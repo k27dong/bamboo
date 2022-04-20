@@ -1,5 +1,5 @@
 {
-  "name": "ozy",
+  "name": "bamboo",
   "version": "3.0.0",
   "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
   "main": "index.js",

@@ -7,11 +7,11 @@
   ——荔枝詞集句
 ```
 
-# 凝丝竹 | Bamboo Discord Bot
+# 凝絲竹 | Bamboo Discord Bot
 
 从网易云播放的discord机器人
 
-### [**Add to Server | 添加至服务器**](https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands)
+### [**添加至服务器 （Add to Server）**](https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands)
 
 ### [**Official Server**](https://discord.gg/p6F32GejZT)
 
