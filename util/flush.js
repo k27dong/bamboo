@@ -4,7 +4,7 @@
 
 const { REST } = require("@discordjs/rest")
 const { Routes } = require("discord-api-types/v9")
-const { client_id, token, dev_guild } = require("./config.json")
+const { client_id, token, dev_guild } = require("../config.json")
 
 const rest = new REST({ version: "9" }).setToken(token)
 

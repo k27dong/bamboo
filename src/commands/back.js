@@ -1,25 +1,27 @@
 const { SlashCommandBuilder } = require("@discordjs/builders")
 const { assert_channel_play_queue } = require("../helper")
+const { play } = require("../player")
 
 module.exports = {
-  data: new SlashCommandBuilder().setName("leave").setDescription("退出"),
+  data: new SlashCommandBuilder()
+    .setName("back")
+    .setDescription("播放上一首"),
   async execute(interaction) {
     try {
       let queue = assert_channel_play_queue(interaction)
 
-      queue.playing = false
-
       if (!!queue.player) {
-        queue.player.stop()
+        queue.playing = true;
+
+        queue.position = queue.position - 1 < 0 ? 0 : queue.position - 1;
+
+        await interaction.reply("✅")
+        play(interaction)
+      }
+      else {
+        await interaction.reply("Nothing is playing")
       }
 
-      if (!!queue.connection) {
-        queue.connection.destroy()
-      }
-
-      interaction.client.queue.delete(interaction.guildId)
-
-      await interaction.reply("done")
     } catch (err) {
       console.log(err)
       await interaction.reply(`Error @ \`${interaction.commandName}\`: ${err}`)

@@ -29,7 +29,7 @@ module.exports = {
         play(interaction)
       }
       else {
-        interaction.reply("Nothing is playing")
+        await interaction.reply("Nothing is playing")
       }
 
     } catch (err) {
