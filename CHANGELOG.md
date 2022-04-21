@@ -1,6 +1,23 @@
 # 更新日志
 
-[English](https://github.com/k27dong/Ozy/blob/main/CHANGELOG_en.md)
+[English](https://github.com/k27dong/bamboo/blob/main/CHANGELOG_en.md)
+
+### 3.0.0 | 20220420
+- 代码重构
+
+```diff
+discord.js
+- 12.5.1
++ 13.6.0
+
+NeteaseCloudMusicApi
+-4.0.3
++4.5.12
+
+Node
+- 12.21.0
++ 16.13.2
+```
 
 ### 2.1.2 | 20211014
 - 服务器用从GCP改为Heroku

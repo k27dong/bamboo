@@ -1,6 +1,23 @@
 # Change Log
 
-[中文版](https://github.com/k27dong/Ozy/blob/main/CHANGELOG.md)
+[中文版](https://github.com/k27dong/bamboo/blob/main/CHANGELOG.md)
+
+### 3.0.0 | 20220420
+- Major Upgrade
+
+```diff
+discord.js
+- 12.5.1
++ 13.6.0
+
+NeteaseCloudMusicApi
+-4.0.3
++4.5.12
+
+Node
+- 12.21.0
++ 16.13.2
+```
 
 ### 2.1.2 | 20211014
 - Changed hosting from GCP to Heroku
