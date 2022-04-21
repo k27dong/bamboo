@@ -15,7 +15,7 @@
 
 ### [**Bug反馈/问题 (Official Server)**](https://discord.gg/p6F32GejZT)
 
-## Slash Commands 😍!
+## Commands
 - `album`
 - `back`
 - `clear`
@@ -27,6 +27,7 @@
 - `lyric`
 - `play`
 - `queue`
+- `search`
 - `shuffle`
 - `skip`
 - `stop`
@@ -37,7 +38,7 @@
 
 ## Changelog
 
-[Changelog](https://github.com/k27dong/Ozy/blob/main/CHANGELOG_en.md) | [更新日志](https://github.com/k27dong/Ozy/blob/main/CHANGELOG.md)
+[Changelog](https://github.com/k27dong/bamboo/blob/master/CHANGELOG_en.md) | [更新日志](https://github.com/k27dong/bamboo/blob/master/CHANGELOG.md)
 
 ### Development
 ```
