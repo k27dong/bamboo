@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("@discordjs/builders")
-const { populate_info } = require("../helper")
 const { documentation } = require("../documentation")
+const { SUPPORT_SERVER_SERVER, SUPPORT_SERVER_CHANNEL } = require("../common")
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -18,8 +18,8 @@ module.exports = {
       if (!!command_param) command_param = command_param.split(" ")[0]
 
       let invitation = await interaction.client.guilds.cache
-        .get("898299988935843930") // ozy support
-        .channels.cache.get("898299988935843933") // welcome channel
+        .get(SUPPORT_SERVER_SERVER)
+        .channels.cache.get(SUPPORT_SERVER_CHANNEL)
         .createInvite()
 
       await interaction.reply(
