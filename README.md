@@ -1,27 +1,29 @@
 ```
-夢中同躡鳳凰翎
-歸作霓裳羽衣曲
-沈香亭北倚欄干
-緩歌縵舞凝絲竹
+折盡武昌柳，掛席上瀟湘。
+二年魚鳥江上，笑我往來忙。
+富貴何時休問，離別中年堪恨，憔悴鬢成霜。
+絲竹陶寫耳，急羽且飛觴。
 
-  ——荔枝詞集句
+  ——辛棄疾
 ```
 
-# 凝絲竹 | Bamboo Discord Bot
+# 絲竹 | Bamboo Discord Bot
 
 从网易云播放的discord机器人
 
-### [**添加至服务器 （Add to Server）**](https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands)
+### [**添加至服务器 (Add to Server)**](https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands)
 
-### [**Official Server**](https://discord.gg/p6F32GejZT)
+### [**Bug反馈/问题 (Official Server)**](https://discord.gg/p6F32GejZT)
 
 ## Slash Commands 😍!
 - `album`
+- `back`
 - `clear`
 - `help`
 - `jump`
 - `leave`
 - `list`
+- `loop`
 - `lyric`
 - `play`
 - `queue`
