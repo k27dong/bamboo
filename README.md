@@ -7,7 +7,7 @@
   ——辛棄疾
 ```
 
-# 絲竹 | Bamboo Discord Bot
+# 竹 | Bamboo Discord Bot
 
 从网易云播放的discord机器人
 
