@@ -1,7 +1,8 @@
 const fs = require("fs")
-const { token, dev_guild } = require("./config.json")
+const { token, dev_guild, phone, country, pwd } = require("./config.json")
 const { Client, Collection, Intents } = require("discord.js")
 const { post_server_list_update } = require("./src/helper")
+const { internal_login } = require("./src/api/netease/internal_login")
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
@@ -9,11 +10,19 @@ const client = new Client({
 
 client.commands = new Collection()
 client.queue = new Map()
+client.cookie = undefined
 
 /** refresh command list  */
 const guild = client.guilds.cache.get(dev_guild)
 client.commands.set([])
 if (!!guild) guild.commands.set([])
+
+/** login */
+internal_login(phone, country, pwd).then((res) => {
+  if (!!res) client.cookie = res.cookie
+})
+
+console.log(client.cookie)
 
 client.on("guildCreate", (guild) => {
   post_server_list_update(guild)
