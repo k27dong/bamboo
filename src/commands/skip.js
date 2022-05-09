@@ -23,7 +23,7 @@ module.exports = {
           queue.position = queue.looping
             ? (queue.position + 1) % queue.track.length
             : queue.position + 1
-          await interaction.reply("✅")
+          await interaction.reply("done")
         }
 
         play(interaction)

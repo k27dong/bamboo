@@ -22,8 +22,6 @@ internal_login(phone, country, pwd).then((res) => {
   if (!!res) client.cookie = res.cookie
 })
 
-console.log(client.cookie)
-
 client.on("guildCreate", (guild) => {
   post_server_list_update(guild)
 })

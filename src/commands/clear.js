@@ -19,7 +19,7 @@ module.exports = {
         queue.player.stop()
       }
 
-      await interaction.reply("✅")
+      await interaction.reply("done")
     } catch (err) {
       console.log(err)
       await interaction.reply(`Error @ \`${interaction.commandName}\`: ${err}`)

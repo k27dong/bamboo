@@ -27,6 +27,7 @@
 - `lyric`
 - `play`
 - `queue`
+- `resume`
 - `search`
 - `shuffle`
 - `skip`

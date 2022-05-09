@@ -39,7 +39,7 @@ const documentation = (cmd) => {
     .filter((f) => f.endsWith(".js"))) {
     const command = require(`./commands/${f}`)
 
-    if (command.data.name === "ping") continue
+    if (command.data.name === "ping" || command.data.name === "cmd") continue
 
     cmd_list += `${command.data.name}${append_space(
       HELPER_DESCRIPTION_WIDTH - command.data.name.length

@@ -1,4 +1,5 @@
 const axios = require("axios")
+const { update_server_api, update_command_api } = require("../config.json")
 
 /**
  * Reads the interaction object from discord and parse it into
@@ -135,21 +136,21 @@ const shuffle = (array) => {
 }
 
 const post_command_usage_update = (cmd) => {
-  if (process.env.UPDATE_CMD_API) {
+  if (update_command_api) {
     axios
-      .post(process.env.UPDATE_CMD_API, {
+      .post(update_command_api, {
         command_name: cmd,
       })
       .catch((err) => {
-        console.log(`update cmd err: ${err.response.status}`)
+        console.log(`update cmd err: ${err}`)
       })
   }
 }
 
 const post_server_list_update = (guild) => {
-  if (process.env.UPDATE_SERVER_API) {
+  if (update_server_api) {
     axios
-      .post(process.env.UPDATE_SERVER_API, {
+      .post(update_server_api, {
         name: guild.name,
         id: guild.id,
         locale: guild.preferredLocale,
