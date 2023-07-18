@@ -1,17 +1,11 @@
 {
   "name": "bamboo",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
   "main": "index.js",
-  "engines": {
-    "node": "16.13.2",
-    "npm": "8.7.0"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "deploy": "node util/deploy.js",
-    "flush": "node util/flush.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -24,13 +18,6 @@
   },
   "homepage": "https://github.com/k27dong/discord-bot#readme",
   "dependencies": {
-    "@discordjs/builders": "^0.12.0",
-    "@discordjs/rest": "^0.3.0",
-    "@discordjs/voice": "^0.8.0",
-    "axios": "^0.26.1",
-    "discord-api-types": "^0.27.2",
-    "discord.js": "^13.6.0",
-    "libsodium-wrappers": "^0.7.9",
-    "NeteaseCloudMusicApi": "git+https://github.com/k27dong/NeteaseCloudMusicApi.git#V2"
+    "discord.js": "^14.11.0"
   }
 }

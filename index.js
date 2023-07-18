@@ -1,49 +1,35 @@
-const fs = require("fs")
-const { token, dev_guild, phone, country, pwd } = require("./config.json")
-const { Client, Collection, Intents } = require("discord.js")
-const { post_server_list_update } = require("./src/helper")
-const { internal_login } = require("./src/api/netease/internal_login")
+const fs = require("node:fs")
+const path = require("node:path")
+const { Client, GatewayIntentBits, Collection } = require("discord.js")
+const { token } = require("./config.json")
 
-const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
-})
+const commands_path = path.join(__dirname, "./src/commands")
+const events_path = path.join(__dirname, "./src/events")
 
+const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 client.commands = new Collection()
-client.queue = new Map()
-client.cookie = undefined
 
-/** refresh command list  */
-const guild = client.guilds.cache.get(dev_guild)
-client.commands.set([])
-if (!!guild) guild.commands.set([])
+/* load commands */
+for (const file of fs
+  .readdirSync(commands_path)
+  .filter((file) => file.endsWith(".js"))) {
+  const command = require(path.join(commands_path, file))
 
-/** login */
-internal_login(phone, country, pwd).then((res) => {
-  if (!!res) client.cookie = res.cookie
-})
-
-client.on("guildCreate", (guild) => {
-  post_server_list_update(guild)
-})
-
-const command_files = fs
-  .readdirSync("./src/commands")
-  .filter((f) => f.endsWith(".js"))
-
-const event_files = fs
-  .readdirSync("./src/events")
-  .filter((f) => f.endsWith(".js"))
-
-for (const f of command_files) {
-  const command = require(`./src/commands/${f}`)
-  client.commands.set(command.data.name, command)
-
-  console.log(command.data.name)
+  if ("data" in command && "execute" in command) {
+    client.commands.set(command.data.name, command)
+    console.log(command.data.name)
+  } else {
+    console.log(
+      `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+    )
+  }
 }
 
-for (const f of event_files) {
-  const event = require(`./src/events/${f}`)
-
+/* load events */
+for (const file of fs
+  .readdirSync(events_path)
+  .filter((file) => file.endsWith(".js"))) {
+  const event = require(path.join(events_path, file))
   if (event.once) {
     client.once(event.name, (...args) => event.execute(...args))
   } else {
