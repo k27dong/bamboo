@@ -15,8 +15,14 @@ module.exports = {
     try {
       await command.execute(interaction)
     } catch (error) {
-      console.error(`Error executing ${interaction.commandName}`)
+      /* Error handling */
       console.error(error)
+
+      if (!interaction.replied) {
+        await interaction.reply(
+          `Error @ \`${interaction.commandName}\`: ${error}`
+        )
+      }
     }
   },
 }

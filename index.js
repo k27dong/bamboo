@@ -9,6 +9,7 @@ const events_path = path.join(__dirname, "./src/events")
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 client.commands = new Collection()
+client.queue = new Map()
 
 /* load commands */
 for (const file of fs
