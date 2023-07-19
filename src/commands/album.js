@@ -20,7 +20,7 @@ module.exports = {
     .setName("album")
     .setDescription("专辑搜索")
     .addStringOption((option) =>
-      option.setName("搜索").setDescription("专辑名").setRequired(true)
+      option.setName("搜索").setDescription("专辑名").setRequired(true),
     ),
   async execute(interaction) {
     const collectorFilter = (i) => i.user.id === interaction.user.id
@@ -43,16 +43,16 @@ module.exports = {
       new StringSelectMenuOptionBuilder()
         .setLabel(al.name)
         .setDescription(
-          `${al.ar} | ${al.size}首 | ${new Date(al.date).getFullYear()}`
+          `${al.ar} | ${al.size}首 | ${new Date(al.date).getFullYear()}`,
         )
-        .setValue(`${i}`)
+        .setValue(`${i}`),
     )
 
     const row = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId("select")
         .setPlaceholder("Nothing selected")
-        .addOptions(album_items)
+        .addOptions(album_items),
     )
 
     const response = await interaction.reply({
@@ -92,7 +92,7 @@ module.exports = {
 
     send_msg_to_text_channel(
       interaction,
-      `Queued ${album_songs.length} songs from ${album.name}`
+      `Queued ${album_songs.length} songs from ${album.name}`,
     )
 
     //     if (!queue.playing) {

@@ -20,7 +20,7 @@ module.exports = {
 
       if (!interaction.replied) {
         await interaction.reply(
-          `Error @ \`${interaction.commandName}\`: ${error}`
+          `Error @ \`${interaction.commandName}\`: ${error}`,
         )
       }
     }
