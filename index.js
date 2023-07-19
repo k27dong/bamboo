@@ -2,6 +2,7 @@ const fs = require("node:fs")
 const path = require("node:path")
 const { Client, GatewayIntentBits, Collection } = require("discord.js")
 const { token } = require("./config.json")
+const { login_qrcode } = require("./src/api/login_qrcode")
 
 const commands_path = path.join(__dirname, "./src/commands")
 const events_path = path.join(__dirname, "./src/events")
@@ -36,5 +37,8 @@ for (const file of fs
     client.on(event.name, (...args) => event.execute(...args))
   }
 }
+
+
+login_qrcode();
 
 client.login(token)
