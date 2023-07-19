@@ -4,8 +4,7 @@ Promise.prototype.ok_or_raise = async function (error) {
 
   if (result.code == 200) {
     return result.data
-  }
-  else {
+  } else {
     throw error
   }
 }
