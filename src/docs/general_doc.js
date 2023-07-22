@@ -45,7 +45,7 @@ const get_internal_doc = (cmd) => {
     if (command.data.name === "ping" || command.data.name === "cmd") continue
 
     cmd_list += `${command.data.name}${append_space(
-      HELPER_DESCRIPTION_WIDTH - command.data.name.length
+      HELPER_DESCRIPTION_WIDTH - command.data.name.length,
     )}${command.data.description}\n`
 
     cmd_helper_msg[command.data.name] =

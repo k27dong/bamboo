@@ -10,7 +10,7 @@ module.exports = {
       option
         .setName("指令")
         .setDescription("获取具体某一条指令的信息")
-        .setRequired(false)
+        .setRequired(false),
     ),
   async execute(interaction) {
     let command_param = interaction.options.getString("指令")
@@ -25,7 +25,7 @@ module.exports = {
       "```" +
         `${get_internal_doc(command_param)}` +
         "```\n" +
-        (!command_param ? `Support Server: ${invitation}` : "")
+        (!command_param ? `Support Server: ${invitation}` : ""),
     )
   },
 }
