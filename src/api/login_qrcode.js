@@ -16,7 +16,6 @@ const login_qrcode = async () => {
       qrimg: true,
     }).ok_or_raise("Failed to create QR code.")
 
-
     /**
      * Todo: find a proper way to display qrcode and check login status
      */
@@ -36,7 +35,6 @@ const login_qrcode = async () => {
     // }, 3000)
 
     console.log("logged in")
-
   } catch (error) {
     console.error(error)
   }
