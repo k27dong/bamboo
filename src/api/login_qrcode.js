@@ -5,6 +5,9 @@ const {
 } = require("NeteaseCloudMusicApi")
 const { ok_or_raise } = require("../util/ok_or")
 
+/**
+ * Todo: find a proper way to display qrcode and check login status
+ */
 const login_qrcode = async () => {
   try {
     console.log(`Logging in ...`)
@@ -15,10 +18,6 @@ const login_qrcode = async () => {
       key: qr_key.unikey,
       qrimg: true,
     }).ok_or_raise("Failed to create QR code.")
-
-    /**
-     * Todo: find a proper way to display qrcode and check login status
-     */
 
     // timer = setInterval(async () => {
     //   const res = await login_qr_check({
