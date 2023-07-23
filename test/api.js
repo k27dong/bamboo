@@ -130,4 +130,6 @@ describe("api", () => {
         })
     })
   })
+
+  // todo: get_raw_lyric_by_id, get_song_url_by_id
 })

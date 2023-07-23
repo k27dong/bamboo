@@ -7,7 +7,9 @@ const { login_qrcode } = require("./src/api/login_qrcode")
 const commands_path = path.join(__dirname, "./src/commands")
 const events_path = path.join(__dirname, "./src/events")
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds] })
+const client = new Client({
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
+})
 client.commands = new Collection()
 client.queue = new Map()
 
@@ -39,7 +41,6 @@ for (const file of fs
   }
 }
 
-
-login_qrcode();
+login_qrcode()
 
 client.login(token)
