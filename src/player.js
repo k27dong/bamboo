@@ -28,9 +28,11 @@ const play = async (interaction) => {
     })
 
     queue.player.on(AudioPlayerStatus.Idle, async () => {
-      console.log("here idle")
-      console.log(queue.playing)
+      console.log("Idle")
+
+      // if playing, play the next resource available
       if (queue.playing) {
+        // logic for looping
         if (!queue.looping && queue.position >= queue.track.length - 1) {
           queue.playing = false
           send_msg_to_text_channel(interaction, `End of queue.`)
@@ -48,6 +50,7 @@ const play = async (interaction) => {
     })
   }
 
+  // connect to voice channel and subscribe player
   if (!queue.connection) {
     queue.connection = joinVoiceChannel({
       channelId: info.voice_channel_id,
@@ -88,6 +91,7 @@ const next_resource = async (interaction) => {
     )
   }
 
+  // if the url is valid, return the resource
   if (err_code === API_OK) {
     send_msg_to_text_channel(interaction, play_message)
     console.log(url)
@@ -95,6 +99,7 @@ const next_resource = async (interaction) => {
     // url = "https://download.samplelib.com/mp3/sample-3s.mp3"
     return createAudioResource(url)
   } else {
+    // handle invalid url
     console.log("url invalid: ", err_code)
 
     if (curr_song.source === "netease") {
@@ -113,6 +118,7 @@ const next_resource = async (interaction) => {
       send_msg_to_text_channel(interaction, "Invalid song")
     }
 
+    // if the current url is invalid, skip and try the next one
     if (!queue.looping && queue.position >= queue.track.length - 1) {
       queue.playing = false
       send_msg_to_text_channel(interaction, `End of queue.`)
