@@ -11,7 +11,7 @@ const {
 } = require("../helper")
 const { search_album } = require("../api/search_album")
 const { get_album_songs } = require("../api/get_album_songs")
-const {play} = require("../player")
+const { play } = require("../player")
 
 /**
  * Todo: Comment this file, include player
@@ -96,10 +96,10 @@ module.exports = {
       `Queued ${album_songs.length} songs from ${album.name}`,
     )
 
-        if (!queue.playing) {
-          queue.playing = true
-          queue.position = queue.track.length - album_songs.length
-          play(interaction)
-        }
+    if (!queue.playing) {
+      queue.playing = true
+      queue.position = queue.track.length - album_songs.length
+      play(interaction)
+    }
   },
 }

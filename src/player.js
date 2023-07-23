@@ -84,7 +84,7 @@ const next_resource = async (interaction) => {
   } else {
     send_msg_to_text_channel(
       interaction,
-      `Sources from ${curr_song.source} is not supported yet!`
+      `Sources from ${curr_song.source} is not supported yet!`,
     )
   }
 
@@ -107,7 +107,7 @@ const next_resource = async (interaction) => {
 
       send_msg_to_text_channel(
         interaction,
-        `Invalid song: ${curr_song.name} (${invalid_reason})`
+        `Invalid song: ${curr_song.name} (${invalid_reason})`,
       )
     } else {
       send_msg_to_text_channel(interaction, "Invalid song")

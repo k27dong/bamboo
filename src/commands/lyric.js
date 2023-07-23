@@ -11,11 +11,12 @@ module.exports = {
     if (!!queue.player) {
       if (queue.track[queue.position].source === "netease") {
         const raw_lrc = await get_raw_lyric_by_id(
-          queue.track[queue.position].id
+          queue.track[queue.position].id,
         )
         await interaction.reply(parse_lrc(raw_lrc))
       } else if (queue.track[queue.position].source === "uploaded_audio") {
         // Todo: find something else (maybe musixmatch)
       }
-    }  },
+    }
+  },
 }
