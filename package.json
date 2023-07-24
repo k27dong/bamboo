@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "nyc --reporter=text ./node_modules/.bin/mocha",
+    "test_file": "nyc --reporter=text ./node_modules/.bin/mocha --",
     "start": "node index.js"
   },
   "repository": {
