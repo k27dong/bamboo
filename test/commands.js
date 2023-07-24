@@ -1,3 +1,8 @@
+const sinon = require("sinon")
+const chai = require("chai")
+const expect = chai.expect
+chai.use(require("chai-sorted"))
+
 const { Client, GatewayIntentBits } = require("discord.js")
 const { build_interaction } = require("./mock/interaction")
 const {
@@ -7,12 +12,8 @@ const {
   dev_channel_id,
   owner_id,
 } = require("../config.json")
-const ping = require("../src/commands/ping")
 
-const sinon = require("sinon")
-const chai = require("chai")
-const expect = chai.expect
-chai.use(require("chai-sorted"))
+const ping = require("../src/commands/ping")
 
 // prepare mocking environment
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
