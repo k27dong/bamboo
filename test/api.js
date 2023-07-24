@@ -22,7 +22,7 @@ const VALID_ALBUM_ITEM = {
 
 describe("api", () => {
   describe("search_album", () => {
-    it("should return objects with correct types of values", function (done) {
+    it("should return objects with correct types of values", (done) => {
       search_album(VALID_ALBUM_SEARCH_PARAM)
         .then((res) => {
           expect(res).to.be.an("array")
@@ -69,7 +69,7 @@ describe("api", () => {
         })
     })
 
-    it("should return results sorted by date", function (done) {
+    it("should return results sorted by date", (done) => {
       search_album(VALID_ALBUM_SEARCH_PARAM)
         .then((res) => {
           const dates = res.map((item) => item.date)
@@ -81,7 +81,7 @@ describe("api", () => {
         })
     })
 
-    it("should return at most 25 results", function (done) {
+    it("should return at most 25 results", (done) => {
       search_album(VALID_ALBUM_SEARCH_PARAM)
         .then((res) => {
           expect(res).to.have.lengthOf.at.most(25)
@@ -92,7 +92,7 @@ describe("api", () => {
         })
     })
 
-    it("should return empty array if no result", function (done) {
+    it("should return empty array if no result", (done) => {
       search_album(INVALID_ALBUM_SEARCH_PARAM)
         .then((res) => {
           expect(res).to.be.an("array").that.is.empty
@@ -105,7 +105,7 @@ describe("api", () => {
   })
 
   describe("get_album_songs", () => {
-    it("should return objects with correct types of values", function (done) {
+    it("should return objects with correct types of values", (done) => {
       get_album_songs(VALID_ALBUM_ITEM)
         .then((res) => {
           expect(res).to.be.an("array")
@@ -135,7 +135,7 @@ describe("api", () => {
   })
 
   describe("get_raw_lyric_by_id", () => {
-    it("should return the unparsed lyric as a string", function (done) {
+    it("should return the unparsed lyric as a string", (done) => {
       get_raw_lyric_by_id(VALID_SONG_ID)
         .then((res) => {
           expect(res).to.be.a("string")
@@ -149,7 +149,7 @@ describe("api", () => {
   })
 
   describe("get_song_url_by_id", () => {
-    it("should return a valid url and a status code", function (done) {
+    it("should return a valid url and a status code", (done) => {
       get_song_url_by_id(VALID_SONG_ID)
         .then((res) => {
           expect(res).to.be.an("array")
