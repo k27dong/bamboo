@@ -9,6 +9,7 @@ const { get_song_url_by_id } = require("../src/api/get_song_url_by_id")
 
 // input parameters used for testing
 const VALID_ALBUM_SEARCH_PARAM = "罗大佑"
+const VALID_ALBUM_SEARCH_PARAM_2 = "冀西南林路行"
 const INVALID_ALBUM_SEARCH_PARAM = "锟斤拷锟斤拷烫烫烫烫烫烫"
 const VALID_SONG_ID = 370380 // 风透的日子
 const VALID_ALBUM_ITEM = {
@@ -83,6 +84,13 @@ describe("api", () => {
 
     it("should return at most 25 results", (done) => {
       search_album(VALID_ALBUM_SEARCH_PARAM)
+        .then((res) => {
+          expect(res).to.have.lengthOf.at.most(25)
+        })
+        .catch((err) => {
+          done(err)
+        })
+      search_album(VALID_ALBUM_SEARCH_PARAM_2)
         .then((res) => {
           expect(res).to.have.lengthOf.at.most(25)
           done()
