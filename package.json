@@ -4,8 +4,9 @@
   "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=text ./node_modules/.bin/mocha",
-    "test_file": "nyc --reporter=text ./node_modules/.bin/mocha --",
+    "test": "cross-env ./node_modules/.bin/mocha",
+    "test_full_report": "cross-env nyc --reporter=text ./node_modules/.bin/mocha",
+    "test_file": "cross-env nyc --reporter=text ./node_modules/.bin/mocha --",
     "start": "node index.js"
   },
   "repository": {
@@ -29,6 +30,7 @@
   "devDependencies": {
     "chai": "^4.3.7",
     "chai-sorted": "^0.2.0",
+    "cross-env": "^7.0.3",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "sinon": "^15.2.0"
