@@ -22,10 +22,14 @@ const build_interaction = async (
   follow_up,
   delete_reply,
   options,
-  command_id
+  command_id,
+  preset_guild = null,
+  preset_member = null,
 ) => {
-  const guild = await client.guilds.fetch(guild_id)
-  const member = await guild.members.fetch(user_id)
+  // const guild = await client.guilds.fetch(guild_id)
+  // const member = await guild.members.fetch(user_id)
+  const guild = preset_guild || await client.guilds.fetch(guild_id)
+  const member = preset_member || await guild.members.fetch(user_id)
   const user = member.user
 
   let interaction = new CommandInteraction(client, {

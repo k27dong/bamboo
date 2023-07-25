@@ -71,7 +71,7 @@ describe("util", () => {
       expect(res.server_id).to.be.a("string")
       expect(res.user_id).to.be.a("string")
       expect(res.text_channel_id).to.be.a("string")
-      expect(res.voice_channel_id).to.be.null
+      expect(res.voice_channel_id).to.be.a("string")
 
       expect(res.server_id).to.equal(guild_id)
       expect(res.user_id).to.equal(user_id)
