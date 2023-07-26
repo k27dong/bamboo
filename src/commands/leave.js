@@ -7,12 +7,12 @@ module.exports = {
   async execute(interaction) {
     let queue = assert_channel_play_queue(interaction)
 
-      queue.playing = false
-      queue.player?.stop()
-      queue.connection?.destroy()
+    queue.playing = false
+    queue.player?.stop()
+    queue.connection?.destroy()
 
-      interaction.client.queue.delete(interaction.guildId)
+    interaction.client.queue.delete(interaction.guildId)
 
-      await interaction.reply("done")
+    await interaction.reply("done")
   },
 }

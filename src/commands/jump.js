@@ -7,7 +7,7 @@ module.exports = {
     .setName("jump")
     .setDescription("播放指定位置")
     .addIntegerOption((option) =>
-      option.setName("位置").setDescription("播放位置").setRequired(true)
+      option.setName("位置").setDescription("播放位置").setRequired(true),
     ),
   async execute(interaction) {
     let queue = assert_channel_play_queue(interaction)
@@ -23,9 +23,7 @@ module.exports = {
     } else {
       queue.position = new_position - 1
       queue.playing = true
-      await interaction.reply(
-        `jumped to: ${queue.track[queue.position].name}`
-      )
+      await interaction.reply(`jumped to: ${queue.track[queue.position].name}`)
       play(interaction)
     }
   },

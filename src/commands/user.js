@@ -10,7 +10,7 @@ module.exports = {
       option
         .setName("用户名")
         .setDescription("填写网易云账号的用户名")
-        .setRequired(true)
+        .setRequired(true),
     ),
   async execute(interaction) {
     let queue = assert_channel_play_queue(interaction)
