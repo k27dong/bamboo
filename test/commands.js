@@ -46,7 +46,7 @@ let preset_guild, preset_member
 
 /**
  * todo: album, jump, leave, lyric, queue, shuffle, skip, stop, user
- * todo: resume, user
+ * todo: resume, user, list
  */
 
 describe("commands", () => {

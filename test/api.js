@@ -22,7 +22,7 @@ const VALID_ALBUM_ITEM = {
 }
 
 /**
- * todo: get_user_profile
+ * todo: get_user_profile, get_user_playlist, get_songs_from_playlist
  */
 
 describe("api", () => {
