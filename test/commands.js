@@ -44,8 +44,10 @@ let preset_guild, preset_member
   preset_member = await preset_guild.members.fetch(user_id)
 })()
 
-// let preset_guild = client.guilds.fetch(guild_id)
-// let preset_member = preset_guild.members.fetch(user_id)
+/**
+ * todo: album, jump, leave, lyric, queue, shuffle, skip, stop, user
+ * todo: resume, user
+ */
 
 describe("commands", () => {
   let interaction, reply_spy
