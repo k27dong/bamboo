@@ -4,7 +4,7 @@ const { real_ip } = require("../../config.json")
 const get_user_playlist = async (id) => {
   let playlist_q = await user_playlist({
     uid: id,
-    realIP: real_ip
+    realIP: real_ip,
   })
 
   let playlist = []
@@ -20,7 +20,7 @@ const get_user_playlist = async (id) => {
         id: p.id,
         play_count: p.playCount,
         count: p.trackCount,
-        cover_img: p.coverImgUrl
+        cover_img: p.coverImgUrl,
       })
     }
   }

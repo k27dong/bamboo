@@ -32,14 +32,14 @@ module.exports = {
         new StringSelectMenuOptionBuilder()
           .setLabel(pl.name)
           .setDescription(`${pl.count}首歌曲 | ${pl.play_count}播放`)
-          .setValue(`${i}`)
+          .setValue(`${i}`),
       )
 
       const row = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
           .setCustomId("playlist_select")
           .setPlaceholder("Nothing selected")
-          .addOptions(playlist_items)
+          .addOptions(playlist_items),
       )
 
       const response = await interaction.reply({
@@ -87,7 +87,7 @@ module.exports = {
 
       send_msg_to_text_channel(
         interaction,
-        `Queued ${playlist_songs.length} songs from ${selected_playlist.name}`
+        `Queued ${playlist_songs.length} songs from ${selected_playlist.name}`,
       )
 
       if (!queue.playing) {
