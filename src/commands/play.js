@@ -8,7 +8,7 @@ module.exports = {
     .setName("play")
     .setDescription("播放音乐")
     .addStringOption((option) =>
-      option.setName("搜索").setDescription("搜索音乐").setRequired(true)
+      option.setName("搜索").setDescription("搜索音乐").setRequired(true),
     ),
   async execute(interaction) {
     let tunnel = "netease" // for now only netease is supported
