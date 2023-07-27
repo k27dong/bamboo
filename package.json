@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "cross-env ./node_modules/.bin/mocha",
-    "test_full_report": "cross-env nyc --reporter=text ./node_modules/.bin/mocha",
-    "test_file": "cross-env nyc --reporter=text ./node_modules/.bin/mocha --",
+    "full_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha",
+    "single_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha --",
     "start": "node index.js"
   },
   "repository": {
