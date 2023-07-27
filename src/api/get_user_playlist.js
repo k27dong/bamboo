@@ -9,7 +9,20 @@ const get_user_playlist = async (id) => {
 
   let playlist = []
 
-  if (!playlist_q.body.playlist.length === 0) {
+  // due to the change in the api, the following check is no longer necessary
+  // since there will always be a default playlist 'xxx喜欢的音乐'
+  // if (!playlist_q.body.playlist.length === 0) {
+  //   return playlist
+  // }
+
+  // edge case: user has no playlist but only the default playlist
+  // somehow there exist two format of default playlist, this is to handle the old one
+  // in case the creator is null, the call is simply rejected for now.
+  if (
+    playlist_q.body.playlist.length === 1 &&
+    playlist_q.body.playlist[0].name.includes("我喜欢的音乐") &&
+    playlist_q.body.playlist[0].creator === null
+  ) {
     return playlist
   }
 
