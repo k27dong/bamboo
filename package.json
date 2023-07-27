@@ -6,7 +6,7 @@
   "scripts": {
     "test": "cross-env ./node_modules/.bin/mocha",
     "full_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha",
-    "single_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha --",
+    "single_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha  -timeout 10000 --",
     "start": "node index.js"
   },
   "repository": {
