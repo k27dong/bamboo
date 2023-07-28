@@ -12,7 +12,7 @@ module.exports = {
     queue.position = -1
     queue.playing = false
 
-    queue.player?.stop();
+    queue.player?.stop()
 
     await interaction.reply("done")
   },

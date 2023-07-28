@@ -13,7 +13,7 @@ module.exports = {
     .setName("search")
     .setDescription("搜索")
     .addStringOption((option) =>
-      option.setName("搜索").setDescription("搜索音乐").setRequired(true)
+      option.setName("搜索").setDescription("搜索音乐").setRequired(true),
     ),
   async execute(interaction) {
     const filter = (i) => {
@@ -50,7 +50,7 @@ module.exports = {
       new StringSelectMenuBuilder()
         .setCustomId("searched_select")
         .setPlaceholder("Nothing selected")
-        .addOptions(searched_items)
+        .addOptions(searched_items),
     )
 
     await interaction.reply({ content: "选择歌曲", components: [row] })
