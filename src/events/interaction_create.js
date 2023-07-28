@@ -1,25 +1,28 @@
-const { post_command_usage_update } = require("../helper")
+const { Events } = require("discord.js")
 
 module.exports = {
-  name: "interactionCreate",
+  name: Events.InteractionCreate,
   async execute(interaction) {
-    if (!interaction.isCommand()) return
+    if (!interaction.isChatInputCommand()) return
 
-    const command = await interaction.client.commands.get(
-      interaction.commandName
-    )
+    const command = interaction.client.commands.get(interaction.commandName)
 
-    if (!command) return
+    if (!command) {
+      console.error(`No command matching ${interaction.commandName} was found.`)
+      return
+    }
 
     try {
-      post_command_usage_update(command.data.name)
       await command.execute(interaction)
     } catch (error) {
+      /* Error handling */
       console.error(error)
-      await interaction.reply({
-        content: "There was an error while executing this command!",
-        ephemeral: true,
-      })
+
+      if (!interaction.replied) {
+        await interaction.reply(
+          `Error @ \`${interaction.commandName}\`: ${error}`,
+        )
+      }
     }
   },
 }

@@ -1,5 +1,5 @@
-const { SlashCommandBuilder } = require("@discordjs/builders")
-const { documentation } = require("../documentation")
+const { SlashCommandBuilder } = require("discord.js")
+const { get_internal_doc } = require("../docs/general_doc")
 const { SUPPORT_SERVER_SERVER, SUPPORT_SERVER_CHANNEL } = require("../common")
 
 module.exports = {
@@ -10,27 +10,22 @@ module.exports = {
       option
         .setName("指令")
         .setDescription("获取具体某一条指令的信息")
-        .setRequired(false)
+        .setRequired(false),
     ),
   async execute(interaction) {
-    try {
-      let command_param = interaction.options.getString("指令")
-      if (!!command_param) command_param = command_param.split(" ")[0]
+    let command_param = interaction.options.getString("指令")
+    if (!!command_param) command_param = command_param.split(" ")[0]
 
-      let invitation = await interaction.client.guilds.cache
-        .get(SUPPORT_SERVER_SERVER)
-        .channels.cache.get(SUPPORT_SERVER_CHANNEL)
-        .createInvite()
+    let invitation = await interaction.client.guilds.cache
+      .get(SUPPORT_SERVER_SERVER)
+      .channels.cache.get(SUPPORT_SERVER_CHANNEL)
+      .createInvite()
 
-      await interaction.reply(
-        "```" +
-          `${documentation(command_param)}` +
-          "```\n" +
-          (!command_param ? `Support Server: ${invitation}` : "")
-      )
-    } catch (err) {
-      console.log(err)
-      await interaction.reply(`Error @ \`${interaction.commandName}\`: ${err}`)
-    }
+    await interaction.reply(
+      "```" +
+        `${get_internal_doc(command_param)}` +
+        "```\n" +
+        (!command_param ? `Support Server: ${invitation}` : ""),
+    )
   },
 }

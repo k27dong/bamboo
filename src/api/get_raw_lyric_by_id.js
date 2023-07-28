@@ -1,5 +1,5 @@
 const { lyric } = require("NeteaseCloudMusicApi")
-const { assert_query_res } = require("../../helper")
+const { assert_query_res } = require("../helper")
 
 const get_raw_lyric_by_id = async (id) => {
   let lyric_q = await lyric({

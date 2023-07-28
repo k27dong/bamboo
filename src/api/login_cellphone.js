@@ -1,6 +1,6 @@
 const { login_cellphone } = require("NeteaseCloudMusicApi")
 
-const internal_login = async (phone, country, pwd) => {
+const login_cellphone = async (phone, country, pwd) => {
   console.log(`Logging in ...`)
 
   let login_q = await login_cellphone({
@@ -18,4 +18,4 @@ const internal_login = async (phone, country, pwd) => {
   }
 }
 
-exports.internal_login = internal_login
+exports.login_cellphone = login_cellphone

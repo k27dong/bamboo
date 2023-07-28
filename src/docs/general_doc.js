@@ -1,7 +1,8 @@
-const fs = require("fs")
-const { HELPER_DESCRIPTION_WIDTH } = require("./common")
+const fs = require("node:fs")
+const path = require("node:path")
+const { HELPER_DESCRIPTION_WIDTH } = require("../common")
 
-const documentation = (cmd) => {
+const get_internal_doc = (cmd) => {
   const append_space = (num) => {
     let empty_spaces = ""
     for (let i = 0; i < num; i++) empty_spaces += " "
@@ -33,16 +34,18 @@ const documentation = (cmd) => {
 
   let cmd_list = "完整指令列表：\n\n"
   let cmd_helper_msg = {}
+  const cmd_path = path.join(__dirname, "../commands")
 
   for (const f of fs
-    .readdirSync("./src/commands")
-    .filter((f) => f.endsWith(".js"))) {
-    const command = require(`./commands/${f}`)
+    .readdirSync(cmd_path)
+    .filter((file) => file.endsWith(".js"))) {
+    const file_path = path.join(cmd_path, f)
+    const command = require(file_path)
 
     if (command.data.name === "ping" || command.data.name === "cmd") continue
 
     cmd_list += `${command.data.name}${append_space(
-      HELPER_DESCRIPTION_WIDTH - command.data.name.length
+      HELPER_DESCRIPTION_WIDTH - command.data.name.length,
     )}${command.data.description}\n`
 
     cmd_helper_msg[command.data.name] =
@@ -57,4 +60,4 @@ const documentation = (cmd) => {
     : `Can't find the command: ${cmd}`
 }
 
-exports.documentation = documentation
+exports.get_internal_doc = get_internal_doc

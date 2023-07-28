@@ -1,28 +1,18 @@
-const { SlashCommandBuilder } = require("@discordjs/builders")
+const { SlashCommandBuilder } = require("discord.js")
 const { assert_channel_play_queue } = require("../helper")
 
 module.exports = {
   data: new SlashCommandBuilder().setName("leave").setDescription("退出"),
+
   async execute(interaction) {
-    try {
-      let queue = assert_channel_play_queue(interaction)
+    let queue = assert_channel_play_queue(interaction)
 
-      queue.playing = false
+    queue.playing = false
+    queue.player?.stop()
+    queue.connection?.destroy()
 
-      if (!!queue.player) {
-        queue.player.stop()
-      }
+    interaction.client.queue.delete(interaction.guildId)
 
-      if (!!queue.connection) {
-        queue.connection.destroy()
-      }
-
-      interaction.client.queue.delete(interaction.guildId)
-
-      await interaction.reply("done")
-    } catch (err) {
-      console.log(err)
-      await interaction.reply(`Error @ \`${interaction.commandName}\`: ${err}`)
-    }
+    await interaction.reply("done")
   },
 }

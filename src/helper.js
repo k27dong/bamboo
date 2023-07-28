@@ -14,7 +14,7 @@ const populate_info = (interaction) => {
     user_id: interaction.member.user.id,
     text_channel_id: interaction.channelId,
     voice_channel_id: interaction.guild.members.cache.get(
-      interaction.member.user.id
+      interaction.member.user.id,
     ).voice.channelId,
   }
 

@@ -1,0 +1,49 @@
+name: Build static, apply formatter, deploy on production
+on: [push]
+
+jobs:
+  run-linters:
+    name: Run linters and formatters with Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "me@kefan.me"
+          git config --global user.name "Kevin Dong"
+
+      - name: Pull latest changes
+        run: git pull
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.16.1
+
+      - name: Setup formatters
+        run: |
+          npm install --no-save prettier
+
+      - name: Run linters
+        run: |
+          npx prettier --write src/
+
+      - name: Check if there is any new translations
+        id: verify_diff
+        run: git diff --quiet || echo "formatter_changes_exist=true" >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        if: steps.verify_diff.outputs.formatter_changes_exist == 'true'
+        run: |
+          timestamp=$(date +'%Y%m%d%H%M%S')
+          git add src/*
+          git commit -m "Automated format fix - $timestamp"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}

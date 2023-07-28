@@ -1,10 +1,12 @@
 const { cloudsearch } = require("NeteaseCloudMusicApi")
-const { assert_query_res } = require("../../helper")
+const { assert_query_res } = require("../helper")
+const { real_ip } = require("../../config.json")
 
 const search_album = async (keywords) => {
   let search_q = await cloudsearch({
     keywords: keywords,
     type: 10, // for album search
+    realIP: real_ip,
   })
 
   assert_query_res(search_q)
@@ -37,7 +39,7 @@ const search_album = async (keywords) => {
     result.push(temp_obj)
   }
 
-  return result
+  return result.sort((a, b) => b.date - a.date)
 }
 
 exports.search_album = search_album
