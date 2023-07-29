@@ -24,7 +24,7 @@ module.exports = {
       option.setName("搜索").setDescription("专辑名").setRequired(true),
     ),
   async execute(interaction) {
-    const collectorFilter = (i) => i.user.id === interaction.user.id
+    const filter = (i) => i.user.id === interaction.user.id
     const info = populate_info(interaction)
     let confirmation = undefined
 
@@ -63,7 +63,7 @@ module.exports = {
 
     try {
       confirmation = await response.awaitMessageComponent({
-        filter: collectorFilter,
+        filter: filter,
         time: 20_000,
       })
     } catch (e) {
