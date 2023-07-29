@@ -13,9 +13,6 @@ const { search_album } = require("../api/search_album")
 const { get_album_songs } = require("../api/get_album_songs")
 const { play } = require("../player")
 
-/**
- * Todo: Comment this file, include player
- */
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("album")
