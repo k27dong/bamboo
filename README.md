@@ -43,6 +43,6 @@
 
 ### Development
 ```
-$ npm i
-$ node index.js
+$ pnpm i
+$ pnpm start
 ```
