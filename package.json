@@ -4,6 +4,7 @@
   "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
   "main": "index.js",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "test": "cross-env ./node_modules/.bin/mocha",
     "full_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha",
     "single_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha  -timeout 10000 --",
@@ -11,21 +12,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/k27dong/discord-bot.git"
+    "url": "git+https://github.com/k27dong/bamboo.git"
   },
   "author": "k27dong",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/k27dong/discord-bot/issues"
+    "url": "https://github.com/k27dong/bamboo/issues"
   },
-  "homepage": "https://github.com/k27dong/discord-bot#readme",
+  "homepage": "https://github.com/k27dong/bamboo#readme",
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.16.0",
+    "NeteaseCloudMusicApi": "^4.8.10",
+    "axios": "^1.4.0",
     "discord.js": "^14.11.0",
     "ffmpeg-static": "^5.1.0",
-    "NeteaseCloudMusicApi": "^4.8.10",
-    "sodium": "^3.0.2"
+    "libsodium-wrappers": "^0.7.11"
   },
   "devDependencies": {
     "chai": "^4.3.7",
