@@ -1,4 +1,4 @@
-name: Build static, apply formatter, deploy on production
+name: lint
 on: [push]
 
 jobs:
