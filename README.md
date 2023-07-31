@@ -58,7 +58,7 @@ $ pnpm start
 
 ![demo1](https://user-images.githubusercontent.com/46537987/155899000-11f8463b-1f19-4a3a-9c84-425cc5e3fc96.gif)
 
-<h2>Contributor</h2>
+<h2>Contributors</h2>
 
 <a href="https://github.com/k27dong/bamboo/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=k27dong/bamboo" />
