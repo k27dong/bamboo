@@ -1,7 +1,7 @@
+require("dotenv").config()
 const fs = require("node:fs")
 const path = require("node:path")
 const { Client, GatewayIntentBits, Collection } = require("discord.js")
-const { token } = require("./config.json")
 const { login_qrcode } = require("./src/api/login_qrcode")
 
 const commands_path = path.join(__dirname, "./src/commands")
@@ -43,4 +43,4 @@ for (const file of fs
 
 login_qrcode()
 
-client.login(token)
+client.login(process.env.TOKEN)

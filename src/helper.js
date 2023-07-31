@@ -1,5 +1,5 @@
+require("dotenv").config()
 const axios = require("axios")
-const { update_server_api, update_command_api } = require("../config.json")
 
 /**
  * Reads the interaction object from discord and parse it into
@@ -136,9 +136,9 @@ const shuffle = (array) => {
 }
 
 const post_command_usage_update = (cmd) => {
-  if (update_command_api) {
+  if (process.env.UPDATE_COMMAND_API) {
     axios
-      .post(update_command_api, {
+      .post(process.env.UPDATE_COMMAND_API, {
         command_name: cmd,
       })
       .catch((err) => {
@@ -148,9 +148,9 @@ const post_command_usage_update = (cmd) => {
 }
 
 const post_server_list_update = (guild) => {
-  if (update_server_api) {
+  if (process.env.UPDATE_SERVER_API) {
     axios
-      .post(update_server_api, {
+      .post(process.env.UPDATE_SERVER_API, {
         name: guild.name,
         id: guild.id,
         locale: guild.preferredLocale,

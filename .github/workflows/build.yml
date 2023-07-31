@@ -1,9 +1,9 @@
-name: lint
+name: build
 on: [push]
 
 jobs:
-  run-linters:
-    name: Run linters and formatters with Prettier
+  lint:
+    name: run linters
     runs-on: ubuntu-latest
 
     steps:
@@ -47,3 +47,40 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
+
+  test:
+    name: run tests
+    needs: lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Pull latest changes
+        run: git pull
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.17.0
+          cache: 'pnpm'
+
+      - name: Run tests
+        run: |
+          pnpm install
+          pnpm test
+        env:
+          TOKEN: ${{ secrets.TOKEN }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          DEV_GUILD: ${{ secrets.DEV_GUILD }}
+          DEV_CHANNEL_ID: ${{ secrets.DEV_CHANNEL_ID }}
+          OWNER_ID: ${{ secrets.OWNER_ID }}
+          REAL_IP: ${{ secrets.REAL_IP }}
+          UPDATE_COMMAND_API: ${{ secrets.UPDATE_COMMAND_API }}
+          UPDATE_SERVER_API: ${{ secrets.UPDATE_SERVER_API }}

@@ -1,11 +1,11 @@
+require("dotenv").config()
 const { album } = require("NeteaseCloudMusicApi")
 const { assert_query_res } = require("../helper")
-const { real_ip } = require("../../config.json")
 
 const get_album_songs = async (al) => {
   let album_q = await album({
     id: al.id,
-    realIP: real_ip,
+    realIP: process.env.REAL_IP,
   })
 
   assert_query_res(album_q)

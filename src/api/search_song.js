@@ -1,11 +1,11 @@
+require("dotenv").config()
 const { cloudsearch } = require("NeteaseCloudMusicApi")
 const { assert_query_res } = require("../helper")
-const { real_ip } = require("../../config.json")
 
 const search_song = async (keywords) => {
   let search_q = await cloudsearch({
     keywords: keywords,
-    realIP: real_ip,
+    realIP: process.env.REAL_IP,
   })
 
   assert_query_res(search_q)

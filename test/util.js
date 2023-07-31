@@ -3,15 +3,9 @@ const sinon = require("sinon")
 const expect = chai.expect
 chai.use(require("chai-sorted"))
 
+require("dotenv").config()
 const { Client, GatewayIntentBits } = require("discord.js")
 const { build_interaction } = require("./mock/interaction")
-const {
-  token,
-  client_id,
-  dev_guild,
-  dev_channel_id,
-  owner_id,
-} = require("../config.json")
 
 const {
   populate_info,
@@ -21,10 +15,10 @@ const {
 
 // prepare mocking environment
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
-const application_id = client_id
-const guild_id = dev_guild
-const channel_id = dev_channel_id
-const user_id = owner_id
+const application_id = process.env.CLIENT_ID
+const guild_id = process.env.DEV_GUILD
+const channel_id = process.env.DEV_CHANNEL_ID
+const user_id = process.env.OWNER_ID
 const type = 2
 const name = "album"
 const subcommand = "search"
@@ -35,7 +29,7 @@ const mock_follow_up = async (res) => {}
 const mock_delete_reply = async (res) => {}
 const options = []
 const command_id = "1234"
-client.login(token)
+client.login(process.env.TOKEN)
 
 const default_interaction = async () => {
   return await build_interaction(

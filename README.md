@@ -15,8 +15,8 @@
   <a href="https://github.com/k27dong/bamboo/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License">
   </a>
-      <a href="https://github.com/k27dong/bamboo/actions?query=build" alt="Actions">
-        <img src="https://github.com/k27dong/bamboo/actions/workflows/lint.yml/badge.svg" />
+      <a href="https://github.com/k27dong/bamboo/actions" alt="Github Actions">
+        <img src="https://github.com/k27dong/bamboo/actions/workflows/build.yml/badge.svg" />
     </a>
 </p>
 

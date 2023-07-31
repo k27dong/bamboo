@@ -1,10 +1,10 @@
+require("dotenv").config()
 const { user_playlist } = require("NeteaseCloudMusicApi")
-const { real_ip } = require("../../config.json")
 
 const get_user_playlist = async (id) => {
   let playlist_q = await user_playlist({
     uid: id,
-    realIP: real_ip,
+    realIP: process.env.REAL_IP,
   })
 
   let playlist = []

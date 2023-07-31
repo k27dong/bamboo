@@ -3,18 +3,11 @@ const chai = require("chai")
 const expect = chai.expect
 chai.use(require("chai-sorted"))
 
+require("dotenv").config()
 const fs = require("node:fs")
 const path = require("node:path")
 const { Client, GatewayIntentBits, Guild } = require("discord.js")
 const { build_interaction } = require("./mock/interaction")
-const {
-  token,
-  client_id,
-  dev_guild,
-  dev_channel_id,
-  owner_id,
-} = require("../config.json")
-
 const ping = require("../src/commands/ping")
 const loop = require("../src/commands/loop")
 const help = require("../src/commands/help")
@@ -23,10 +16,10 @@ const { get_internal_doc } = require("../src/docs/general_doc")
 // prepare mocking environment
 const command_path = path.join(__dirname, "../src/commands")
 const client = new Client({ intents: [GatewayIntentBits.Guilds] })
-const application_id = client_id
-const guild_id = dev_guild
-const channel_id = dev_channel_id
-const user_id = owner_id
+const application_id = process.env.CLIENT_ID
+const guild_id = process.env.DEV_GUILD
+const channel_id = process.env.DEV_CHANNEL_ID
+const user_id = process.env.OWNER_ID
 const type = 2
 const name = "album"
 const subcommand = "search"
@@ -37,7 +30,7 @@ const mock_follow_up = async (res) => {}
 const mock_delete_reply = async (res) => {}
 const options = []
 const command_id = "1234"
-client.login(token)
+client.login(process.env.TOKEN)
 let preset_guild, preset_member
 ;(async () => {
   preset_guild = await client.guilds.fetch(guild_id)
