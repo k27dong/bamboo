@@ -60,3 +60,7 @@ $ pnpm start
 
 <h2>Contributor</h2>
 
+<a href="https://github.com/k27dong/bamboo/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=k27dong/bamboo" />
+</a>
+
