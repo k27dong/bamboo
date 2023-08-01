@@ -8,7 +8,8 @@
     "test": "cross-env ./node_modules/.bin/mocha -timeout 10000",
     "full_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha",
     "single_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha  -timeout 10000 --",
-    "start": "node index.js"
+    "start": "node index.js",
+    "docker:build": "docker build -t bamboo ."
   },
   "repository": {
     "type": "git",
