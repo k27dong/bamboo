@@ -1,14 +1,14 @@
+require("dotenv").config()
 const { lyric } = require("NeteaseCloudMusicApi")
-const { assert_query_res } = require("../helper")
+const { ok_or_raise } = require("../util/ok_or")
 
 const get_raw_lyric_by_id = async (id) => {
-  let lyric_q = await lyric({
+  let lyric_data = await lyric({
     id: id,
-  })
+    realIP: process.env.REAL_IP,
+  }).ok_or_raise("API Error in lyric")
 
-  assert_query_res(lyric_q)
-
-  return lyric_q.body.lrc.lyric
+  return lyric_data.lrc.lyric
 }
 
 exports.get_raw_lyric_by_id = get_raw_lyric_by_id

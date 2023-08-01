@@ -1,16 +1,13 @@
 require("dotenv").config()
 const { cloudsearch } = require("NeteaseCloudMusicApi")
-const { assert_query_res } = require("../helper")
 
 const search_song = async (keywords) => {
-  let search_q = await cloudsearch({
+  let song_data = await cloudsearch({
     keywords: keywords,
     realIP: process.env.REAL_IP,
-  })
+  }).ok_or_raise("API Error in cloudsearch song")
 
-  assert_query_res(search_q)
-
-  const query = search_q.body.result.songs
+  const query = song_data.result.songs
   const res = []
 
   if (!query) return

@@ -1,21 +1,23 @@
 require("dotenv").config()
 const { playlist_detail, song_detail } = require("NeteaseCloudMusicApi")
+const { ok_or_raise } = require("../util/ok_or")
+const { ERR_NOT_FOUND } = require("../common")
 
 const get_songs_from_playlist = async (list) => {
-  let playlist_q = await playlist_detail({
+  let playlist_data = await playlist_detail({
     id: list.id,
     realIP: process.env.REAL_IP,
-  })
+  }).ok_or_raise("API Error in playlist_detail")
 
   let raw_songs = []
   let id_chunks = []
   let songs = []
 
-  if (playlist_q.body.code === 404) {
+  if (playlist_data.code === ERR_NOT_FOUND) {
     return raw_songs
   }
 
-  raw_songs = playlist_q.body.playlist.trackIds
+  raw_songs = playlist_data.playlist.trackIds
 
   while (raw_songs.length > 0) {
     id_chunks.push(raw_songs.splice(0, 999))
@@ -33,16 +35,16 @@ const get_songs_from_playlist = async (list) => {
       }
     }
 
-    let songs_q = await song_detail({
+    let song_data = await song_detail({
       ids: ids,
       realIP: process.env.REAL_IP,
-    })
+    }).ok_or_raise("API Error in song_detail")
 
-    if (!songs_q.body.songs || songs_q.body.songs.length === 0) {
+    if (!song_data.songs || song_data.songs.length === 0) {
       return songs
     }
 
-    for (let s of songs_q.body.songs) {
+    for (let s of song_data.songs) {
       songs.push({
         name: s.name,
         id: s.id,

@@ -1,3 +1,8 @@
+/**
+ * !Deprecated: this login method is no longer support due to a change
+ * !made by NetEase.
+ */
+
 const { login_cellphone } = require("NeteaseCloudMusicApi")
 
 const login_cellphone = async (phone, country, pwd) => {

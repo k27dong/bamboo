@@ -1,19 +1,17 @@
 require("dotenv").config()
 const { cloudsearch } = require("NeteaseCloudMusicApi")
-const { assert_query_res } = require("../helper")
+const { ok_or_raise } = require("../util/ok_or")
 
 const get_user_profile = async (name) => {
-  let search_q = await cloudsearch({
+  let profile_data = await cloudsearch({
     keywords: name,
     type: 1002,
     realIP: process.env.REAL_IP,
-  })
+  }).ok_or_raise("API Error in cloudsearch profile")
 
-  assert_query_res(search_q)
-
-  return !search_q.body.result.userprofiles
+  return !profile_data.result.userprofiles
     ? null
-    : search_q.body.result.userprofiles[0]
+    : profile_data.result.userprofiles[0]
 }
 
 exports.get_user_profile = get_user_profile

@@ -1,11 +1,12 @@
+const { API_OK } = require("../common")
+
 Promise.prototype.ok_or_raise = async function (error) {
   let result = await this
-  result = result.body
 
-  if (result.code == 200) {
-    return result.data
+  if (result.body.code === API_OK && result.status === API_OK) {
+    return result.body
   } else {
-    throw error
+    throw `(${result.status}): ${error}`
   }
 }
 
