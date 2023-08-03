@@ -1,8 +1,9 @@
 # Bot Token
 config.json
 
-# MacOS stuff
+# Mac & Idea files
 .DS_Store
+.idea
 
 # scripts
 start.sh
