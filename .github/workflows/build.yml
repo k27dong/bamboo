@@ -39,7 +39,7 @@ jobs:
         if: steps.verify_diff.outputs.formatter_changes_exist == 'true'
         run: |
           timestamp=$(date +'%Y%m%d%H%M%S')
-          git add src/*
+          git add src/* test/*
           git commit -m "Automated format fix - $timestamp"
 
       - name: Push changes
