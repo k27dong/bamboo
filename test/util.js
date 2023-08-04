@@ -12,7 +12,9 @@ const {
   assert_query_res,
   assert_channel_play_queue,
   display_track,
-  parse_lrc, shuffle, time_convert,
+  parse_lrc,
+  shuffle,
+  time_convert,
 } = require("../src/helper")
 
 // prepare mocking environment
@@ -194,17 +196,17 @@ describe("util", () => {
 
   describe("shuffle", () => {
     it("should change the order of the array", () => {
-      const array = [1, 2, 3, 4, 5];
-      const shuffled = shuffle([...array]);
-      expect(shuffled).to.not.deep.equal(array);
+      const array = [1, 2, 3, 4, 5]
+      const shuffled = shuffle([...array])
+      expect(shuffled).to.not.deep.equal(array)
     })
   })
 
   describe("time_convert", () => {
-    it('should return the correct date string', () => {
-      const timestamp = Date.UTC(2023, 6, 18);
-      const result = time_convert(timestamp);
-      expect(result).to.equal('2023, Jul, 18');
-    });
+    it("should return the correct date string", () => {
+      const timestamp = Date.UTC(2023, 6, 18)
+      const result = time_convert(timestamp)
+      expect(result).to.equal("2023, Jul, 18")
+    })
   })
 })

@@ -119,16 +119,16 @@ const send_msg_to_text_channel = (interaction, content) => {
 }
 
 const shuffle = (arr) => {
-  let curr_index = arr.length;
+  let curr_index = arr.length
 
   while (curr_index !== 0) {
-    const rand_index = Math.floor(Math.random() * curr_index);
-    curr_index--;
+    const rand_index = Math.floor(Math.random() * curr_index)
+    curr_index--
 
-    [arr[curr_index], arr[rand_index]] = [arr[rand_index], arr[curr_index]];
+    ;[arr[curr_index], arr[rand_index]] = [arr[rand_index], arr[curr_index]]
   }
 
-  return arr;
+  return arr
 }
 
 /**
@@ -176,14 +176,14 @@ const time_convert = (timestamp) => {
     "Oct",
     "Nov",
     "Dec",
-  ];
+  ]
 
-  const date_object = new Date(timestamp);
-  const year = date_object.getUTCFullYear();
-  const month = months[date_object.getUTCMonth()];
-  const date = date_object.getUTCDate();
+  const date_object = new Date(timestamp)
+  const year = date_object.getUTCFullYear()
+  const month = months[date_object.getUTCMonth()]
+  const date = date_object.getUTCDate()
 
-  return `${year}, ${month}, ${date}`;
+  return `${year}, ${month}, ${date}`
 }
 
 exports.populate_info = populate_info
