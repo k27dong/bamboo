@@ -16,7 +16,7 @@ const play = async (interaction) => {
   let queue = assert_channel_play_queue(interaction)
   let info = populate_info(interaction)
 
-  if (queue.track.length == 0) {
+  if (queue.track.length === 0) {
     send_msg_to_text_channel(interaction, `Nothing to play!`)
   }
 
@@ -69,7 +69,7 @@ const next_resource = async (interaction) => {
   let queue = assert_channel_play_queue(interaction)
   let cookie = interaction.client.cookie
 
-  if (queue.track.length == 0) {
+  if (queue.track.length === 0) {
     send_msg_to_text_channel(interaction, `Nothing to play!`)
     queue.playing = false
     queue.player.stop()

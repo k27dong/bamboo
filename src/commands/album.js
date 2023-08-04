@@ -33,7 +33,7 @@ module.exports = {
     const song_search_keywords = interaction.options.getString("搜索")
     const query_result = await search_album(song_search_keywords)
 
-    if (query_result.length == 0) {
+    if (query_result.length === 0) {
       throw "can't find any result"
     }
 

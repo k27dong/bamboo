@@ -14,7 +14,7 @@ const login_cellphone = async (phone, country, pwd) => {
     password: pwd,
   })
 
-  if (login_q.body.code == 200) {
+  if (login_q.body.code === 200) {
     console.log(`logged in.`)
     console.log(`User: ${login_q.body.profile.nickname}`)
     return login_q.body

@@ -1,5 +1,6 @@
 require("dotenv").config()
 const axios = require("axios")
+const { API_OK } = require("./common")
 
 /**
  * Reads the interaction object from discord and parse it into
@@ -9,7 +10,7 @@ const axios = require("axios")
  * @returns Info object with useful data structures
  */
 const populate_info = (interaction) => {
-  let info = {
+  return {
     server_id: interaction.guildId,
     user_id: interaction.member.user.id,
     text_channel_id: interaction.channelId,
@@ -17,16 +18,13 @@ const populate_info = (interaction) => {
       interaction.member.user.id,
     ).voice.channelId,
   }
-
-  return info
 }
 
 /**
  * Checks the query result, if the return code is not 200 throws error
- * @param {Query} res
  */
 const assert_query_res = (res) => {
-  if (res.status != 200) throw `code ${res.status}`
+  if (res.status !== API_OK) throw `code ${res.status}`
 }
 
 const create_queue = (interaction) => {
@@ -95,7 +93,7 @@ const parse_lrc = (lrc) => {
   for (let i = 0; i < sanitized.length; i++) {
     let l = sanitized[i]
     try {
-      if (l.length >= 0 && l[0] == "[") {
+      if (l.length >= 0 && l[0] === "[") {
         sanitized[i] = sanitized[i].slice(sanitized[i].indexOf("]") + 1)
       }
     } catch (err) {

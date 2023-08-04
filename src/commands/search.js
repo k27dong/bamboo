@@ -2,7 +2,7 @@ const {
   ActionRowBuilder,
   StringSelectMenuBuilder,
   SlashCommandBuilder,
-  ComponentType,
+  StringSelectMenuOptionBuilder,
 } = require("discord.js")
 const { search_song } = require("../api/search_song")
 const { populate_info, assert_channel_play_queue } = require("../helper")
@@ -16,12 +16,9 @@ module.exports = {
       option.setName("搜索").setDescription("搜索音乐").setRequired(true),
     ),
   async execute(interaction) {
-    const filter = (i) => {
-      i.deferUpdate()
-      return i.user.id === interaction.user.id
-    }
-
+    const filter = (i) => i.user.id === interaction.user.id
     const info = populate_info(interaction)
+    let confirmation = undefined
 
     if (!info.voice_channel_id) {
       throw "you must be in a voice channel!"
@@ -31,70 +28,69 @@ module.exports = {
     const song_search_keywords = interaction.options.getString("搜索")
     const query_result = await search_song(song_search_keywords)
 
-    if (!query_result || query_result.length == 0) {
+    if (!query_result || query_result.length === 0) {
       throw `can't find anything for: ${song_search_keywords}`
     }
 
     let song = query_result
-    searched_items = []
+    let searched_items = query_result.map((s, i) =>
+      new StringSelectMenuOptionBuilder()
+        .setLabel(s.name)
+        .setDescription(`${s.ar.name} | ${s.al.name}`)
+        .setValue(`${i}`),
+    )
 
-    song.forEach((s, i) => {
-      searched_items.push({
-        label: s.name,
-        description: `${s.ar.name} | ${s.al.name}`,
-        value: `${i}`,
-      })
-    })
-
-    const row = new ActionRowBuilder().addComponents(
+    let row = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId("searched_select")
         .setPlaceholder("Nothing selected")
         .addOptions(searched_items),
     )
 
-    await interaction.reply({ content: "选择歌曲", components: [row] })
-    const message = await interaction.fetchReply()
+    const response = await interaction.reply({
+      content: "搜索结果",
+      components: [row],
+    })
 
-    message
-      .awaitMessageComponent({
-        filter,
-        componentType: ComponentType.StringSelect,
-        time: 20000, // 20 sec
+    try {
+      confirmation = await response.awaitMessageComponent({
+        filter: filter,
+        time: 20_000,
       })
-      .then(async (res) => {
-        let play_message = ""
-        const selected_song = song[res.values[0]]
-
-        if (
-          selected_song.source === "netease" ||
-          selected_song.source === "youtube_url"
-        ) {
-          play_message = `**Queued**: ${selected_song.name} ${
-            !!selected_song.ar.name ? `(${selected_song.ar.name})` : ""
-          }`
-        }
-
-        interaction.editReply({
-          content: play_message,
-          components: [],
-          embeds: [],
-        })
-
-        queue.track.push(selected_song)
-
-        if (!queue.playing) {
-          queue.playing = true
-          queue.position = queue.track.length - 1
-          play(interaction)
-        }
+    } catch (e) {
+      await interaction.editReply({
+        content: "No interactions were collected, cancelling",
+        components: [],
       })
-      .catch((err) => {
-        console.log(err)
-        interaction.editReply({
-          content: `err! ${err}`,
-          components: [],
-        })
-      })
+    }
+
+    if (!confirmation) {
+      throw "No interactions were collected, cancelling"
+    }
+
+    const selected_song = song[confirmation.values[0]]
+    let play_message = ""
+
+    if (
+      selected_song.source === "netease" ||
+      selected_song.source === "youtube_url"
+    ) {
+      play_message = `**Queued**: ${selected_song.name} ${
+        !!selected_song.ar.name ? `(${selected_song.ar.name})` : ""
+      }`
+    }
+
+    interaction.editReply({
+      content: play_message,
+      components: [],
+    })
+
+    queue.track.push(selected_song)
+
+    if (!queue.playing) {
+      queue.playing = true
+      queue.position = queue.track.length - 1
+      play(interaction)
+    }
   },
 }
