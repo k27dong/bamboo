@@ -122,7 +122,6 @@ const shuffle = (arr) => {
   while (curr_index !== 0) {
     const rand_index = Math.floor(Math.random() * curr_index)
     curr_index--
-
     ;[arr[curr_index], arr[rand_index]] = [arr[rand_index], arr[curr_index]]
   }
 
