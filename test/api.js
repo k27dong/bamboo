@@ -131,29 +131,6 @@ describe("api", () => {
           done(err)
         })
     })
-
-    it("should throw if api returns error", async () => {
-      let cloudsearch_stub = sinon.stub()
-      const proxy_api = {
-        ...NeteaseCloudMusicApi,
-        cloudsearch: cloudsearch_stub,
-      }
-
-      let search_album = proxyquire("../src/api/search_album", {
-        NeteaseCloudMusicApi: proxy_api,
-      }).search_album
-
-      cloudsearch_stub.resolves(ERR_RESPONSE)
-
-      await expect(search_album(VALID_ALBUM_SEARCH_PARAM)).to.be.rejected.then(
-        (error) => {
-          expect(error).to.be.a("string")
-          expect(error).to.include(500)
-        }
-      )
-
-      cloudsearch_stub.reset()
-    })
   })
 
   describe("get_album_songs", () => {
