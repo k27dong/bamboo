@@ -34,22 +34,26 @@ const login_qrcode = async () => {
   try {
     console.log(`Logging in ...`)
 
-    let cookie_res;
+    let cookie_res
     let qr_key_res = await login_qr_key().ok_or_raise("Failed to get QR key.")
     let qr_code_res = await login_qr_create({
       key: qr_key_res.data.unikey,
     }).ok_or_raise("Failed to create QR code.")
 
-    QRCode.toString(qr_code_res.data.qrurl,{type:'terminal'}, function (err, url) {
-      console.log(url)
-    })
+    QRCode.toString(
+      qr_code_res.data.qrurl,
+      { type: "terminal" },
+      function (err, url) {
+        console.log(url)
+      },
+    )
 
     for (; true; ) {
       cookie_res = await login_qr_check({
         key: qr_key_res.data.unikey,
-      });
+      })
       if (cookie_res.body.code === 803) {
-        break;
+        break
       }
       // console.log(cookie_res.body.code)
     }
