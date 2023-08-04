@@ -10,7 +10,9 @@ const { build_interaction } = require("./mock/interaction")
 const {
   populate_info,
   assert_query_res,
-  assert_channel_play_queue, display_track, parse_lrc,
+  assert_channel_play_queue,
+  display_track,
+  parse_lrc,
 } = require("../src/helper")
 
 // prepare mocking environment
@@ -47,7 +49,7 @@ const default_interaction = async () => {
     mock_follow_up,
     mock_delete_reply,
     options,
-    command_id
+    command_id,
   )
 }
 
@@ -126,37 +128,37 @@ describe("util", () => {
       const track = [
         {
           song: {
-            name: '告别的年代',
+            name: "告别的年代",
             id: 109236,
-            ar: {name: "罗大佑"},
+            ar: { name: "罗大佑" },
             al: {},
-            source: 'netease'
+            source: "netease",
           },
           pos: 0,
-          curr: true
+          curr: true,
         },
         {
           song: {
-            name: '沉默的表示',
+            name: "沉默的表示",
             id: 109243,
-            ar: {name: "罗大佑"},
+            ar: { name: "罗大佑" },
             al: {},
-            source: 'netease'
+            source: "netease",
           },
           pos: 1,
-          curr: false
+          curr: false,
         },
         {
           song: {
-            name: '爱人同志',
+            name: "爱人同志",
             id: 109246,
-            ar: {name: "罗大佑"},
+            ar: { name: "罗大佑" },
             al: {},
-            source: 'netease'
+            source: "netease",
           },
           pos: 2,
-          curr: false
-        }
+          curr: false,
+        },
       ]
 
       const res = display_track(track)

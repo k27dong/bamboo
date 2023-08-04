@@ -26,8 +26,8 @@ const build_interaction = async (
   preset_guild = null,
   preset_member = null,
 ) => {
-  const guild = preset_guild || await client.guilds.fetch(guild_id)
-  const member = preset_member || await guild.members.fetch(user_id)
+  const guild = preset_guild || (await client.guilds.fetch(guild_id))
+  const member = preset_member || (await guild.members.fetch(user_id))
   const user = member.user
 
   let interaction = new CommandInteraction(client, {

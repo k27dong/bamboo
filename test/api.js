@@ -58,7 +58,7 @@ describe("api", () => {
               "size",
               "pic",
               "date",
-              "ar"
+              "ar",
             )
             expect(item.name).to.be.a("string")
             expect(item.id).to.be.a("number")
@@ -177,7 +177,7 @@ describe("api", () => {
         (error) => {
           expect(error).to.be.a("string")
           expect(error).to.include(500)
-        }
+        },
       )
 
       album_stub.reset()
@@ -227,7 +227,7 @@ describe("api", () => {
             "nickname",
             "playlistCount",
             "signature",
-            "userId"
+            "userId",
           )
           expect(res.nickname).to.be.a("string")
           expect(res.playlistCount).to.be.a("number")
@@ -268,7 +268,7 @@ describe("api", () => {
               "id",
               "play_count",
               "count",
-              "cover_img"
+              "cover_img",
             )
             expect(item.name).to.be.a("string")
             expect(item.id).to.be.a("number")
@@ -346,7 +346,7 @@ describe("api", () => {
           })
 
           done()
-      })
+        })
         .catch((err) => {
           done(err)
         })

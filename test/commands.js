@@ -63,7 +63,7 @@ describe("commands", () => {
       options,
       command_id,
       preset_guild,
-      preset_member
+      preset_member,
     )
 
     interaction.client.queue = new Map()
@@ -140,7 +140,7 @@ describe("commands", () => {
 
       expect(
         interaction.client.guilds.cache.get().channels.cache.get().createInvite
-          .called
+          .called,
       ).to.be.true
     })
 
