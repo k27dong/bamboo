@@ -118,23 +118,22 @@ const send_msg_to_text_channel = (interaction, content) => {
   interaction.client.channels.cache.get(interaction.channelId).send(content)
 }
 
-const shuffle = (array) => {
-  var curr_index = array.length,
-    temp_value,
-    ran_index
+const shuffle = (arr) => {
+  let curr_index = arr.length;
 
-  while (0 !== curr_index) {
-    ran_index = Math.floor(Math.random() * curr_index)
-    curr_index -= 1
+  while (curr_index !== 0) {
+    const rand_index = Math.floor(Math.random() * curr_index);
+    curr_index--;
 
-    temp_value = array[curr_index]
-    array[curr_index] = array[ran_index]
-    array[ran_index] = temp_value
+    [arr[curr_index], arr[rand_index]] = [arr[rand_index], arr[curr_index]];
   }
 
-  return array
+  return arr;
 }
 
+/**
+ * todo: add command usage * server list update api
+ */
 const post_command_usage_update = (cmd) => {
   if (process.env.UPDATE_COMMAND_API) {
     axios
@@ -164,8 +163,7 @@ const post_server_list_update = (guild) => {
 }
 
 const time_convert = (timestamp) => {
-  var a = new Date(timestamp)
-  var months = [
+  const months = [
     "Jan",
     "Feb",
     "Mar",
@@ -178,13 +176,14 @@ const time_convert = (timestamp) => {
     "Oct",
     "Nov",
     "Dec",
-  ]
-  var year = a.getFullYear()
-  var month = months[a.getMonth()]
-  var date = a.getDate()
+  ];
 
-  let time = year + ", " + month + ", " + date
-  return time
+  const date_object = new Date(timestamp);
+  const year = date_object.getUTCFullYear();
+  const month = months[date_object.getUTCMonth()];
+  const date = date_object.getUTCDate();
+
+  return `${year}, ${month}, ${date}`;
 }
 
 exports.populate_info = populate_info
@@ -195,5 +194,5 @@ exports.send_msg_to_text_channel = send_msg_to_text_channel
 exports.parse_lrc = parse_lrc
 exports.shuffle = shuffle
 exports.post_command_usage_update = post_command_usage_update
-exports.time_convert = time_convert
 exports.post_server_list_update = post_server_list_update
+exports.time_convert = time_convert
