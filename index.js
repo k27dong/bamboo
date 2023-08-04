@@ -12,6 +12,7 @@ const client = new Client({
 })
 client.commands = new Collection()
 client.queue = new Map()
+client.cookie = undefined;
 
 /* load commands */
 for (const file of fs
@@ -21,7 +22,7 @@ for (const file of fs
 
   if ("data" in command && "execute" in command) {
     client.commands.set(command.data.name, command)
-    console.log(command.data.name)
+    // console.log(command.data.name)
   } else {
     console.log(
       `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
@@ -41,6 +42,9 @@ for (const file of fs
   }
 }
 
-login_qrcode()
+login_qrcode().then((res) => {
+  client.cookie = res.cookie
+  console.log("logged in!")
+})
 
 client.login(process.env.TOKEN)
