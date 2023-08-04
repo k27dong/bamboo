@@ -1,7 +1,11 @@
 const chai = require("chai")
+const sinon = require("sinon")
+const proxyquire = require('proxyquire');
 const expect = chai.expect
 chai.use(require("chai-sorted"))
+chai.use(require('chai-as-promised'));
 
+const NeteaseCloudMusicApi = require("NeteaseCloudMusicApi")
 const { search_album } = require("../src/api/search_album")
 const { get_album_songs } = require("../src/api/get_album_songs")
 const { get_raw_lyric_by_id } = require("../src/api/get_raw_lyric_by_id")
@@ -11,6 +15,7 @@ const { get_user_playlist } = require("../src/api/get_user_playlist")
 const {
   get_songs_from_playlist,
 } = require("../src/api/get_songs_from_playlist")
+const { ERR_SERVER_ERROR } = require("../src/common")
 
 // input parameters used for testing
 const VALID_ALBUM_SEARCH_PARAM = "罗大佑"
@@ -29,6 +34,12 @@ const VALID_ALBUM_ITEM = {
   pic: "https://placeholder.jpg",
   date: 823104000000,
   ar: "OK男女合唱团",
+}
+const ERR_RESPONSE = {
+  status: ERR_SERVER_ERROR,
+  body: {
+    code: ERR_SERVER_ERROR,
+  }
 }
 
 describe("api", () => {
@@ -120,6 +131,25 @@ describe("api", () => {
           done(err)
         })
     })
+
+    it('should throw if api returns error', async () => {
+      let cloudsearch_stub = sinon.stub();
+      const proxy_api = { ...NeteaseCloudMusicApi, cloudsearch: cloudsearch_stub };
+
+      let search_album = proxyquire("../src/api/search_album", {
+        "NeteaseCloudMusicApi": proxy_api
+      }).search_album;
+
+      cloudsearch_stub.resolves(ERR_RESPONSE);
+
+      await expect(search_album(VALID_ALBUM_SEARCH_PARAM))
+      .to.be.rejected.then((error) => {
+        expect(error).to.be.a('string');
+        expect(error).to.include(500);
+      });
+
+      cloudsearch_stub.reset();
+    });
   })
 
   describe("get_album_songs", () => {
@@ -150,6 +180,25 @@ describe("api", () => {
           done(err)
         })
     })
+
+    it('should throw if api returns error', async () => {
+      let album_stub = sinon.stub();
+      const proxy_api = { ...NeteaseCloudMusicApi, album: album_stub };
+
+      let get_album_songs = proxyquire("../src/api/get_album_songs", {
+        "NeteaseCloudMusicApi": proxy_api
+      }).get_album_songs;
+
+      album_stub.resolves(ERR_RESPONSE);
+
+      await expect(get_album_songs(VALID_ALBUM_ITEM))
+      .to.be.rejected.then((error) => {
+        expect(error).to.be.a('string');
+        expect(error).to.include(500);
+      });
+
+      album_stub.reset();
+    });
   })
 
   describe("get_raw_lyric_by_id", () => {
