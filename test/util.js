@@ -10,7 +10,7 @@ const { build_interaction } = require("./mock/interaction")
 const {
   populate_info,
   assert_query_res,
-  assert_channel_play_queue,
+  assert_channel_play_queue, display_track, parse_lrc,
 } = require("../src/helper")
 
 // prepare mocking environment
@@ -109,6 +109,84 @@ describe("util", () => {
       const result = assert_channel_play_queue(interaction)
 
       expect(result).to.equal(mock_queue)
+    })
+  })
+
+  describe("display_track", () => {
+    it("should notify if the track is empty", () => {
+      const track = []
+
+      const res = display_track(track)
+
+      expect(res).to.be.a("string")
+      expect(res).to.equal("```Track empty!```")
+    })
+
+    it("should return a string contains all the track", async () => {
+      const track = [
+        {
+          song: {
+            name: '告别的年代',
+            id: 109236,
+            ar: {name: "罗大佑"},
+            al: {},
+            source: 'netease'
+          },
+          pos: 0,
+          curr: true
+        },
+        {
+          song: {
+            name: '沉默的表示',
+            id: 109243,
+            ar: {name: "罗大佑"},
+            al: {},
+            source: 'netease'
+          },
+          pos: 1,
+          curr: false
+        },
+        {
+          song: {
+            name: '爱人同志',
+            id: 109246,
+            ar: {name: "罗大佑"},
+            al: {},
+            source: 'netease'
+          },
+          pos: 2,
+          curr: false
+        }
+      ]
+
+      const res = display_track(track)
+
+      expect(res).to.be.a("string")
+      expect(res.length).to.be.greaterThan(50)
+    })
+  })
+
+  describe("parse_lrc", () => {
+    it("should return the default message if the input is empty", () => {
+      const res = parse_lrc(undefined)
+
+      expect(res).to.be.a("string")
+      expect(res).to.equal("```No lyrics available```")
+    })
+
+    it("should parse raw lyrics into a string", () => {
+      const raw_lyc = `\n[00:00.00] 作词 : 吴晟\n[00:01.00] 作曲 : 罗大佑\n[05:01.19]古早的 古早的 古早以前\n[05:10.97]世世代代的祖公\n[05:15.36]就在这片长不出荣华富贵长不出奇迹的土地上\n[05:34.62]挥洒咸咸的汗水\n[05:42.28]播下粒粒的种籽\n[05:48.25]繁衍他们那无所谓而认命的子孙`
+
+      const res = parse_lrc(raw_lyc)
+
+      expect(res).to.be.a("string")
+
+      const lines = res.split("\n")
+      expect(lines.length).to.equal(10)
+      expect(lines[3]).to.equal("古早的 古早的 古早以前")
+      expect(lines[4]).to.equal("世世代代的祖公")
+      expect(lines[5]).to.equal("就在这片长不出荣华富贵长不出奇迹的土地上")
+      expect(lines[8]).to.equal("繁衍他们那无所谓而认命的子孙")
     })
   })
 })

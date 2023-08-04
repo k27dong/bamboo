@@ -6,6 +6,7 @@ chai.use(require("chai-sorted"))
 chai.use(require("chai-as-promised"))
 
 const NeteaseCloudMusicApi = require("NeteaseCloudMusicApi")
+const { ERR_SERVER_ERROR } = require("../src/common")
 const { search_album } = require("../src/api/search_album")
 const { get_album_songs } = require("../src/api/get_album_songs")
 const { get_raw_lyric_by_id } = require("../src/api/get_raw_lyric_by_id")
@@ -15,7 +16,7 @@ const { get_user_playlist } = require("../src/api/get_user_playlist")
 const {
   get_songs_from_playlist,
 } = require("../src/api/get_songs_from_playlist")
-const { ERR_SERVER_ERROR } = require("../src/common")
+const { search_song } = require("../src/api/search_song")
 
 // input parameters used for testing
 const VALID_ALBUM_SEARCH_PARAM = "罗大佑"
@@ -324,6 +325,28 @@ describe("api", () => {
 
           done()
         })
+        .catch((err) => {
+          done(err)
+        })
+    })
+  })
+
+  describe("search_songs", () => {
+    it("should return a valid list of songs", (done) => {
+      search_song(VALID_ALBUM_SEARCH_PARAM_2)
+        .then((res) => {
+          expect(res).to.be.an("array")
+
+          res.forEach((item) => {
+            expect(item).to.be.an("object")
+            expect(item).to.have.all.keys("name", "id", "ar", "al", "source")
+            expect(item.name).to.be.a("string")
+            expect(item.id).to.be.a("number")
+            expect(item.source).to.be.a("string")
+          })
+
+          done()
+      })
         .catch((err) => {
           done(err)
         })
