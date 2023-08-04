@@ -30,7 +30,8 @@
     "discord.js": "^14.11.0",
     "dotenv": "^16.3.1",
     "ffmpeg-static": "^5.1.0",
-    "libsodium-wrappers": "^0.7.11"
+    "libsodium-wrappers": "^0.7.11",
+    "qrcode": "^1.5.3"
   },
   "devDependencies": {
     "chai": "^4.3.7",
