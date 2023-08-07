@@ -1,5 +1,7 @@
 const {
-  login_qr_key, login_qr_create, login_qr_check
+  login_qr_key,
+  login_qr_create,
+  login_qr_check,
 } = require("NeteaseCloudMusicApi")
 const QRCode = require("qrcode")
 const { STATUS_CONFIRMED, STATUS_EXPIRED } = require("../common")
@@ -38,13 +40,16 @@ const login_qrcode = async () => {
 
     let qr_key_res = await login_qr_key().ok_or_raise("Failed to get QR key.")
     let qr_code_res = await login_qr_create({
-      key: qr_key_res.data.unikey
+      key: qr_key_res.data.unikey,
     }).ok_or_raise("Failed to create QR code.")
 
-    QRCode.toString(qr_code_res.data.qrurl, { type: "terminal" },
-      function(err, url) {
+    QRCode.toString(
+      qr_code_res.data.qrurl,
+      { type: "terminal" },
+      function (err, url) {
         console.log(url)
-      })
+      },
+    )
 
     let cookie_res
     let is_done = false
@@ -57,7 +62,7 @@ const login_qrcode = async () => {
       }
 
       cookie_res = await login_qr_check({
-        key: qr_key_res.data.unikey
+        key: qr_key_res.data.unikey,
       })
 
       if (cookie_res.body.code === STATUS_CONFIRMED) {
@@ -72,7 +77,7 @@ const login_qrcode = async () => {
 
     // wait until the QR code is scanned or expired
     while (!is_done && elapsed < MAX_DURATION) {
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
     }
 
     return is_done ? cookie_res.body.cookie : null
