@@ -1,6 +1,6 @@
 FROM node:20-slim AS base
 
-RUN apt-get update && apt-get install -y python3 && corepack enable && apt-get clean && rm -rf /var/lib/apt/lists/
+RUN apt-get update && apt-get install -y python3 ffmpeg && corepack enable && apt-get clean && rm -rf /var/lib/apt/lists/
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
