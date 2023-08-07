@@ -45,26 +45,19 @@ Bamboo is a Discord bot that allows you to stream music from[ NetEase Cloud Musi
 
 The official instance of Bamboo is hosted on a server that operates 24/7 with auto-restart capabilities. To introduce it to your server, click on the invite link above. However, due to potential high traffic, the server may experience slowdowns which may affect your experience. For a more personalized and reliable experience, it is recommended to host your own instance of Bamboo.
 
-## Support Server
+Bamboo is still in its early stages of development. If you encounter any bugs or have any suggestions, please feel free to join the support server and let us know!
 
-Bamboo is still in its early stages of development. If you encounter any bugs or have any suggestions, please feel free to join the support server and let us know! 
-
-[Official Discord Server](https://discord.gg/p6F32GejZT)
-
-## Changelog
-
-[Changelog](https://github.com/k27dong/bamboo/blob/master/CHANGELOG_en.md)
+[Join the Official Discord Server](https://discord.gg/p6F32GejZT)
 
 ## Development
 
-### Docker
 ```shell
+# Docker
 $ docker compose up --build
 ```
 
-### Node
-
 ```shell
+# Node
 $ pnpm i
 $ pnpm start
 ```
