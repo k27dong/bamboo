@@ -37,6 +37,10 @@
 
 <h2>Overview</h2>
 
+Bamboo is a Discord bot that allows you to stream music from[ NetEase Cloud Music](https://music.163.com/) to Discord voice channels. It is written in JavaScript with [discord.js](https://discord.js.org/). 
+
+<h2>Installation</h2>
+
 
 ### [**添加至服务器 (Add to Server)**](https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands)
 
