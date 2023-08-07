@@ -43,8 +43,10 @@ login_qrcode().then((res) => {
   if (!res) {
     console.log("running without logging in")
   }
-  client.cookie = res
-  console.log("Netease logged in!")
+  else {
+    client.cookie = res
+    console.log("Netease logged in!")
+  }
 })
 
 client.login(process.env.TOKEN).then(() => {
