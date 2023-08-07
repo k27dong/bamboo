@@ -10,6 +10,16 @@ const ERR_COPYRIGHT = 404
 const ERR_NOT_FOUND = 404
 const ERR_SERVER_ERROR = 500
 
+const STATUS_EXPIRED = 800
+const STATUS_WAITING = 801
+const STATUS_CONFIRM = 802
+const STATUS_CONFIRMED = 803
+
+// 800: QR code expired
+// 801: waiting for scan
+//   802: waiting for confirm
+//   803: scan confirmed (cookie returned)
+
 const HELPER_DESCRIPTION_WIDTH = 10
 const SUPPORT_SERVER_SERVER = "966754695123177554"
 const SUPPORT_SERVER_CHANNEL = "966754695123177557"
