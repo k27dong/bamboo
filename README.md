@@ -35,34 +35,45 @@
   </a>
 </p>
 
-<h2>Overview</h2>
+## Overview
 
 Bamboo is a Discord bot that allows you to stream music from[ NetEase Cloud Music](https://music.163.com/) to Discord voice channels. It is written in JavaScript with [discord.js](https://discord.js.org/). 
 
-<h2>Installation</h2>
+## Installation
 
+[Invite to Server](https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands)
 
-### [**添加至服务器 (Add to Server)**](https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands)
+The official instance of Bamboo is hosted on a server that operates 24/7 with auto-restart capabilities. To introduce it to your server, click on the invite link above. However, due to potential high traffic, the server may experience slowdowns which may affect your experience. For a more personalized and reliable experience, it is recommended to host your own instance of Bamboo.
 
-### [**Bug反馈/问题 (Official Server)**](https://discord.gg/p6F32GejZT)
+## Support Server
 
+Bamboo is still in its early stages of development. If you encounter any bugs or have any suggestions, please feel free to join the support server and let us know! 
+
+[Official Discord Server](https://discord.gg/p6F32GejZT)
 
 ## Changelog
 
-[Changelog](https://github.com/k27dong/bamboo/blob/master/CHANGELOG_en.md) | [更新日志](https://github.com/k27dong/bamboo/blob/master/CHANGELOG.md)
+[Changelog](https://github.com/k27dong/bamboo/blob/master/CHANGELOG_en.md)
 
-<h2>Development</h2>
+## Development
 
+### Docker
+```shell
+$ docker compose up --build
 ```
+
+### Node
+
+```shell
 $ pnpm i
 $ pnpm start
 ```
 
-<h2>Demo</h2>
+## Demo
 
 ![demo1](https://user-images.githubusercontent.com/46537987/155899000-11f8463b-1f19-4a3a-9c84-425cc5e3fc96.gif)
 
-<h2>Contributors</h2>
+## Contributors
 
 <a href="https://github.com/k27dong/bamboo/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=k27dong/bamboo" />

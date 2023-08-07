@@ -1,52 +1,57 @@
-# 更新日志
+# Change Log
 
-[English](https://github.com/k27dong/bamboo/blob/main/CHANGELOG_en.md)
+[中文版](https://github.com/k27dong/bamboo/blob/main/CHANGELOG_CN.md)
 
-### 3.0.0 | 20220420
-- 代码重构
+### 4.0.0 | 20220420
+- Major Upgrade
+- Bumped the version of dependencies
+- Hosted on server via docker
 
 ```diff
 discord.js
 - 12.5.1
-+ 13.6.0
++ 14.11.0
 
 NeteaseCloudMusicApi
 -4.0.3
-+4.5.12
++4.8.10
 
 Node
 - 12.21.0
-+ 16.13.2
++ 18.17.0
 ```
 
+### 3.0.0 | 20220420
+- Refactored the project
+
 ### 2.1.2 | 20211014
-- 服务器用从GCP改为Heroku
-- 修复了`remove`中的一个bug
+- Changed hosting from GCP to Heroku
+- Fixed a bug in the `remove` command
 
 ### 2.1.1 | 20210331
-- 用`*`代替了`!`作为前缀
-- 当上线时自动设置状态栏
-- 修复了一个由于网易云api参数错误而导致不能正确地读取专辑搜索结果的问题
-- 默认显示列表的前后比例从`0.4`下调至`0.3`
-- 修复了显示列表有时会超出discord消息长度限制(2000)的问题
-- 为`queue`指令增加了`full`选项
+- Changed the prefix from `!` to `*`, since the former is used by Rythm, another famous music bot
+- Set status for the bot
+- Fixed a bug where the resulting playlist could not be displayed due to an error from the Netease API
+- The default front and back ratio when displaying track is reduced from `0.4` to `0.3`
+- Fixed a problem where the length of the displayed track sometime goes beyond the limit of a single discord message (2000)
+- Added `full` flag for the `queue` command
 
 ### 2.1.0 | 20210328
-- 现在可以在不重启整个服务的情况下更新代码
-- 优化了服务器端的一些问题
+- Now the bot could be updated without restarting the entire service
+- Optimized the server which ozy is hosted on
 
 ### 2.0.3 | 20210327
-- 修改了README，增加了一个可以将ozy直接加入服务器的按钮
-- 修复了当用户不在语音频道里点歌报错的问题
-- 为每个指令添加了文档
+- Added a button in README to connect ozy to your server
+- Fixed a problem where user could still add songs even he/she's not in any voice channel
+- Wrote help scripts for each command
 
 ### 2.0.2 | 20210326
-- 修复了歌单超过1000首就不能添加的问题
-- 在请求歌曲url时设置cookie
+- Fixed a problem where a Netease playlist with >1000 songs cannot be added to the queue
+- Correctly set cookies when request song urls from Netease
 
 ### 2.0.1 | 20210324
-- 增加了直接播放youtube链接的功能
-- 修复了一些bug
+- Now user can play directly from a youtube url
+- Bugfix
 
 ### 2.0.0 | 20210322
-- 完成代码重构
+- Refactored the project
