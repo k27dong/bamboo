@@ -17,8 +17,7 @@ module.exports = {
       } else if (queue.track[queue.position].source === "uploaded_audio") {
         // Todo: find something other source
       }
-    }
-    else {
+    } else {
       await interaction.reply("Nothing is playing!")
     }
   },
