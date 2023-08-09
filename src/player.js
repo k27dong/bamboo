@@ -81,6 +81,13 @@ const next_resource = async (interaction) => {
 
   if (curr_song.source === "netease") {
     ;[url, err_code] = await get_song_url_by_id(curr_song.id, cookie)
+
+    if (queue.track[queue.position] !== curr_song) {
+      console.log("Song changed, skip")
+
+      return null
+    }
+
     play_message = `Playing: ${queue.track[queue.position].name} (${
       queue.track[queue.position].ar.name
     })`
