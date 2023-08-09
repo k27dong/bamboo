@@ -6,11 +6,13 @@ chai.use(require("chai-sorted"))
 require("dotenv").config()
 const fs = require("node:fs")
 const path = require("node:path")
-const { Client, GatewayIntentBits, Guild } = require("discord.js")
+const { Client, GatewayIntentBits } = require("discord.js")
 const { build_interaction } = require("./mock/interaction")
 const ping = require("../src/commands/ping")
 const loop = require("../src/commands/loop")
 const help = require("../src/commands/help")
+const back = require("../src/commands/back")
+const clear = require("../src/commands/clear")
 const { get_internal_doc } = require("../src/docs/general_doc")
 
 // prepare mocking environment
@@ -23,11 +25,11 @@ const user_id = process.env.OWNER_ID
 const type = 2
 const name = "album"
 const subcommand = "search"
-const mock_reply = async (res) => {}
-const mock_defer_reply = async (res) => {}
-const mock_edit_reply = async (res) => {}
-const mock_follow_up = async (res) => {}
-const mock_delete_reply = async (res) => {}
+const mock_reply = async () => {}
+const mock_defer_reply = async () => {}
+const mock_edit_reply = async () => {}
+const mock_follow_up = async () => {}
+const mock_delete_reply = async () => {}
 const options = []
 const command_id = "1234"
 client.login(process.env.TOKEN)
@@ -38,9 +40,14 @@ let preset_guild, preset_member
 })()
 
 /**
- * todo: album, jump, leave, lyric, queue, shuffle, skip, stop, user
- * todo: resume, user, list
+ * Todo:
+ *  album, jump, leave, list, play
+ *  queue, resume, search, shuffle, skip, stop, user
  */
+
+const get_queue = (interaction) => {
+  return interaction.client.queue.get(guild_id)
+}
 
 describe("commands", () => {
   let interaction, reply_spy
@@ -148,6 +155,72 @@ describe("commands", () => {
       await help.execute(interaction)
 
       sinon.assert.calledWithMatch(reply_spy, "Support Server: fake invite")
+    })
+  })
+
+  describe("back", () => {
+    it("should decrease the position by 1", async () => {
+      interaction.client.queue.set(guild_id, {
+        playing: false,
+        position: 2,
+        player: {},
+      })
+
+      await back.execute(interaction)
+
+      expect(get_queue(interaction).position).to.equal(1)
+      expect(get_queue(interaction).playing).to.equal(true)
+      sinon.assert.calledOnce(reply_spy)
+      sinon.assert.calledWith(reply_spy, "done")
+    })
+
+    it("should not decrease the position if it is 0", async () => {
+      interaction.client.queue.set(guild_id, {
+        playing: false,
+        position: 0,
+        player: {},
+      })
+
+      await back.execute(interaction)
+
+      expect(get_queue(interaction).position).to.equal(0)
+      expect(get_queue(interaction).playing).to.equal(true)
+      sinon.assert.calledOnce(reply_spy)
+      sinon.assert.calledWith(reply_spy, "done")
+    })
+
+    it("should reply with error message if the queue is empty", async () => {
+      interaction.client.queue.set(guild_id, {
+        playing: true,
+        position: 2,
+        player: undefined,
+      })
+
+      await back.execute(interaction)
+
+      expect(interaction.client.queue.get(guild_id).position).to.equal(2)
+      sinon.assert.calledOnce(reply_spy)
+      sinon.assert.calledWith(reply_spy, "Nothing is playing")
+    })
+  })
+
+  describe("clear", () => {
+    it("should clear the queue", async () => {
+      interaction.client.queue.set(guild_id, {
+        playing: true,
+        position: 3,
+        player: undefined,
+        track: [1, 2, 3],
+      })
+
+      await clear.execute(interaction)
+
+      expect(get_queue(interaction).position).to.equal(-1)
+      expect(get_queue(interaction).playing).to.equal(false)
+      expect(get_queue(interaction).player).to.equal(undefined)
+
+      sinon.assert.calledOnce(reply_spy)
+      sinon.assert.calledWith(reply_spy, "done")
     })
   })
 })
