@@ -32,7 +32,9 @@ const mock_follow_up = async () => {}
 const mock_delete_reply = async () => {}
 const options = []
 const command_id = "1234"
-client.login(process.env.TOKEN)
+client.login(process.env.TOKEN).then(() => {
+  console.log("client successfully logged in in test environment")
+})
 let preset_guild, preset_member
 ;(async () => {
   preset_guild = await client.guilds.fetch(guild_id)

@@ -29,6 +29,7 @@ module.exports = {
 
     queue.track.push(song)
 
+    let play_message
     if (song.source === "netease") {
       play_message = `**Queued**: ${song.name} ${
         !!song.ar.name ? `(${song.ar.name})` : ""

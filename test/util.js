@@ -1,5 +1,4 @@
 const chai = require("chai")
-const sinon = require("sinon")
 const expect = chai.expect
 chai.use(require("chai-sorted"))
 
@@ -26,14 +25,16 @@ const user_id = process.env.OWNER_ID
 const type = 2
 const name = "album"
 const subcommand = "search"
-const mock_reply = async (res) => {}
-const mock_defer_reply = async (res) => {}
-const mock_edit_reply = async (res) => {}
-const mock_follow_up = async (res) => {}
-const mock_delete_reply = async (res) => {}
+const mock_reply = async () => {}
+const mock_defer_reply = async () => {}
+const mock_edit_reply = async () => {}
+const mock_follow_up = async () => {}
+const mock_delete_reply = async () => {}
 const options = []
 const command_id = "1234"
-client.login(process.env.TOKEN)
+client.login(process.env.TOKEN).then(() => {
+  console.log("client successfully logged in in test environment")
+})
 
 const default_interaction = async () => {
   return await build_interaction(
@@ -63,7 +64,7 @@ describe("util", () => {
   describe("populate_info", () => {
     it("should return the info object with the correct type of values", async () => {
       const interaction = await default_interaction()
-      const res = await populate_info(interaction)
+      const res = populate_info(interaction)
 
       expect(res).to.be.an("object")
       expect(res.server_id).to.be.a("string")
