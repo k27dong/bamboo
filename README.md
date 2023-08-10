@@ -53,6 +53,7 @@ Bamboo is still in its early stages of development. If you encounter any bugs or
 
 ## Development
 
+> **Note**
 > As of August 2023, the static binary of `ffmpeg` on Linux-based systems would incorrectly trigger the `AudioPlayerStatus` event in `discord.js`, causing Bamboo to stop playing music. To fix this, it is required for Linux users to bypass the static binary by manually installing `ffmpeg` via `apt`:
 >
 > ```shell
@@ -60,7 +61,7 @@ Bamboo is still in its early stages of development. If you encounter any bugs or
 > ```
 >
 > For other systems, it is also recommended to install
-> `ffmpeg` for better performance but it can be done simply via `pnpm`:
+> `ffmpeg` for better performance, and it can be done simply via `pnpm`:
 >
 > ```shell
 > $ pnpm install ffmpeg-static
@@ -68,41 +69,34 @@ Bamboo is still in its early stages of development. If you encounter any bugs or
 >
 > More information can be found in [this thread](https://github.com/Androz2091/discord-player/issues/1639#issuecomment-1477466885).
 
-```shell
-# Docker
-$ docker compose up --build
-```
-
-```shell
-# Node
-$ pnpm i
-$ pnpm start
-```
+- Install [Node.js](https://nodejs.org/en/) >= v16 and [pnpm](https://pnpm.io/).
+- For Docker: `docker compose up`
+- For Node: `pnpm install && pnpm start`
 
 ## Demo
 
 Play songs from an album:
 
 <p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/b28eefca-cc62-4d59-b16c-ed176a21a373" width="95%" height="95%"/>
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/b28eefca-cc62-4d59-b16c-ed176a21a373" width="95%" height="95%" alt="album_demo"/>
 </p>
 
 Play songs from a user playlist
 
 <p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/8933171a-adfd-44b3-a30c-e28a1565df5f" width="95%" height="95%"/>
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/8933171a-adfd-44b3-a30c-e28a1565df5f" width="95%" height="95%" alt="playlist_demo"/>
 </p>
 
 Play a song by its name:
 
 <p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/6233aad5-185c-4343-8bdc-663c9709f18d" width="95%" height="95%"/>
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/6233aad5-185c-4343-8bdc-663c9709f18d" width="95%" height="95%" alt="play_demo"/>
 </p>
 
 Display lyrics:
 
 <p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/99e336cb-886f-4660-af8b-f67b6347cb67" width="95%" height="95%"/>
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/99e336cb-886f-4660-af8b-f67b6347cb67" width="95%" height="95%" alt="lyric_demo"/>
 </p>
 
 ## Contributors
