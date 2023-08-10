@@ -37,7 +37,9 @@
 
 ## Overview
 
-Bamboo is a Discord bot that allows you to stream music from[ NetEase Cloud Music](https://music.163.com/) to Discord voice channels. It is written in JavaScript with [discord.js](https://discord.js.org/). 
+Bamboo is a Discord bot that allows you to stream music from [NetEase Cloud Music](https://music.163.com/) to Discord voice channels. It is written in JavaScript with [discord.js](https://discord.js.org/).
+
+[中文文档](https://github.com/k27dong/bamboo/blob/master/README_CN.md)
 
 ## Installation
 
@@ -64,7 +66,29 @@ $ pnpm start
 
 ## Demo
 
-![demo1](https://user-images.githubusercontent.com/46537987/155899000-11f8463b-1f19-4a3a-9c84-425cc5e3fc96.gif)
+Play songs from an album:
+
+<p align="center">
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/b28eefca-cc62-4d59-b16c-ed176a21a373" width="80%" height="80%"/>
+</p>
+
+Play songs from a user playlist
+
+<p align="center">
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/8933171a-adfd-44b3-a30c-e28a1565df5f" width="80%" height="80%"/>
+</p>
+
+Play a song by its name:
+
+<p align="center">
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/6233aad5-185c-4343-8bdc-663c9709f18d" width="80%" height="80%"/>
+</p>
+
+Display lyrics:
+
+<p align="center">
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/99e336cb-886f-4660-af8b-f67b6347cb67" width="80%" height="80%"/>
+</p>
 
 ## Contributors
 
