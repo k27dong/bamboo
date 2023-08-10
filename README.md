@@ -69,25 +69,25 @@ $ pnpm start
 Play songs from an album:
 
 <p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/b28eefca-cc62-4d59-b16c-ed176a21a373" width="80%" height="80%"/>
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/b28eefca-cc62-4d59-b16c-ed176a21a373" width="95%" height="95%"/>
 </p>
 
 Play songs from a user playlist
 
 <p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/8933171a-adfd-44b3-a30c-e28a1565df5f" width="80%" height="80%"/>
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/8933171a-adfd-44b3-a30c-e28a1565df5f" width="95%" height="95%"/>
 </p>
 
 Play a song by its name:
 
 <p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/6233aad5-185c-4343-8bdc-663c9709f18d" width="80%" height="80%"/>
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/6233aad5-185c-4343-8bdc-663c9709f18d" width="95%" height="95%"/>
 </p>
 
 Display lyrics:
 
 <p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/99e336cb-886f-4660-af8b-f67b6347cb67" width="80%" height="80%"/>
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/99e336cb-886f-4660-af8b-f67b6347cb67" width="95%" height="95%"/>
 </p>
 
 ## Contributors
