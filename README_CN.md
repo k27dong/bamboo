@@ -11,7 +11,6 @@
 
 <h4 align="center">一个播放网易云音乐的Discord机器人</h4>
 
-<!--suppress HtmlDeprecatedAttribute -->
 <p align="center">
   <a href="https://github.com/discordjs">
     <img src="https://img.shields.io/badge/discord.js-v14.11.0-f7df1e.svg?logo=pnpm" alt="discord.js badge" />
@@ -24,7 +23,6 @@
   </a>
 </p>
 
-<!--suppress HtmlDeprecatedAttribute -->
 <p align="center">
   <a href="https://github.com/k27dong/bamboo/actions">
     <img src="https://github.com/k27dong/bamboo/actions/workflows/build.yml/badge.svg" alt="Github action badge"/>
@@ -37,10 +35,62 @@
   </a>
 </p>
 
-<h2>Overview</h2>
-WIP
+## Overview
 
-<h2>Contributors</h2>
+Bamboo(竹) 是一个播放[网易云音乐](https://music.163.com/)的Discord机器人，使用[discord.js](https://discord.js.org/)与JavaScript编写。
+
+[English Readme](https://github.com/k27dong/bamboo/blob/master/README.md)
+
+## 安装
+
+[添加至服务器](https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands)
+
+The official instance of Bamboo is hosted on a server that operates 24/7 with auto-restart capabilities. To introduce it to your server, click on the invite link above. However, due to potential high traffic, the server may experience slowdowns which may affect your experience. For a more personalized and reliable experience, it is recommended to host your own instance of Bamboo.
+
+Bamboo 依旧处于早期开发阶段。如果你遇到了任何问题或者有任何建议，欢迎加入官方服务器并告诉我！
+
+[官方服务器](https://discord.gg/p6F32GejZT)
+
+## 本地开发
+
+```shell
+# Docker
+$ docker compose up --build
+```
+
+```shell
+# Node
+$ pnpm i
+$ pnpm start
+```
+
+## 使用 & 截图
+
+播放整张专辑：
+
+<p align="center">
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/b28eefca-cc62-4d59-b16c-ed176a21a373" width="95%" height="95%"/>
+</p>
+
+播放用户歌单：
+
+<p align="center">
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/8933171a-adfd-44b3-a30c-e28a1565df5f" width="95%" height="95%"/>
+</p>
+
+播放歌曲：
+
+<p align="center">
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/6233aad5-185c-4343-8bdc-663c9709f18d" width="95%" height="95%"/>
+</p>
+
+显示歌词：
+
+<p align="center">
+  <img src="https://github.com/k27dong/bamboo/assets/46537987/99e336cb-886f-4660-af8b-f67b6347cb67" width="95%" height="95%"/>
+</p>
+
+## 鸣谢
 
 <a href="https://github.com/k27dong/bamboo/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=k27dong/bamboo"  alt="Contributor badge"/>

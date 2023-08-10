@@ -53,6 +53,21 @@ Bamboo is still in its early stages of development. If you encounter any bugs or
 
 ## Development
 
+> As of August 2023, the static binary of `ffmpeg` on Linux-based systems would incorrectly trigger the `AudioPlayerStatus` event in `discord.js`, causing Bamboo to stop playing music. To fix this, it is required for Linux users to bypass the static binary by manually installing `ffmpeg` via `apt`:
+>
+> ```shell
+> $ sudo apt update && sudo apt install ffmpeg
+> ```
+>
+> For other systems, it is also recommended to install
+> `ffmpeg` for better performance but it can be done simply via `pnpm`:
+>
+> ```shell
+> $ pnpm install ffmpeg-static
+> ```
+>
+> More information can be found in [this thread](https://github.com/Androz2091/discord-player/issues/1639#issuecomment-1477466885).
+
 ```shell
 # Docker
 $ docker compose up --build
