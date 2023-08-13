@@ -10,7 +10,10 @@
     "single_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha  -timeout 10000 --",
     "start": "node index.js",
     "docker:build": "docker build -t bamboo:$npm_package_version .",
-    "docker:build:win": "docker build -t bamboo:%npm_package_version% ."
+    "docker:build:win": "docker build -t bamboo:%npm_package_version% .",
+    "deploy:dev": "node src/util/deploy_local.js",
+    "deploy:prod": "node src/util/deploy_global.js",
+    "flush:prod": "node src/util/flush_global.js"
   },
   "repository": {
     "type": "git",
