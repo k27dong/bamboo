@@ -183,6 +183,10 @@ const time_convert = (timestamp) => {
   return `${year}, ${month}, ${date}`
 }
 
+const code_block = (content) => {
+  return "```" + content + "```"
+}
+
 exports.populate_info = populate_info
 exports.assert_query_res = assert_query_res
 exports.assert_channel_play_queue = assert_channel_play_queue
@@ -193,3 +197,4 @@ exports.shuffle = shuffle
 exports.post_command_usage_update = post_command_usage_update
 exports.post_server_list_update = post_server_list_update
 exports.time_convert = time_convert
+exports.code_block = code_block

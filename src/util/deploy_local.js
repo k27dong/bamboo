@@ -1,3 +1,8 @@
+/**
+ * This script is used to deploy the commands to the dev server, predefined in
+ * the .env file. It is not meant to be used in production.
+ */
+
 require("dotenv").config()
 const fs = require("node:fs")
 const path = require("node:path")

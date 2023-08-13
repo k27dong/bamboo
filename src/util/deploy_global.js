@@ -1,8 +1,13 @@
+/**
+ * This script is used to deploy the commands to the global server.
+ */
+
 require("dotenv").config()
 const fs = require("node:fs")
 const path = require("node:path")
 const { REST, Routes } = require("discord.js")
 
+const elevated_commands = ["sudo"]
 const rest = new REST().setToken(process.env.TOKEN)
 const commands = []
 const command_path = path.join(__dirname, "../commands")
@@ -11,6 +16,9 @@ const command_files = fs
   .filter((file) => file.endsWith(".js"))
 
 for (const file of command_files) {
+  // exclude privileged commands
+  if (!elevated_commands.includes(file.split(".")[0])) continue
+
   const file_path = path.join(command_path, file)
   const command = require(file_path)
   if ("data" in command && "execute" in command) {
