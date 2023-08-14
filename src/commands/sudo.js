@@ -80,8 +80,22 @@ module.exports = {
 
         await interaction.reply(`uptime: ${uptime}`)
         break
-      case "reload":
-        // reload all commands
+      case "check":
+        // performs different checks on the bot
+        switch (command[1]) {
+          case "cookie":
+            // check if netease cookie is set
+            if (interaction.client.cookie) {
+              await interaction.reply("Cookie: **SET**")
+            }
+            else {
+              await interaction.reply("Cookie: **NOT SET**")
+            }
+            break
+          default:
+            await interaction.reply(`unknown check: \`${command[1]}\``)
+        }
+
         break
       default:
         // unknown commands
