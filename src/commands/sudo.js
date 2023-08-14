@@ -87,8 +87,7 @@ module.exports = {
             // check if netease cookie is set
             if (interaction.client.cookie) {
               await interaction.reply("Cookie: **SET**")
-            }
-            else {
+            } else {
               await interaction.reply("Cookie: **NOT SET**")
             }
             break
