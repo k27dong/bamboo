@@ -4,5 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    ports:
+      - "53881:53881"
     env_file: .env
     restart: unless-stopped

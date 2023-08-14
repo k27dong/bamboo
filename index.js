@@ -3,6 +3,7 @@ const fs = require("node:fs")
 const path = require("node:path")
 const { Client, GatewayIntentBits, Collection } = require("discord.js")
 const { login_qrcode } = require("./src/api/login_qrcode")
+const { alive } = require("./src/util/keep_alive")
 
 const commands_path = path.join(__dirname, "./src/commands")
 const events_path = path.join(__dirname, "./src/events")
@@ -51,4 +52,5 @@ login_qrcode().then((res) => {
 
 client.login(process.env.TOKEN).then(() => {
   console.log("Discord logged in!")
+  alive()
 })
