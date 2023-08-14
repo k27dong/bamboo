@@ -1,4 +1,5 @@
 const { Events } = require("discord.js")
+const { post_command_usage_update } = require("../helper")
 
 module.exports = {
   name: Events.InteractionCreate,
@@ -13,6 +14,7 @@ module.exports = {
     }
 
     try {
+      post_command_usage_update(command.data.name)
       await command.execute(interaction)
     } catch (error) {
       /* Error handling */

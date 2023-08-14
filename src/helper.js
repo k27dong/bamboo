@@ -128,9 +128,6 @@ const shuffle = (arr) => {
   return arr
 }
 
-/**
- * todo: add command usage * server list update api
- */
 const post_command_usage_update = (cmd) => {
   if (process.env.UPDATE_COMMAND_API) {
     axios
@@ -150,7 +147,7 @@ const post_server_list_update = (guild) => {
         name: guild.name,
         id: guild.id,
         locale: guild.preferredLocale,
-        member_count: guild.memberCount,
+        member_count: guild.memberCount - 1,
         joined_time: time_convert(guild.joinedTimestamp),
       })
       .catch((err) => {
