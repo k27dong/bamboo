@@ -61,7 +61,7 @@ module.exports = {
     try {
       confirmation = await response.awaitMessageComponent({
         filter: filter,
-        time: 20_000,
+        time: 30_000,
       })
     } catch (e) {
       await interaction.editReply({

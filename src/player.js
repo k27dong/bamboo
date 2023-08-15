@@ -101,9 +101,7 @@ const next_resource = async (interaction) => {
   // if the url is valid, return the resource
   if (err_code === API_OK) {
     send_msg_to_text_channel(interaction, play_message)
-    console.log(url)
-
-    // url = "https://download.samplelib.com/mp3/sample-3s.mp3"
+    console.log(`${interaction.guild.name} | ${url}`)
     return createAudioResource(url)
   } else {
     // handle invalid url

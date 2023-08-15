@@ -33,12 +33,19 @@ module.exports = {
     }
 
     let song = query_result
-    let searched_items = query_result.map((s, i) =>
-      new StringSelectMenuOptionBuilder()
-        .setLabel(s.name)
-        .setDescription(`${s.ar.name} | ${s.al.name}`)
-        .setValue(`${i}`),
-    )
+    let searched_items = query_result.map((s, i) => {
+      let description = `${s.ar.name} | ${s.al.name}`;
+
+      // Dropdown menu description has a limit of 100 characters
+      if (description.length > 100) {
+        description = description.substring(0, 97) + '...';
+      }
+
+      return new StringSelectMenuOptionBuilder()
+      .setLabel(s.name)
+      .setDescription(description)
+      .setValue(`${i}`);
+    });
 
     let row = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
@@ -55,7 +62,7 @@ module.exports = {
     try {
       confirmation = await response.awaitMessageComponent({
         filter: filter,
-        time: 20_000,
+        time: 30_000,
       })
     } catch (e) {
       await interaction.editReply({
