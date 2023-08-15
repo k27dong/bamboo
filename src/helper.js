@@ -1,6 +1,6 @@
 require("dotenv").config()
 const axios = require("axios")
-const { API_OK } = require("./common")
+const { API_OK, MAX_MESSAGE_LENGTH } = require("./common")
 
 /**
  * Reads the interaction object from discord and parse it into
@@ -85,31 +85,36 @@ const display_track = (track) => {
 }
 
 const parse_lrc = (lrc) => {
-  if (typeof lrc === "undefined") {
-    return "```No lyrics available```"
+  if (!lrc) {
+    return code_block("No lyrics available")
   }
 
-  let sanitized = lrc.split("\n")
-  for (let i = 0; i < sanitized.length; i++) {
-    let l = sanitized[i]
-    try {
-      if (l.length >= 0 && l[0] === "[") {
-        sanitized[i] = sanitized[i].slice(sanitized[i].indexOf("]") + 1)
-      }
-    } catch (err) {
-      console.log(err)
-    }
+  /**
+   * Regex explanation:
+   * 1. remove timestamp from the beginning of each line ([mm:ss.xx] or [mm:ss.xxx])
+   * 2. remove multiple spaces
+   * 3. Add space after comma if there isn't one (a,b -> a, b)
+   * 4. Add space after period if there isn't one (I.Robot -> I. Robot)
+   */
+  let sanitized = lrc
+    .split("\n")
+    .map((line) => line.replace(/\[\d{2}:\d{2}\.\d{2,3}]/, "").trim())
+    .map((line) => line.replace(/\s+/g, " "))
+    .map((line) => line.replace(/,([^\s\d])/g, ", $1"))
+    .map((line) => line.replace(/\.([^\s\d.])/g, ". $1"))
+
+  let lyric = ""
+
+  for (
+    let i = 0;
+    i < sanitized.length &&
+    lyric.length + sanitized[i].length < MAX_MESSAGE_LENGTH - 7;
+    i++
+  ) {
+    lyric += sanitized[i] + "\n"
   }
 
-  let parsed = "```"
-  for (let i = 0; i < sanitized.length; i++) {
-    if (parsed.length < 1985) {
-      parsed += sanitized[i] + "\n"
-    }
-  }
-  parsed += "```"
-
-  return parsed
+  return code_block(lyric)
 }
 
 const send_msg_to_text_channel = (interaction, content) => {
