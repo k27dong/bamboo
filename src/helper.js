@@ -98,7 +98,7 @@ const parse_lrc = (lrc) => {
    */
   let sanitized = lrc
     .split("\n")
-    .map((line) => line.replace(/\[\d{2}:\d{2}\.\d{2,3}]/, "").trim())
+    .map((line) => line.replace(/\[\d{2}:\d{2}(\.\d{2,3})?]/, "").trim())
     .map((line) => line.replace(/\s+/g, " "))
     .map((line) => line.replace(/,([^\s\d])/g, ", $1"))
     .map((line) => line.replace(/\.([^\s\d.])/g, ". $1"))
