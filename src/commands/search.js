@@ -34,18 +34,18 @@ module.exports = {
 
     let song = query_result
     let searched_items = query_result.map((s, i) => {
-      let description = `${s.ar.name} | ${s.al.name}`;
+      let description = `${s.ar.name} | ${s.al.name}`
 
       // Dropdown menu description has a limit of 100 characters
       if (description.length > 100) {
-        description = description.substring(0, 97) + '...';
+        description = description.substring(0, 97) + "..."
       }
 
       return new StringSelectMenuOptionBuilder()
-      .setLabel(s.name)
-      .setDescription(description)
-      .setValue(`${i}`);
-    });
+        .setLabel(s.name)
+        .setDescription(description)
+        .setValue(`${i}`)
+    })
 
     let row = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
