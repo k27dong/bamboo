@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js")
-const { assert_channel_play_queue } = require("../helper")
+const { assert_channel_play_queue, trim_description } = require("../helper")
 const { get_user_profile } = require("../api/get_user_profile")
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
 
       let user_msg = new EmbedBuilder()
         .setTitle(`User: ${user.nickname}`)
-        .setDescription(user.signature)
+        .setDescription(trim_description(user.signature))
         .setThumbnail(user.avatarUrl)
         .setFooter({
           text: `${user.playlistCount} playlists`,

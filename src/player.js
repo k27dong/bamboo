@@ -79,6 +79,13 @@ const next_resource = async (interaction) => {
   let play_message = ""
   let curr_song = queue.track[queue.position]
 
+  // checks if the song still exists in the queue
+  if (!curr_song) {
+    console.log("Song cleared, skip")
+
+    return null
+  }
+
   if (curr_song.source === "netease") {
     ;[url, err_code] = await get_song_url_by_id(curr_song.id, cookie)
 

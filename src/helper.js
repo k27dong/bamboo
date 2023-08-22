@@ -1,6 +1,6 @@
 require("dotenv").config()
 const axios = require("axios")
-const { API_OK, MAX_MESSAGE_LENGTH } = require("./common")
+const { API_OK, MAX_MESSAGE_LENGTH, MAX_DESCRIPTION_LENGTH } = require("./common")
 
 /**
  * Reads the interaction object from discord and parse it into
@@ -189,6 +189,14 @@ const code_block = (content) => {
   return "```" + content + "```"
 }
 
+const trim_description = (description) => {
+  if (description.length > MAX_DESCRIPTION_LENGTH) {
+    description = description.substring(0, MAX_DESCRIPTION_LENGTH - 3) + "..."
+  }
+
+  return description
+}
+
 exports.populate_info = populate_info
 exports.assert_query_res = assert_query_res
 exports.assert_channel_play_queue = assert_channel_play_queue
@@ -200,3 +208,4 @@ exports.post_command_usage_update = post_command_usage_update
 exports.post_server_list_update = post_server_list_update
 exports.time_convert = time_convert
 exports.code_block = code_block
+exports.trim_description = trim_description

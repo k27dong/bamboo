@@ -1,6 +1,6 @@
 {
   "name": "bamboo",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
   "main": "index.js",
   "scripts": {

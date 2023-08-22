@@ -7,7 +7,7 @@ const {
 } = require("discord.js")
 const {
   assert_channel_play_queue,
-  send_msg_to_text_channel,
+  send_msg_to_text_channel, trim_description,
 } = require("../helper")
 const { get_user_playlist } = require("../api/get_user_playlist")
 const { get_songs_from_playlist } = require("../api/get_songs_from_playlist")
@@ -31,7 +31,7 @@ module.exports = {
       let playlist_items = playlist.map((pl, i) =>
         new StringSelectMenuOptionBuilder()
           .setLabel(pl.name)
-          .setDescription(`${pl.count}首歌曲 | ${pl.play_count}播放`)
+          .setDescription(trim_description(`${pl.count}首歌曲 | ${pl.play_count}播放`))
           .setValue(`${i}`),
       )
 

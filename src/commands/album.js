@@ -12,6 +12,7 @@ const {
 const { search_album } = require("../api/search_album")
 const { get_album_songs } = require("../api/get_album_songs")
 const { play } = require("../player")
+const { MAX_DESCRIPTION_LENGTH } = require("../common")
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -37,14 +38,23 @@ module.exports = {
       throw "can't find any result"
     }
 
-    let album_items = query_result.map((al, i) =>
-      new StringSelectMenuOptionBuilder()
-        .setLabel(al.name)
-        .setDescription(
-          `${al.ar} | ${al.size}首 | ${new Date(al.date).getFullYear()}`,
-        )
-        .setValue(`${i}`),
-    )
+    let album_items = query_result.map((al, i) => {
+      let artist_info = `${al.ar}`;
+      let remaining_info = ` | ${al.size}首 | ${new Date(al.date).getFullYear()}`;
+      let full_description = artist_info + remaining_info;
+
+      if (full_description.length > MAX_DESCRIPTION_LENGTH) {
+        let availableLength = MAX_DESCRIPTION_LENGTH - remaining_info.length;
+
+        artist_info = `${artist_info.substring(0, availableLength - 3)}...`;
+        full_description = artist_info + remaining_info;
+      }
+
+      return new StringSelectMenuOptionBuilder()
+      .setLabel(al.name)
+      .setDescription(full_description)
+      .setValue(`${i}`);
+    });
 
     const row = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()

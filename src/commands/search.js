@@ -5,7 +5,7 @@ const {
   StringSelectMenuOptionBuilder,
 } = require("discord.js")
 const { search_song } = require("../api/search_song")
-const { populate_info, assert_channel_play_queue } = require("../helper")
+const { populate_info, assert_channel_play_queue, trim_description } = require("../helper")
 const { play } = require("../player")
 
 module.exports = {
@@ -33,19 +33,12 @@ module.exports = {
     }
 
     let song = query_result
-    let searched_items = query_result.map((s, i) => {
-      let description = `${s.ar.name} | ${s.al.name}`
-
-      // Dropdown menu description has a limit of 100 characters
-      if (description.length > 100) {
-        description = description.substring(0, 97) + "..."
-      }
-
-      return new StringSelectMenuOptionBuilder()
-        .setLabel(s.name)
-        .setDescription(description)
-        .setValue(`${i}`)
-    })
+    let searched_items = query_result.map((s, i) =>
+      new StringSelectMenuOptionBuilder()
+      .setLabel(s.name)
+      .setDescription(trim_description(`${s.ar.name} | ${s.al.name}`))
+      .setValue(`${i}`)
+    );
 
     let row = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()
