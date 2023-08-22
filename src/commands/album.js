@@ -39,22 +39,24 @@ module.exports = {
     }
 
     let album_items = query_result.map((al, i) => {
-      let artist_info = `${al.ar}`;
-      let remaining_info = ` | ${al.size}首 | ${new Date(al.date).getFullYear()}`;
-      let full_description = artist_info + remaining_info;
+      let artist_info = `${al.ar}`
+      let remaining_info = ` | ${al.size}首 | ${new Date(
+        al.date,
+      ).getFullYear()}`
+      let full_description = artist_info + remaining_info
 
       if (full_description.length > MAX_DESCRIPTION_LENGTH) {
-        let availableLength = MAX_DESCRIPTION_LENGTH - remaining_info.length;
+        let availableLength = MAX_DESCRIPTION_LENGTH - remaining_info.length
 
-        artist_info = `${artist_info.substring(0, availableLength - 3)}...`;
-        full_description = artist_info + remaining_info;
+        artist_info = `${artist_info.substring(0, availableLength - 3)}...`
+        full_description = artist_info + remaining_info
       }
 
       return new StringSelectMenuOptionBuilder()
-      .setLabel(al.name)
-      .setDescription(full_description)
-      .setValue(`${i}`);
-    });
+        .setLabel(al.name)
+        .setDescription(full_description)
+        .setValue(`${i}`)
+    })
 
     const row = new ActionRowBuilder().addComponents(
       new StringSelectMenuBuilder()

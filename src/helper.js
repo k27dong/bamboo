@@ -1,6 +1,10 @@
 require("dotenv").config()
 const axios = require("axios")
-const { API_OK, MAX_MESSAGE_LENGTH, MAX_DESCRIPTION_LENGTH } = require("./common")
+const {
+  API_OK,
+  MAX_MESSAGE_LENGTH,
+  MAX_DESCRIPTION_LENGTH,
+} = require("./common")
 
 /**
  * Reads the interaction object from discord and parse it into
