@@ -24,7 +24,7 @@ module.exports = {
 
       let user_msg = new EmbedBuilder()
         .setTitle(`User: ${user.nickname}`)
-        .setDescription(trim_description(user.signature))
+        .setDescription(trim_description(user.signature) || null)
         .setThumbnail(user.avatarUrl)
         .setFooter({
           text: `${user.playlistCount} playlists`,

@@ -12,7 +12,7 @@ const search_song = async (keywords) => {
 
   if (!query) return
 
-  for (let i = 0; i < Math.min(10, query.length); i++) {
+  for (let i = 0; i < Math.min(20, query.length); i++) {
     res.push({
       name: query[i].name,
       id: query[i].id,

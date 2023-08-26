@@ -7,12 +7,12 @@ const {
 const {
   populate_info,
   assert_channel_play_queue,
-  send_msg_to_text_channel,
+  send_msg_to_text_channel, trim_description,
 } = require("../helper")
 const { search_album } = require("../api/search_album")
 const { get_album_songs } = require("../api/get_album_songs")
 const { play } = require("../player")
-const { MAX_DESCRIPTION_LENGTH } = require("../common")
+const { MAX_DESCRIPTION_LENGTH, MAX_DROPDOWN_SELECTION_LENGTH } = require("../common")
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -53,7 +53,7 @@ module.exports = {
       }
 
       return new StringSelectMenuOptionBuilder()
-        .setLabel(al.name)
+        .setLabel(trim_description(al.name))
         .setDescription(full_description)
         .setValue(`${i}`)
     })
@@ -62,7 +62,7 @@ module.exports = {
       new StringSelectMenuBuilder()
         .setCustomId("select")
         .setPlaceholder("Nothing selected")
-        .addOptions(album_items),
+        .addOptions(album_items.slice(0, MAX_DROPDOWN_SELECTION_LENGTH)),
     )
 
     const response = await interaction.reply({

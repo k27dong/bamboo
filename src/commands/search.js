@@ -11,6 +11,7 @@ const {
   trim_description,
 } = require("../helper")
 const { play } = require("../player")
+const { MAX_DROPDOWN_SELECTION_LENGTH } = require("../common")
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -39,7 +40,7 @@ module.exports = {
     let song = query_result
     let searched_items = query_result.map((s, i) =>
       new StringSelectMenuOptionBuilder()
-        .setLabel(s.name)
+        .setLabel(trim_description(s.name))
         .setDescription(trim_description(`${s.ar.name} | ${s.al.name}`))
         .setValue(`${i}`),
     )
@@ -48,7 +49,7 @@ module.exports = {
       new StringSelectMenuBuilder()
         .setCustomId("searched_select")
         .setPlaceholder("Nothing selected")
-        .addOptions(searched_items),
+        .addOptions(searched_items.slice(0, MAX_DROPDOWN_SELECTION_LENGTH)),
     )
 
     const response = await interaction.reply({

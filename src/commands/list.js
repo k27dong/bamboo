@@ -13,6 +13,7 @@ const {
 const { get_user_playlist } = require("../api/get_user_playlist")
 const { get_songs_from_playlist } = require("../api/get_songs_from_playlist")
 const { play } = require("../player")
+const { MAX_DROPDOWN_SELECTION_LENGTH } = require("../common")
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -31,7 +32,7 @@ module.exports = {
 
       let playlist_items = playlist.map((pl, i) =>
         new StringSelectMenuOptionBuilder()
-          .setLabel(pl.name)
+          .setLabel(trim_description(pl.name))
           .setDescription(
             trim_description(`${pl.count}首歌曲 | ${pl.play_count}播放`),
           )
@@ -42,7 +43,7 @@ module.exports = {
         new StringSelectMenuBuilder()
           .setCustomId("playlist_select")
           .setPlaceholder("Nothing selected")
-          .addOptions(playlist_items),
+          .addOptions(playlist_items.slice(0, MAX_DROPDOWN_SELECTION_LENGTH)),
       )
 
       const response = await interaction.reply({

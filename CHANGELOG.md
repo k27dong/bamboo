@@ -2,6 +2,9 @@
 
 [中文版](https://github.com/k27dong/bamboo/blob/main/CHANGELOG_CN.md)
 
+### 4.0.3 | 20230826
+- Multiple bugfixes
+
 ### 4.0.0 | 20220420
 - Major Upgrade
 - Bumped the version of dependencies
