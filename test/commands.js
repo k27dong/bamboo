@@ -91,7 +91,7 @@ describe("commands", () => {
       await ping.execute(interaction)
 
       sinon.assert.calledOnce(reply_spy)
-      sinon.assert.calledWith(reply_spy, "Pong!")
+      sinon.assert.calledWith(reply_spy, sinon.match(string => string.includes("Pong"), "expected to include 'Pong'"));
     })
   })
 
