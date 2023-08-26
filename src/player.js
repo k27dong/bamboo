@@ -50,16 +50,14 @@ const play = async (interaction) => {
     })
   }
 
-  // connect to voice channel and subscribe player
-  if (!queue.connection) {
-    queue.connection = joinVoiceChannel({
-      channelId: info.voice_channel_id,
-      guildId: info.server_id,
-      adapterCreator: interaction.guild.voiceAdapterCreator,
-    })
+  // connect to voice channel and subscribe player, it will automatically move to new channel even if connected
+  queue.connection = joinVoiceChannel({
+    channelId: info.voice_channel_id,
+    guildId: info.server_id,
+    adapterCreator: interaction.guild.voiceAdapterCreator,
+  })
 
-    queue.connection.subscribe(queue.player)
-  }
+  queue.connection.subscribe(queue.player)
 
   let resource = await next_resource(interaction)
   if (!!resource) queue.player.play(resource)
