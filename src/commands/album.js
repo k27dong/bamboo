@@ -7,12 +7,16 @@ const {
 const {
   populate_info,
   assert_channel_play_queue,
-  send_msg_to_text_channel, trim_description,
+  send_msg_to_text_channel,
+  trim_description,
 } = require("../helper")
 const { search_album } = require("../api/search_album")
 const { get_album_songs } = require("../api/get_album_songs")
 const { play } = require("../player")
-const { MAX_DESCRIPTION_LENGTH, MAX_DROPDOWN_SELECTION_LENGTH } = require("../common")
+const {
+  MAX_DESCRIPTION_LENGTH,
+  MAX_DROPDOWN_SELECTION_LENGTH,
+} = require("../common")
 
 module.exports = {
   data: new SlashCommandBuilder()
