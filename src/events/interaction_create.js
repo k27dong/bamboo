@@ -20,10 +20,14 @@ module.exports = {
       /* Error handling */
       console.error(error)
 
-      if (!interaction.replied) {
-        await interaction.reply(
-          `Error @ \`${interaction.commandName}\`: ${error}`,
-        )
+      try {
+        if (!interaction.replied) {
+          await interaction.reply(
+            `Error @ \`${interaction.commandName}\`: ${error}`,
+          )
+        }
+      } catch (reply_error) {
+        console.error("Failed to reply to the interaction:", reply_error)
       }
     }
   },
