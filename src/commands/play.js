@@ -11,6 +11,7 @@ module.exports = {
       option.setName("搜索").setDescription("搜索音乐").setRequired(true),
     ),
   async execute(interaction) {
+    await interaction.deferReply();
     const info = populate_info(interaction)
 
     if (!info.voice_channel_id) {
@@ -35,7 +36,7 @@ module.exports = {
         !!song.ar.name ? `(${song.ar.name})` : ""
       }`
     }
-    await interaction.reply(play_message)
+    await interaction.editReply(play_message)
 
     if (!queue.playing) {
       queue.playing = true
