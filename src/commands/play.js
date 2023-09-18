@@ -11,7 +11,7 @@ module.exports = {
       option.setName("搜索").setDescription("搜索音乐").setRequired(true),
     ),
   async execute(interaction) {
-    await interaction.deferReply();
+    await interaction.deferReply()
     const info = populate_info(interaction)
 
     if (!info.voice_channel_id) {

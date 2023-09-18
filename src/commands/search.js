@@ -25,7 +25,7 @@ module.exports = {
     const info = populate_info(interaction)
     let confirmation = undefined
 
-    await interaction.deferReply();
+    await interaction.deferReply()
 
     if (!info.voice_channel_id) {
       throw "you must be in a voice channel!"
