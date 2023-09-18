@@ -17,8 +17,8 @@ module.exports = {
     if (!!command_param) command_param = command_param.split(" ")[0]
 
     let invitation = await interaction.client.guilds.cache
-      .get(SUPPORT_SERVER_SERVER)
-      .channels.cache.get(SUPPORT_SERVER_CHANNEL)
+      .get(interaction.client.support_server_id)
+      .channels.cache.get(interaction.client.support_channel_id)
       .createInvite()
 
     await interaction.reply(

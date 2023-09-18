@@ -14,6 +14,8 @@ const client = new Client({
 client.commands = new Collection()
 client.queue = new Map()
 client.cookie = undefined
+client.support_server_id = process.env.SUPPORT_SERVER_ID
+client.support_channel_id = process.env.SUPPORT_CHANNEL_ID
 
 /* load commands */
 for (const file of fs.readdirSync(commands_path).

@@ -25,6 +25,8 @@ module.exports = {
     const info = populate_info(interaction)
     let confirmation = undefined
 
+    await interaction.deferReply();
+
     if (!info.voice_channel_id) {
       throw "you must be in a voice channel!"
     }
@@ -52,7 +54,7 @@ module.exports = {
         .addOptions(searched_items.slice(0, MAX_DROPDOWN_SELECTION_LENGTH)),
     )
 
-    const response = await interaction.reply({
+    const response = await interaction.editReply({
       content: "搜索结果",
       components: [row],
     })
