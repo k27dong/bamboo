@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js")
 const { get_internal_doc } = require("../docs/general_doc")
-const { SUPPORT_SERVER_SERVER, SUPPORT_SERVER_CHANNEL } = require("../common")
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -18,14 +17,14 @@ module.exports = {
 
     let invitation = await interaction.client.guilds.cache
       .get(interaction.client.support_server_id)
-      .channels.cache.get(interaction.client.support_channel_id)
-      .createInvite()
+      ?.channels.cache.get(interaction.client.support_channel_id)
+      ?.createInvite()
 
     await interaction.reply(
       "```" +
         `${get_internal_doc(command_param)}` +
         "```\n" +
-        (!command_param ? `Support Server: ${invitation}` : ""),
+        (!command_param && invitation ? `Support Server: ${invitation}` : ""),
     )
   },
 }
