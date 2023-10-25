@@ -25,8 +25,7 @@ module.exports = {
           await interaction.reply(
             `Error @ \`${interaction.commandName}\`: ${error}`,
           )
-        }
-        else {
+        } else {
           await interaction.followUp(
             `Error @ \`${interaction.commandName}\`: ${error}`,
           )
