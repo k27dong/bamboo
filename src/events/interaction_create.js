@@ -21,8 +21,13 @@ module.exports = {
       console.error(error)
 
       try {
-        if (!interaction.replied) {
+        if (!interaction.replied && !interaction.deferred) {
           await interaction.reply(
+            `Error @ \`${interaction.commandName}\`: ${error}`,
+          )
+        }
+        else {
+          await interaction.followUp(
             `Error @ \`${interaction.commandName}\`: ${error}`,
           )
         }
