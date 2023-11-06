@@ -38,9 +38,6 @@ Bamboo is provided "as is," without any warranty of any kind. We disclaim all wa
 
 In no event shall Bamboo, its developers, or contributors be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses.
 
-## Governing Law
-These Terms shall be governed by the laws of [Your Country/State], without regard to its conflict of law provisions.
-
 ## Contact Information
 
 For any questions about these Terms, please contact us at [me@kefan.me](mailto:me@kefan.me).
