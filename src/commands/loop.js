@@ -9,6 +9,6 @@ module.exports = {
     let queue = assert_channel_play_queue(interaction)
 
     queue.looping = !queue.looping
-    await interaction.reply(`单曲循环: ${queue.looping ? "**ON**" : "**OFF**"}`)
+    await interaction.reply(`列表循环: ${queue.looping ? "**ON**" : "**OFF**"}`)
   },
 }
