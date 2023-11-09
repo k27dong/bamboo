@@ -30,6 +30,10 @@ module.exports = {
     } else {
       let playlist = await get_user_playlist(queue.user.userId)
 
+      if (playlist.length === 0) {
+        return await interaction.reply("用户歌单为空，这也可能是由于用户把喜欢的歌单和创建的歌单设置了非所有人可见")
+      }
+
       let playlist_items = playlist.map((pl, i) =>
         new StringSelectMenuOptionBuilder()
           .setLabel(trim_description(pl.name))
