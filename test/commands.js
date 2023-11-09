@@ -2,6 +2,7 @@ const sinon = require("sinon")
 const chai = require("chai")
 const expect = chai.expect
 chai.use(require("chai-sorted"))
+chai.use(require("chai-as-promised"))
 
 require("dotenv").config()
 const fs = require("node:fs")
@@ -13,6 +14,9 @@ const loop = require("../src/commands/loop")
 const help = require("../src/commands/help")
 const back = require("../src/commands/back")
 const clear = require("../src/commands/clear")
+const leave = require("../src/commands/leave")
+const jump = require("../src/commands/jump")
+const skip = require("../src/commands/skip")
 const { get_internal_doc } = require("../src/docs/general_doc")
 
 // prepare mocking environment
@@ -43,8 +47,8 @@ let preset_guild, preset_member
 
 /**
  * Todo:
- *  album, jump, leave, list, play
- *  queue, resume, search, shuffle, skip, stop, user
+ *  album, list, play
+ *  queue, resume, search, shuffle, stop, user
  */
 
 const get_queue = (interaction) => {
@@ -80,10 +84,12 @@ describe("commands", () => {
     reply_spy = sinon.spy(interaction, "reply")
   })
 
+  afterEach(() => {
+    sinon.restore()
+  })
+
   after(() => {
     client.destroy()
-
-    reply_spy.restore()
   })
 
   describe("ping", () => {
@@ -229,6 +235,138 @@ describe("commands", () => {
 
       sinon.assert.calledOnce(reply_spy)
       sinon.assert.calledWith(reply_spy, "done")
+    })
+  })
+
+  describe("leave", () => {
+    let queue, stop_spy, destroy_spy
+
+    beforeEach(() => {
+      queue = {
+        playing: true,
+        position: 3,
+        player: { stop: sinon.spy() },
+        connection: { destroy: sinon.spy() },
+      }
+
+      interaction.client.queue.set(guild_id, queue)
+
+      stop_spy = queue.player.stop
+      destroy_spy = queue.connection.destroy
+    })
+
+    it("should leave the voice channel", async () => {
+      await leave.execute(interaction)
+
+      expect(interaction.client.queue.get(guild_id)).to.equal(undefined)
+
+      sinon.assert.calledOnce(reply_spy)
+      sinon.assert.calledWith(reply_spy, "done")
+    })
+
+    it("should clear the queue and stop the player", async () => {
+      await leave.execute(interaction)
+
+      sinon.assert.calledOnce(stop_spy)
+      sinon.assert.calledOnce(destroy_spy)
+    })
+  })
+
+  describe("jump", () => {
+    beforeEach(() => {
+      interaction.client.queue.set(guild_id, {
+        track: [{ name: "Track 1" }, { name: "Track 2" }, { name: "Track 3" }],
+        position: 0,
+        playing: true,
+      })
+
+      interaction.options = {
+        getInteger: sinon.stub(),
+      }
+    })
+
+    it("should reply with the current track if the new position is the current one", async () => {
+      interaction.options.getInteger.returns(1)
+
+      await jump.execute(interaction)
+
+      sinon.assert.calledOnce(reply_spy)
+      sinon.assert.calledWith(reply_spy, "1 is playing!")
+    })
+
+    it("should throw an error if the new position is invalid", async () => {
+      interaction.options.getInteger.returns(-1)
+
+      await expect(jump.execute(interaction)).to.be.rejectedWith(
+        "-1 is not a valid index to jump to",
+      )
+    })
+
+    it("should change the position and start playing the new track", async () => {
+      interaction.options.getInteger.returns(3)
+
+      await jump.execute(interaction)
+
+      const queue = interaction.client.queue.get(interaction.guildId)
+      expect(queue.position).to.equal(2)
+
+      expect(reply_spy.calledOnce).to.be.true
+      expect(reply_spy.calledWith("jumped to: Track 3")).to.be.true
+    })
+  })
+
+  describe("skip", () => {
+    it("should reply with 'End of queue.' when at the end of the queue without looping", async () => {
+      interaction.client.queue.set(interaction.guildId, {
+        player: { stop: sinon.spy() },
+        track: [{ name: "Track 1" }, { name: "Track 2" }],
+        position: 1,
+        playing: true,
+        looping: false,
+      })
+
+      await skip.execute(interaction)
+
+      sinon.assert.calledWith(reply_spy, "End of queue.")
+      sinon.assert.calledOnce(
+        interaction.client.queue.get(interaction.guildId).player.stop,
+      )
+      expect(
+        interaction.client.queue.get(interaction.guildId).position,
+      ).to.equal(-1)
+    })
+
+    it("should increment position and play next track when not at end of queue", async () => {
+      interaction.client.queue.set(interaction.guildId, {
+        player: { stop: sinon.stub() },
+        track: [{ name: "Track 1" }, { name: "Track 2" }, { name: "Track 3" }],
+        position: 0,
+        playing: true,
+        looping: false,
+      })
+
+      await skip.execute(interaction)
+
+      sinon.assert.calledWith(reply_spy, "done")
+      expect(
+        interaction.client.queue.get(interaction.guildId).position,
+      ).to.equal(1)
+    })
+
+    it("should reply with 'Nothing is playing' when there is no player", async () => {
+      interaction.client.queue.set(interaction.guildId, {
+        player: null,
+        track: [{ name: "Track 1" }, { name: "Track 2" }],
+        position: 0,
+        playing: true,
+        looping: false,
+      })
+
+      await skip.execute(interaction)
+
+      sinon.assert.calledWith(reply_spy, "Nothing is playing")
+      expect(interaction.client.queue.get(interaction.guildId).playing).to.be
+        .true
     })
   })
 })
