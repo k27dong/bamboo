@@ -107,13 +107,13 @@ describe("commands", () => {
 
       expect(interaction.client.queue.get(guild_id).looping).to.be.true
       sinon.assert.calledOnce(reply_spy)
-      sinon.assert.calledWith(reply_spy, "单曲循环: **ON**")
+      sinon.assert.calledWith(reply_spy, "列表循环: **ON**")
 
       await loop.execute(interaction)
 
       expect(interaction.client.queue.get(guild_id).looping).to.be.false
       sinon.assert.calledTwice(reply_spy)
-      sinon.assert.calledWith(reply_spy, "单曲循环: **OFF**")
+      sinon.assert.calledWith(reply_spy, "列表循环: **OFF**")
     })
   })
 
