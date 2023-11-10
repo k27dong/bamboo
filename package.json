@@ -24,6 +24,12 @@
   "bugs": {
     "url": "https://github.com/k27dong/bamboo/issues"
   },
+  "nyc": {
+    "exclude": [
+      "src/commands/sudo.js",
+      "src/commands/reload.js"
+    ]
+  },
   "homepage": "https://github.com/k27dong/bamboo#readme",
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
