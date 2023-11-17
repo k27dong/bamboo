@@ -1,5 +1,5 @@
 const { Events } = require("discord.js")
-const { post_command_usage_update } = require("../helper")
+const { post_command_usage_update } = require("../../helper")
 
 module.exports = {
   name: Events.InteractionCreate,
