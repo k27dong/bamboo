@@ -2,12 +2,12 @@ const {
   createAudioPlayer,
   AudioPlayerStatus,
   createAudioResource,
-  joinVoiceChannel,
 } = require("@discordjs/voice")
 const {
   assert_channel_play_queue,
   populate_info,
   send_msg_to_text_channel,
+  join_voice_channel,
 } = require("./helper")
 const { get_song_url_by_id } = require("./api/get_song_url_by_id")
 const { API_OK, ERR_UNPAID, ERR_COPYRIGHT } = require("./common")
@@ -51,11 +51,7 @@ const play = async (interaction) => {
   }
 
   // connect to voice channel and subscribe player, it will automatically move to new channel even if connected
-  queue.connection = joinVoiceChannel({
-    channelId: info.voice_channel_id,
-    guildId: info.server_id,
-    adapterCreator: interaction.guild.voiceAdapterCreator,
-  })
+  queue.connection = join_voice_channel(queue, info, interaction)
 
   queue.connection.subscribe(queue.player)
 

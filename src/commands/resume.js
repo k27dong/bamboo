@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js")
-const { assert_channel_play_queue } = require("../helper")
+const { assert_channel_play_queue, populate_info, join_voice_channel } = require("../helper")
 const { play } = require("../player")
 
 module.exports = {
@@ -7,6 +7,10 @@ module.exports = {
 
   async execute(interaction) {
     let queue = assert_channel_play_queue(interaction)
+    let info = populate_info(interaction)
+
+    // check before queue.playing for manually disconnection/diff channel
+    queue.connection = join_voice_channel(queue, info, interaction)
 
     if (!queue.playing) {
       queue.playing = true
