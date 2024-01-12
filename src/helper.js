@@ -5,6 +5,9 @@ const {
   MAX_MESSAGE_LENGTH,
   MAX_DESCRIPTION_LENGTH,
 } = require("./common")
+const {
+  joinVoiceChannel,
+} = require("@discordjs/voice")
 
 /**
  * Reads the interaction object from discord and parse it into
@@ -54,6 +57,14 @@ const assert_channel_play_queue = (interaction) => {
   }
 
   return interaction.client.queue.get(interaction.guildId)
+}
+
+const join_voice_channel = (queue, info, interaction) => {
+  return joinVoiceChannel({
+    channelId: info.voice_channel_id,
+    guildId: info.server_id,
+    adapterCreator: interaction.guild.voiceAdapterCreator,
+  })
 }
 
 const display_track = (track) => {
@@ -204,6 +215,7 @@ const trim_description = (description) => {
 exports.populate_info = populate_info
 exports.assert_query_res = assert_query_res
 exports.assert_channel_play_queue = assert_channel_play_queue
+exports.join_voice_channel = join_voice_channel
 exports.display_track = display_track
 exports.send_msg_to_text_channel = send_msg_to_text_channel
 exports.parse_lrc = parse_lrc
