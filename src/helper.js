@@ -5,9 +5,7 @@ const {
   MAX_MESSAGE_LENGTH,
   MAX_DESCRIPTION_LENGTH,
 } = require("./common")
-const {
-  joinVoiceChannel,
-} = require("@discordjs/voice")
+const { joinVoiceChannel } = require("@discordjs/voice")
 
 /**
  * Reads the interaction object from discord and parse it into

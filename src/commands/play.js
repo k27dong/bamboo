@@ -1,6 +1,10 @@
 const { SlashCommandBuilder } = require("discord.js")
 const { search_song } = require("../api/search_song")
-const { populate_info, assert_channel_play_queue, join_voice_channel } = require("../helper")
+const {
+  populate_info,
+  assert_channel_play_queue,
+  join_voice_channel,
+} = require("../helper")
 const { play } = require("../player")
 
 module.exports = {
@@ -39,7 +43,7 @@ module.exports = {
     }
     await interaction.editReply(play_message)
 
-    // always try to join the voice channel since bot might be manually disconnected/diff channel 
+    // always try to join the voice channel since bot might be manually disconnected/diff channel
     queue.connection = join_voice_channel(queue, info, interaction)
 
     if (!queue.playing) {

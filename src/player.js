@@ -113,8 +113,8 @@ const next_resource = async (interaction) => {
         err_code === ERR_UNPAID
           ? "付费歌曲"
           : err_code === ERR_COPYRIGHT
-          ? "无版权"
-          : "未知错误"
+            ? "无版权"
+            : "未知错误"
 
       send_msg_to_text_channel(
         interaction,

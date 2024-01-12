@@ -1,5 +1,9 @@
 const { SlashCommandBuilder } = require("discord.js")
-const { assert_channel_play_queue, populate_info, join_voice_channel } = require("../helper")
+const {
+  assert_channel_play_queue,
+  populate_info,
+  join_voice_channel,
+} = require("../helper")
 const { play } = require("../player")
 
 module.exports = {

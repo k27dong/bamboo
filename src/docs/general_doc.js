@@ -56,8 +56,8 @@ const get_internal_doc = (cmd) => {
   return !cmd
     ? cmd_list
     : !!cmd_helper_msg[cmd]
-    ? cmd_helper_msg[cmd]
-    : `Can't find the command: ${cmd}`
+      ? cmd_helper_msg[cmd]
+      : `Can't find the command: ${cmd}`
 }
 
 exports.get_internal_doc = get_internal_doc
