@@ -14,7 +14,7 @@ module.exports = {
     }
 
     try {
-      post_command_usage_update(command.data.name)
+      // post_command_usage_update(command.data.name)
       await command.execute(interaction)
     } catch (error) {
       /* Error handling */

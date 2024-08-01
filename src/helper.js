@@ -131,7 +131,7 @@ const parse_lrc = (lrc) => {
 }
 
 const send_msg_to_text_channel = (interaction, content) => {
-  interaction.client.channels.cache.get(interaction.channelId).send(content)
+  interaction.client.channels.cache.get(interaction.channelId)?.send(content)
 }
 
 const shuffle = (arr) => {
