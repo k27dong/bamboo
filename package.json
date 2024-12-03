@@ -1,0 +1,43 @@
+{
+  "name": "bamboo",
+  "version": "5.0.0",
+  "private": true,
+  "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
+  "homepage": "https://github.com/k27dong/bamboo#readme",
+  "bugs": {
+    "url": "https://github.com/k27dong/bamboo/issues",
+    "email": "me@kefan.me"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k27dong/bamboo.git"
+  },
+  "license": "MIT",
+  "author": "k27dong",
+  "type": "module",
+  "main": "dist/Bamboo.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "pnpm build && pnpm start",
+    "start": "node --enable-source-maps dist/Bamboo.js",
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --cache --fix && prettier --write .",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^15.13.0",
+    "prettier": "^3.4.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.17.0"
+  },
+  "packageManager": "pnpm@9.10.0",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  }
+}
