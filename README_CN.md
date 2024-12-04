@@ -58,7 +58,7 @@ Bamboo(竹)部署在作者租用的服务器上以保证长期在线，但是由
 
 > **Note**
 > 截至2023年8月，Linux环境下的`ffmpeg-static`会错误地触发`discord.js`中`AudioPlayerStatus`的事件。因此该环境下的用户必须自行安装`ffmpeg`：
-> 
+>
 > ```shell
 > $ sudo apt update && sudo apt install ffmpeg
 > ```
