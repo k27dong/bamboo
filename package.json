@@ -22,7 +22,9 @@
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix && prettier --write .",
     "start": "node --enable-source-maps dist/Bamboo.js",
-    "watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")"
+    "watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
+    "deploy:dev": "tsx src/common/scripts/deploy.ts dev",
+    "deploy:global": "tsx src/common/scripts/deploy.ts global"
   },
   "dependencies": {
     "@discordjs/voice": "^0.18.0",
