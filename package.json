@@ -27,8 +27,11 @@
     "deploy:global": "tsx src/common/scripts/deploy.ts global"
   },
   "dependencies": {
+    "@discord-player/extractor": "^7.1.0",
     "@discordjs/voice": "^0.18.0",
     "bufferutil": "^4.0.8",
+    "discord-player": "^7.1.0",
+    "discord-player-youtubei": "^1.4.2",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5"
   },
