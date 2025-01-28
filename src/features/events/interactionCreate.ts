@@ -2,7 +2,7 @@ import { type Client, Events, type Interaction } from "discord.js"
 
 import { Commands } from "../commands"
 
-export default (client: Client): void => {
+export default (client: Client) => {
   client.on(Events.InteractionCreate, (interaction: Interaction) => {
     void (async () => {
       try {

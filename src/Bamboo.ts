@@ -4,15 +4,16 @@ import { Player } from "discord-player"
 import { YoutubeiExtractor } from "discord-player-youtubei"
 
 import { TOKEN } from "@/common/utils/config"
-import * as events from "@/features/events"
+import * as playerEvents from "@/core/player/events"
+import * as clientEvents from "@/features/events"
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 })
-
-Object.values(events).forEach((event) => event(client))
-
 const player = new Player(client)
+
+Object.values(clientEvents).forEach((event) => event(client))
+Object.values(playerEvents).forEach((event) => event(player))
 
 await player.extractors.loadMulti(DefaultExtractors)
 await player.extractors.register(YoutubeiExtractor, {})
