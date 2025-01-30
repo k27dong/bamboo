@@ -1,18 +1,30 @@
 import {
   BaseExtractor,
+  type ExtractorInfo,
+  type ExtractorSearchContext,
   QueryType,
   type SearchQueryType,
-  type Track,
+  Track,
 } from "discord-player"
 
 import type { ApiServiceType } from "@/common/constants"
-
-import { BambooApi } from "../api/BambooApi"
+import { formatMilliseconds } from "@/common/utils/common"
+import { BambooApi } from "@/core/api/BambooApi"
+import type { NeteaseSong } from "@/core/api/interfaces"
 
 export class BambooExtractor extends BaseExtractor {
   static override identifier = "com.k27dong.bamboo.bamboo-extractor" as const
 
   private api: BambooApi | null = null
+
+  private isDirectUrl(query: string): boolean {
+    try {
+      new URL(query)
+      return true
+    } catch {
+      return false
+    }
+  }
 
   public override createBridgeQuery = (track: Track) =>
     `${track.title} by ${track.author} official audio`
@@ -40,7 +52,9 @@ export class BambooExtractor extends BaseExtractor {
     query: string,
     queryType?: SearchQueryType,
   ): Promise<boolean> {
-    if (typeof query !== "string") return Promise.resolve(false)
+    if (typeof query !== "string" || this.isDirectUrl(query))
+      return Promise.resolve(false)
+
     return Promise.resolve(
       ([QueryType.AUTO, QueryType.AUTO_SEARCH] as SearchQueryType[]).some(
         (r) => r === queryType,
@@ -48,20 +62,46 @@ export class BambooExtractor extends BaseExtractor {
     )
   }
 
-  // TODO
-  // discord-player calls this method when it wants a search result. It is called with the search query and a context parameter (options passed to player.search() method)
-  // override async handle(query, context): Promise<ExtractorInfo> {
-  //   // if query contained protocol, you can access that protocol via context.protocol
-  //   return this.createResponse(playlist | null, [tracks])
-  // }
+  override async handle(
+    query: string,
+    context: ExtractorSearchContext,
+  ): Promise<ExtractorInfo> {
+    if (!this.api) throw new Error("Extractor not activated")
 
-  // // discord-player calls this method when it wants you to stream a track. You can either return raw url pointing at a stream or node.js readable stream object. Note: this method wont be called if onBeforeCreateStream was used. It is called with discord-player track object.
-  // override async stream(track: Track): Promise<string> {
+    const rawTrack = await this.api.getDefaultTrack(query)
+    if (!rawTrack) throw new Error("Failed to get track")
 
-  // }
+    const track = this.buildTrack(rawTrack, context)
 
-  // // discord-player calls this method when it wants some tracks for autoplay mode.
+    return this.createResponse(null, [track])
+  }
+
+  override async stream(track: Track): Promise<string> {
+    if (!this.api) throw new Error("Extractor not activated")
+
+    const streamUrl = await this.api.getTrackUrl(track)
+    if (!streamUrl) throw new Error("Failed to get stream URL")
+
+    return streamUrl
+  }
+
+  // discord-player calls this method when it wants some tracks for autoplay mode.
   // override async getRelatedTracks(track): Promise<ExtractorInfo> {
   //   return this.createResponse(null, [tracks])
   // }
+
+  buildTrack(info: NeteaseSong, context: ExtractorSearchContext): Track {
+    return new Track(this.context.player, {
+      title: info.name,
+      url: `${info.id}`,
+      duration: formatMilliseconds(info.dt),
+      thumbnail: info.al.picUrl,
+      author: info.ar[0].name,
+      requestedBy: context.requestedBy,
+      source: "arbitrary",
+      queryType: context.type!,
+      metadata: info,
+      requestMetadata: () => Promise.resolve(info),
+    })
+  }
 }

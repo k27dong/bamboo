@@ -1,6 +1,12 @@
-import { DefaultExtractors } from "@discord-player/extractor"
+import {
+  AttachmentExtractor,
+  ReverbnationExtractor,
+  SoundCloudExtractor,
+  VimeoExtractor,
+} from "@discord-player/extractor"
 import { Client, GatewayIntentBits } from "discord.js"
 import { Player } from "discord-player"
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { YoutubeiExtractor } from "discord-player-youtubei"
 
 import { ApiServiceType } from "@/common/constants"
@@ -10,24 +16,32 @@ import { BambooExtractor } from "@/core/extractor/BambooExtractor"
 import * as playerEvents from "@/core/player/events"
 import * as clientEvents from "@/features/events"
 
+// Create new Discord and player clients
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 })
 const player = new Player(client)
 
+// Load Discord and player events
 Object.values(clientEvents).forEach((event) => event(client))
 Object.values(playerEvents).forEach((event) => event(player))
 
-await setUpCookie(ApiServiceType.Netease)
+// Set up cookies for APIs
+const neteaseCookie = await setUpCookie(ApiServiceType.Netease)
 
-await player.extractors.loadMulti(DefaultExtractors)
-await player.extractors.register(YoutubeiExtractor, {})
+// Load extractors for player
 await player.extractors.register(BambooExtractor, {
   cookies: {
-    [ApiServiceType.Netease]: "your-netease-cookie-here",
+    [ApiServiceType.Netease]: neteaseCookie,
   },
 })
+// await player.extractors.register(YoutubeiExtractor, {})
+await player.extractors.register(AttachmentExtractor, {})
+await player.extractors.register(SoundCloudExtractor, {})
+await player.extractors.register(VimeoExtractor, {})
+await player.extractors.register(ReverbnationExtractor, {})
 
+// Log in to Discord
 client.login(TOKEN).catch((error) => {
   console.error("❌ Failed to log in:", error)
 })

@@ -1,5 +1,8 @@
-import type { BambooMusicApi } from "@/core/api/interfaces"
+import type { Track } from "discord-player"
 
+import type { BambooMusicApi, NeteaseSong } from "@/core/api/interfaces"
+
+import { getSongUrlByTrack } from "./getTrackUrl"
 import { searchSong } from "./searchSong"
 
 export class NeteaseService implements BambooMusicApi {
@@ -9,9 +12,11 @@ export class NeteaseService implements BambooMusicApi {
     this.cookie = cookie
   }
 
-  async search(query: string): Promise<any> {
-    const result = await searchSong(query, this.cookie)
+  async getTrackUrl(track: Track): Promise<string> {
+    return getSongUrlByTrack(track, this.cookie)
+  }
 
-    return result
+  async getDefaultTrack(query: string): Promise<NeteaseSong | null> {
+    return searchSong(query, this.cookie)
   }
 }
