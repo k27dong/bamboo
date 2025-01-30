@@ -22,3 +22,5 @@ export const QRCodeStatus = {
 export const HTTP_STATUS = {
   OK: 200,
 } as const
+
+export const DISCORD_MESSAGE_CHAR_LIMIT = 1990

@@ -22,7 +22,7 @@ export const Play: Command = {
   data: PlayOption,
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
-      await interaction.deferReply({ ephemeral: true })
+      await interaction.deferReply()
       await checkInVoiceChannel(interaction)
 
       const player = useMainPlayer()
@@ -38,7 +38,7 @@ export const Play: Command = {
       })
 
       await interaction.editReply(
-        `${result.track.title} has been added to the queue!`,
+        `**Queued**: ${result.track.title} ${result.track.author ? ` (${result.track.author}) ` : ""} [${result.track.duration}]`,
       )
     } catch (error) {
       console.error(`❌ Error in ${Play.name} command:`, error)

@@ -8,5 +8,5 @@ import type {
 
 export interface Command extends ChatInputApplicationCommandData {
   data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder
-  run: (client: Client, interaction: CommandInteraction) => void | Promise<void>
+  run: (client: Client, interaction: CommandInteraction) => Promise<void>
 }
