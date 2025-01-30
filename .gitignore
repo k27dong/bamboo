@@ -73,3 +73,6 @@ package-lock.json
 
 # Build
 dist/
+
+# Cookies
+cookies/

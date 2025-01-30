@@ -8,3 +8,18 @@ export interface Credentials {
 }
 
 export type DeployScope = "dev" | "global"
+
+export interface QRKeyResponse {
+  code: number
+  unikey: string
+}
+
+export interface QRCodeResponse {
+  qrurl: string
+  qrimg: string
+}
+
+export interface QRCheckResponse {
+  code: number
+  cookie: string
+}

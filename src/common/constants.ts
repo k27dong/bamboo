@@ -9,3 +9,16 @@ export enum EmbedColors {
   Success = 0x027333,
   Playing = 0xadbc67,
 }
+
+export enum ApiServiceType {
+  Netease = "netease",
+}
+
+export const QRCodeStatus = {
+  CONFIRMED: 803,
+  EXPIRED: 800,
+} as const
+
+export const HTTP_STATUS = {
+  OK: 200,
+} as const
