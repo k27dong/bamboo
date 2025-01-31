@@ -7,6 +7,10 @@ import {
 import { type Track, useQueue } from "discord-player"
 
 import { DISCORD_MESSAGE_CHAR_LIMIT } from "@/common/constants"
+import {
+  durationStringToSeconds,
+  secondsToHumanDuration,
+} from "@/common/utils/common"
 import type { Command } from "@/core/commands/Command"
 
 const QueueOption = new SlashCommandBuilder()
@@ -14,27 +18,46 @@ const QueueOption = new SlashCommandBuilder()
   .setDescription("显示播放队列")
 
 const formatQueueMessage = (
-  tracks: Track[],
+  displayedTracks: Track[],
   currentIndex: number,
   startPosition: number,
+  totalDuration: string,
+  totalQueueLength: number,
 ): string => {
-  if (!tracks.length) return "```Track empty!```"
+  if (!displayedTracks.length) return "```Track empty!```"
 
-  let queueMessage = ""
   const maxLength = DISCORD_MESSAGE_CHAR_LIMIT
+  const reservedSpace = 35
+  const durationLine = `\nTotal: ${totalDuration}`
+  let remainingTracks = 0
+  let queueMessage = ""
 
-  for (let i = 0; i < tracks.length; i++) {
-    const { title, author, duration } = tracks[i]
+  for (let i = 0; i < displayedTracks.length; i++) {
+    const { title, author, duration } = displayedTracks[i]
     const isCurrent = i === currentIndex ? "   ◄———— \n" : "\n"
     const queuePosition = startPosition + i + 1
-    const currLine = `${queuePosition}) ${title} ${author ? `(${author})` : ""} [${duration}] ${isCurrent}`
+    const currLine = `${queuePosition}) ${title} ${author ? `(${author})` : ""} [${duration}]${isCurrent}`
 
-    if (queueMessage.length + currLine.length >= maxLength) {
-      queueMessage += `${queuePosition}) ...\n`
+    if (queueMessage.length + currLine.length + reservedSpace >= maxLength) {
+      remainingTracks = totalQueueLength - (startPosition + i + 1)
+      queueMessage += `${queuePosition}) ... (${remainingTracks} more)\n`
       break
     }
 
     queueMessage += currLine
+  }
+
+  if (remainingTracks === 0) {
+    remainingTracks =
+      totalQueueLength - (startPosition + displayedTracks.length)
+  }
+
+  if (remainingTracks > 0) {
+    queueMessage += `\n... (${remainingTracks} more tracks)`
+  }
+
+  if (queueMessage.length + durationLine.length + 6 <= maxLength) {
+    queueMessage += durationLine
   }
 
   return `\`\`\`${queueMessage}\`\`\``
@@ -51,8 +74,9 @@ export const Queue: Command = {
       if (!queue) {
         await interaction.reply({
           content: "Queue not found!",
-          flags: MessageFlags.Ephemeral
+          flags: MessageFlags.Ephemeral,
         })
+        return
       }
 
       if (!queue.currentTrack) {
@@ -63,6 +87,14 @@ export const Queue: Command = {
       const currentTrack = queue.currentTrack
       const upcomingTracks = queue.tracks.data
       const historyTracks = queue.history.tracks.data
+
+      const totalQueueLength = historyTracks.length + 1 + upcomingTracks.length
+      const totalDuration = secondsToHumanDuration(
+        upcomingTracks.reduce(
+          (acc, track) => acc + durationStringToSeconds(track.duration),
+          0,
+        ),
+      )
 
       const displayedTracks: Track[] = [currentTrack]
       const backRatio = 0.3
@@ -111,7 +143,13 @@ export const Queue: Command = {
       const currentIndex = displayedTracks.indexOf(currentTrack)
 
       await interaction.reply(
-        formatQueueMessage(displayedTracks, currentIndex, startPosition),
+        formatQueueMessage(
+          displayedTracks,
+          currentIndex,
+          startPosition,
+          totalDuration,
+          totalQueueLength,
+        ),
       )
     } catch (error) {
       console.error(`❌ Error in ${Queue.name} command:`, error)

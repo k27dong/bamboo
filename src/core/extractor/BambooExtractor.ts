@@ -8,7 +8,7 @@ import {
 } from "discord-player"
 
 import type { ApiServiceType } from "@/common/constants"
-import { formatMilliseconds } from "@/common/utils/common"
+import { millisecondsToTimeString } from "@/common/utils/common"
 import { BambooApi } from "@/core/api/BambooApi"
 import type { NeteaseSong } from "@/core/api/interfaces"
 
@@ -94,7 +94,7 @@ export class BambooExtractor extends BaseExtractor {
     return new Track(this.context.player, {
       title: info.name,
       url: `${info.id}`,
-      duration: formatMilliseconds(info.dt),
+      duration: millisecondsToTimeString(info.dt),
       thumbnail: info.al.picUrl,
       author: info.ar[0].name,
       requestedBy: context.requestedBy,
