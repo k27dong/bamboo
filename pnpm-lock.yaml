@@ -34,6 +34,9 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
+      openai:
+        specifier: ^4.82.0
+        version: 4.82.0(ws@8.18.0(bufferutil@4.0.8))
       qrcode-terminal:
         specifier: ^0.12.0
         version: 0.12.0
@@ -743,6 +746,18 @@ packages:
         integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==,
       }
 
+  "@types/node-fetch@2.6.12":
+    resolution:
+      {
+        integrity: sha512-8nneRWKCg3rMtF69nLQJnOYUcbafYeFSjqkw3jCRLsqkWFlHaoQrr5mXmofFGOx3DKn7UfmBMyov8ySvLRVldA==,
+      }
+
+  "@types/node@18.19.74":
+    resolution:
+      {
+        integrity: sha512-HMwEkkifei3L605gFdV+/UwtpxP6JSzM+xFk2Ia6DNFSwSVBRh9qp5Tgf4lNFOMfPVuU0WnkcWpXZpgn5ufO4A==,
+      }
+
   "@types/node@22.10.1":
     resolution:
       {
@@ -869,6 +884,13 @@ packages:
     engines: { node: ">=12" }
     hasBin: true
 
+  abort-controller@3.0.0:
+    resolution:
+      {
+        integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==,
+      }
+    engines: { node: ">=6.5" }
+
   accepts@1.3.8:
     resolution:
       {
@@ -898,6 +920,13 @@ packages:
         integrity: sha512-jRR5wdylq8CkOe6hei19GGZnxM6rBGwFl3Bg0YItGDimvjGtAvdZk4Pu6Cl4u4Igsws4a1fd1Vq3ezrhn4KmFw==,
       }
     engines: { node: ">= 14" }
+
+  agentkeepalive@4.6.0:
+    resolution:
+      {
+        integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==,
+      }
+    engines: { node: ">= 8.0.0" }
 
   ajv@6.12.6:
     resolution:
@@ -1632,6 +1661,13 @@ packages:
       }
     engines: { node: ">= 0.6" }
 
+  event-target-shim@5.0.1:
+    resolution:
+      {
+        integrity: sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==,
+      }
+    engines: { node: ">=6" }
+
   express-fileupload@1.5.1:
     resolution:
       {
@@ -1769,12 +1805,25 @@ packages:
       }
     engines: { node: ">=14" }
 
+  form-data-encoder@1.7.2:
+    resolution:
+      {
+        integrity: sha512-qfqtYan3rxrnCk1VYaA4H+Ms9xdpPqvLZa6xmMgFvhO32x7/3J/ExcTd6qpxM0vH2GdMI+poehyBZvqfMTto8A==,
+      }
+
   form-data@4.0.1:
     resolution:
       {
         integrity: sha512-tzN8e4TX8+kkxGPK8D5u0FNmjPUjw3lwC9lSLxxoB/+GtsJG91CO8bSWy73APlgAZzZbXEYZJuxjkHH2w+Ezhw==,
       }
     engines: { node: ">= 6" }
+
+  formdata-node@4.4.1:
+    resolution:
+      {
+        integrity: sha512-0iirZp3uVDjVGt9p49aTaqjk84TrglENEDuqfdlZQ1roC9CWlPk6Avf8EEnZNcAqPonwkG35x4n3ww/1THYAeQ==,
+      }
+    engines: { node: ">= 12.20" }
 
   formdata-polyfill@4.0.10:
     resolution:
@@ -1948,6 +1997,12 @@ packages:
         integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==,
       }
     engines: { node: ">= 14" }
+
+  humanize-ms@1.2.1:
+    resolution:
+      {
+        integrity: sha512-Fl70vYtsAFb/C06PTS9dZBo7ihau+Tu/DNCk/OyHhea07S+aeMWpFFkUaXRa8fI+ScZbEI8dfSxwY7gxZ9SAVQ==,
+      }
 
   iconv-lite@0.4.24:
     resolution:
@@ -2578,6 +2633,21 @@ packages:
         integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==,
       }
     engines: { node: ">= 0.8" }
+
+  openai@4.82.0:
+    resolution:
+      {
+        integrity: sha512-1bTxOVGZuVGsKKUWbh3BEwX1QxIXUftJv+9COhhGGVDTFwiaOd4gWsMynF2ewj1mg6by3/O+U8+EEHpWRdPaJg==,
+      }
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.23.8
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   optionator@0.9.4:
     resolution:
@@ -3386,6 +3456,12 @@ packages:
     engines: { node: ">=14.17" }
     hasBin: true
 
+  undici-types@5.26.5:
+    resolution:
+      {
+        integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==,
+      }
+
   undici-types@6.20.0:
     resolution:
       {
@@ -3458,6 +3534,13 @@ packages:
         integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==,
       }
     engines: { node: ">= 8" }
+
+  web-streams-polyfill@4.0.0-beta.3:
+    resolution:
+      {
+        integrity: sha512-QW95TCTaHmsYfHDybGMwO5IJIM93I/6vTRk+daHTWFPhwh+C8Cg7j7XyKrwrj8Ib6vYXe0ocYNrmzY4xAAN6ug==,
+      }
+    engines: { node: ">= 14" }
 
   webidl-conversions@3.0.1:
     resolution:
@@ -3938,6 +4021,15 @@ snapshots:
 
   "@types/json-schema@7.0.15": {}
 
+  "@types/node-fetch@2.6.12":
+    dependencies:
+      "@types/node": 22.10.1
+      form-data: 4.0.1
+
+  "@types/node@18.19.74":
+    dependencies:
+      undici-types: 5.26.5
+
   "@types/node@22.10.1":
     dependencies:
       undici-types: 6.20.0
@@ -4053,6 +4145,10 @@ snapshots:
       - debug
       - supports-color
 
+  abort-controller@3.0.0:
+    dependencies:
+      event-target-shim: 5.0.1
+
   accepts@1.3.8:
     dependencies:
       mime-types: 2.1.35
@@ -4065,6 +4161,10 @@ snapshots:
   acorn@8.14.0: {}
 
   agent-base@7.1.3: {}
+
+  agentkeepalive@4.6.0:
+    dependencies:
+      humanize-ms: 1.2.1
 
   ajv@6.12.6:
     dependencies:
@@ -4538,6 +4638,8 @@ snapshots:
 
   etag@1.8.1: {}
 
+  event-target-shim@5.0.1: {}
+
   express-fileupload@1.5.1:
     dependencies:
       busboy: 1.6.0
@@ -4655,11 +4757,18 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
+  form-data-encoder@1.7.2: {}
+
   form-data@4.0.1:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
+
+  formdata-node@4.4.1:
+    dependencies:
+      node-domexception: 1.0.0
+      web-streams-polyfill: 4.0.0-beta.3
 
   formdata-polyfill@4.0.10:
     dependencies:
@@ -4769,6 +4878,10 @@ snapshots:
       debug: 4.3.7
     transitivePeerDependencies:
       - supports-color
+
+  humanize-ms@1.2.1:
+    dependencies:
+      ms: 2.1.3
 
   iconv-lite@0.4.24:
     dependencies:
@@ -5054,6 +5167,20 @@ snapshots:
   on-finished@2.4.1:
     dependencies:
       ee-first: 1.1.1
+
+  openai@4.82.0(ws@8.18.0(bufferutil@4.0.8)):
+    dependencies:
+      "@types/node": 18.19.74
+      "@types/node-fetch": 2.6.12
+      abort-controller: 3.0.0
+      agentkeepalive: 4.6.0
+      form-data-encoder: 1.7.2
+      formdata-node: 4.4.1
+      node-fetch: 2.7.0
+    optionalDependencies:
+      ws: 8.18.0(bufferutil@4.0.8)
+    transitivePeerDependencies:
+      - encoding
 
   optionator@0.9.4:
     dependencies:
@@ -5520,6 +5647,8 @@ snapshots:
 
   typescript@5.7.2: {}
 
+  undici-types@5.26.5: {}
+
   undici-types@6.20.0: {}
 
   undici@5.28.5:
@@ -5545,6 +5674,8 @@ snapshots:
   vary@1.1.2: {}
 
   web-streams-polyfill@3.3.3: {}
+
+  web-streams-polyfill@4.0.0-beta.3: {}
 
   webidl-conversions@3.0.1: {}
 

@@ -5,6 +5,7 @@ export interface Credentials {
   OWNER_ID: string
   DEV_CHANNEL_ID?: string
   REAL_IP?: string
+  OPENAI_API_KEY?: string
 }
 
 export type DeployScope = "dev" | "global"

@@ -5,13 +5,38 @@ import {
   SlashCommandBuilder,
 } from "discord.js"
 import { useMainPlayer, useQueue } from "discord-player"
+import OpenAI from "openai"
 
 import {
   DISCORD_MESSAGE_CHAR_LIMIT,
   EXTRACTOR_IDENTIFIER,
   ExtractorSearchType,
 } from "@/common/constants"
+import { LYRIC_SANITIZATION_PROMPT } from "@/common/prompts"
+import { OPENAI_API_KEY } from "@/common/utils/config"
 import type { Command } from "@/core/commands/Command"
+
+const getGptParsedLyric = async (
+  rawLyric: string,
+  parsedLyric: string,
+): Promise<string> => {
+  const openai = new OpenAI({
+    apiKey: OPENAI_API_KEY,
+  })
+  const response = await openai.chat.completions.create({
+    messages: [
+      { role: "system", content: LYRIC_SANITIZATION_PROMPT },
+      {
+        role: "user",
+        content: `Raw lyrics: ${rawLyric}\n\nParsed lyrics: ${parsedLyric}\n\nSummarize per the rules.`,
+      },
+    ],
+    store: false,
+    model: "gpt-4o-mini",
+  })
+
+  return response.choices[0].message.content!
+}
 
 const parseLrc = (lrc: string | null | undefined): string => {
   if (!lrc) {
@@ -85,9 +110,21 @@ export const Lyric: Command = {
         },
       })
 
-      console.log(lrcResult.tracks[0].title)
+      const rawLyric = lrcResult.tracks[0].title
+      const parsedLyric = parseLrc(rawLyric)
 
-      await interaction.reply(parseLrc(lrcResult.tracks[0].title))
+      await interaction.reply(parsedLyric)
+
+      const gptParsedLyric = await Promise.race([
+        getGptParsedLyric(rawLyric, parsedLyric),
+        new Promise<string>((_, reject) =>
+          setTimeout(
+            () => reject(new Error("API timeout after 15 minutes")),
+            900000,
+          ),
+        ),
+      ])
+      await interaction.editReply(gptParsedLyric)
     } catch (error: any) {
       console.error(`❌ Error in ${Lyric.name} command:`, error)
       await interaction.followUp({
