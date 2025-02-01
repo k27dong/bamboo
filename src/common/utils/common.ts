@@ -67,3 +67,28 @@ export const millisecondsToTimeString = (ms: number): string => {
     ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
     : `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
 }
+
+/**
+ * Converts a Unix timestamp (seconds or milliseconds) to a 4-digit year
+ * @param timestamp - Unix timestamp (seconds or milliseconds since epoch)
+ * @returns 4-digit year (e.g. 2024)
+ * @throws {Error} If timestamp is invalid or out of range
+ * @example
+ * timestampToYear(1717987737)    // 2024 (seconds)
+ * timestampToYear(1717987737000) // 2024 (milliseconds)
+ */
+export const timestampToYear = (timestamp: number): number => {
+  if (typeof timestamp !== "number" || isNaN(timestamp)) {
+    throw new Error("Invalid timestamp: must be a valid number")
+  }
+
+  // More accurate threshold for detecting second-based timestamps
+  const adjustedTimestamp = timestamp < 1e10 ? timestamp * 1000 : timestamp
+  const date = new Date(adjustedTimestamp)
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid timestamp: cannot convert to valid date")
+  }
+
+  return date.getFullYear()
+}

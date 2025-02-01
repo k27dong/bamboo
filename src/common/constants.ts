@@ -24,3 +24,14 @@ export const HTTP_STATUS = {
 } as const
 
 export const DISCORD_MESSAGE_CHAR_LIMIT = 1990
+
+export const EXTRACTOR_IDENTIFIER = "com.k27dong.bamboo.bamboo-extractor"
+
+export enum ExtractorSearchType {
+  AlbumLists,
+  Album,
+  Track,
+  TrackInfo,
+}
+
+export const DISCORD_DROPDOWN_LIMIT = 25

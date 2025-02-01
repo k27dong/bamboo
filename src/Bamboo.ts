@@ -35,11 +35,11 @@ await player.extractors.register(BambooExtractor, {
     [ApiServiceType.Netease]: neteaseCookie,
   },
 })
-// await player.extractors.register(YoutubeiExtractor, {})
 await player.extractors.register(AttachmentExtractor, {})
 await player.extractors.register(SoundCloudExtractor, {})
 await player.extractors.register(VimeoExtractor, {})
 await player.extractors.register(ReverbnationExtractor, {})
+// await player.extractors.register(YoutubeiExtractor, {})
 
 // Log in to Discord
 client.login(TOKEN).catch((error) => {

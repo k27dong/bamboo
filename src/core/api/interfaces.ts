@@ -3,11 +3,13 @@ import type { Track } from "discord-player"
 export interface BambooMusicApi {
   getTrackUrl: (id: Track) => Promise<string>
   getDefaultTrack: (query: string) => Promise<NeteaseSong | null>
+  searchAlbum: (query: string) => Promise<NeteaseAlbumDetailed[] | null>
+  getAlbumById: (id: string) => Promise<NeteaseSong[] | null>
 }
 
 export interface NeteaseCloudSearchSongResult {
   searchQcReminder: any
-  songs: any
+  songs: NeteaseSong[]
   songCount: number
 }
 
@@ -22,6 +24,13 @@ export interface NeteaseAlbum {
   id: number
   name: string
   picUrl: string
+}
+
+export interface NeteaseAlbumDetailed extends NeteaseAlbum {
+  size: number
+  pic: number
+  publishTime: number
+  artists: NeteaseArtist[]
 }
 
 export interface NeteaseArtist {
@@ -47,4 +56,13 @@ export interface NeteaseSongPlayable {
   code: number
   type: string
   fee: NeteaseFeeType
+}
+
+export interface NeteaseCloudSearchAlbumResult {
+  albums: NeteaseAlbumDetailed[]
+  albumCount: number
+}
+
+export interface NeteaseAlbumSearchInfo {
+  picUrl: string
 }

@@ -28,15 +28,15 @@ const formatQueueMessage = (
 
   const maxLength = DISCORD_MESSAGE_CHAR_LIMIT
   const reservedSpace = 35
-  const durationLine = `\nTotal: ${totalDuration}`
+  const durationLine = `\n总时长: ${totalDuration}`
   let remainingTracks = 0
   let queueMessage = ""
 
   for (let i = 0; i < displayedTracks.length; i++) {
-    const { title, author, duration } = displayedTracks[i]
+    const { title, author } = displayedTracks[i]
     const isCurrent = i === currentIndex ? "   ◄———— \n" : "\n"
     const queuePosition = startPosition + i + 1
-    const currLine = `${queuePosition}) ${title} ${author ? `(${author})` : ""} [${duration}]${isCurrent}`
+    const currLine = `${queuePosition}) ${title} ${author ? `(${author})` : ""} ${isCurrent}`
 
     if (queueMessage.length + currLine.length + reservedSpace >= maxLength) {
       remainingTracks = totalQueueLength - (startPosition + i + 1)
