@@ -59,4 +59,12 @@ export class BambooApi implements BambooMusicApi {
     const service = this.getService(source)
     return await service.getAlbumById(id)
   }
+
+  async getLyricById(
+    id: string,
+    source: ApiServiceType = ApiServiceType.Netease,
+  ): Promise<string | null> {
+    const service = this.getService(source)
+    return await service.getLyricById(id)
+  }
 }

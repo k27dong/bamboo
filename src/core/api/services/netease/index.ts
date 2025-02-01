@@ -8,6 +8,7 @@ import type {
 
 import { getAlbumList } from "./getAlbumList"
 import { getAlbumSongs } from "./getAlbumSongs"
+import { getRawLyricById } from "./getRawLyricById"
 import { getSongUrlByTrack } from "./getTrackUrl"
 import { searchSong } from "./searchSong"
 
@@ -32,5 +33,9 @@ export class NeteaseService implements BambooMusicApi {
 
   async getAlbumById(id: string): Promise<NeteaseSong[] | null> {
     return getAlbumSongs(id, this.cookie)
+  }
+
+  async getLyricById(id: string): Promise<string | null> {
+    return getRawLyricById(id, this.cookie)
   }
 }

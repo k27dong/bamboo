@@ -11,10 +11,15 @@ import {
 } from "discord.js"
 import { useMainPlayer } from "discord-player"
 
-import { EXTRACTOR_IDENTIFIER, ExtractorSearchType } from "@/common/constants"
+import {
+  DISCORD_SELECT_MENU_LIMIT as DISCORD_SELECT_MENU_LIMIT,
+  EXTRACTOR_IDENTIFIER,
+  ExtractorSearchType,
+} from "@/common/constants"
 import { timestampToYear } from "@/common/utils/common"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
+import { ErrorMessage } from "@/core/player/embedMessages"
 
 const AlbumOption = new SlashCommandBuilder()
   .setName("album")
@@ -47,12 +52,17 @@ export const Album: Command = {
         },
       })
 
-      const MAX_LENGTH = 100
+      if (result.isEmpty()) {
+        await interaction.editReply({
+          embeds: [ErrorMessage(`❌ 未找到专辑: ${query}`)],
+        })
+        return
+      }
 
       const albumSelectRowOptions = result.tracks.map((track, i) => {
         const label =
-          track.title.length > MAX_LENGTH
-            ? `${track.title.slice(0, MAX_LENGTH - 3)}...`
+          track.title.length > DISCORD_SELECT_MENU_LIMIT
+            ? `${track.title.slice(0, DISCORD_SELECT_MENU_LIMIT - 3)}...`
             : track.title
 
         const year = timestampToYear(parseInt(track.duration, 10))
@@ -61,7 +71,10 @@ export const Album: Command = {
         const yearLength = year.toString().length
         const viewsLength = views.length
         const fixedPartsLength = viewsLength + yearLength + 7
-        const maxAuthorLength = Math.max(0, MAX_LENGTH - fixedPartsLength)
+        const maxAuthorLength = Math.max(
+          0,
+          DISCORD_SELECT_MENU_LIMIT - fixedPartsLength,
+        )
 
         const author =
           track.author.length > maxAuthorLength

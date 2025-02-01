@@ -5,6 +5,7 @@ export interface BambooMusicApi {
   getDefaultTrack: (query: string) => Promise<NeteaseSong | null>
   searchAlbum: (query: string) => Promise<NeteaseAlbumDetailed[] | null>
   getAlbumById: (id: string) => Promise<NeteaseSong[] | null>
+  getLyricById: (id: string) => Promise<string | null>
 }
 
 export interface NeteaseCloudSearchSongResult {
@@ -65,4 +66,9 @@ export interface NeteaseCloudSearchAlbumResult {
 
 export interface NeteaseAlbumSearchInfo {
   picUrl: string
+}
+
+export interface NeteaseLyric {
+  version: number
+  lyric: string
 }

@@ -32,6 +32,8 @@ export enum ExtractorSearchType {
   Album,
   Track,
   TrackInfo,
+  Lyric,
 }
 
 export const DISCORD_DROPDOWN_LIMIT = 25
+export const DISCORD_SELECT_MENU_LIMIT = 100

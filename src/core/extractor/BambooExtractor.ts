@@ -111,6 +111,14 @@ export class BambooExtractor extends BaseExtractor {
 
         return this.createResponse(album, albumSongs)
       }
+      case ExtractorSearchType.Lyric: {
+        const rawLyric = await this.api.getLyricById(query)
+        if (!rawLyric) throw new Error("Failed to get lyric")
+
+        const lyricTrack = this.buildLyricTrack(rawLyric, context)
+
+        return this.createResponse(null, [lyricTrack])
+      }
       case ExtractorSearchType.Track:
       default: {
         const rawTrack = await this.api.getDefaultTrack(query)
@@ -162,6 +170,15 @@ export class BambooExtractor extends BaseExtractor {
         source: "arbitrary",
         views: album.size,
       })
+    })
+  }
+
+  buildLyricTrack(lyric: string, context: ExtractorSearchContext): Track {
+    return new Track(this.context.player, {
+      title: lyric,
+      requestedBy: context.requestedBy,
+      source: "arbitrary",
+      queryType: context.type!,
     })
   }
 }
