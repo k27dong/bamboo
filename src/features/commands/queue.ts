@@ -151,8 +151,12 @@ export const Queue: Command = {
           totalQueueLength,
         ),
       )
-    } catch (error) {
+    } catch (error: any) {
       console.error(`❌ Error in ${Queue.name} command:`, error)
+      await interaction.followUp({
+        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
+        flags: MessageFlags.Ephemeral,
+      })
     }
   },
 }

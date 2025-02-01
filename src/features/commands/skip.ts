@@ -1,6 +1,7 @@
 import {
   type Client,
   type CommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
 import { useQueue } from "discord-player"
@@ -34,8 +35,12 @@ export const Skip: Command = {
       queue.node.skip()
 
       await interaction.reply("done")
-    } catch (error) {
+    } catch (error: any) {
       console.error(`❌ Error in ${Skip.name} command:`, error)
+      await interaction.followUp({
+        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
+        flags: MessageFlags.Ephemeral,
+      })
     }
   },
 }
