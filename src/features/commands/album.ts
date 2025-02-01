@@ -4,6 +4,7 @@ import {
   type CommandInteraction,
   ComponentType,
   type GuildMember,
+  MessageFlags,
   SlashCommandBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
@@ -136,8 +137,12 @@ export const Album: Command = {
           }
         })()
       })
-    } catch (error) {
+    } catch (error: any) {
       console.error(`❌ Error in ${Album.name} command:`, error)
+      await interaction.followUp({
+        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
+        flags: MessageFlags.Ephemeral,
+      })
     }
   },
 }

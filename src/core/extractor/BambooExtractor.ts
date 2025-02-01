@@ -124,8 +124,6 @@ export class BambooExtractor extends BaseExtractor {
   }
 
   override async stream(track: Track): Promise<string> {
-    console.log("here")
-
     if (!this.api) throw new Error("Extractor not activated")
 
     const streamUrl = await this.api.getTrackUrl(track)

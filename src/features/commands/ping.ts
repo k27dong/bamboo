@@ -1,6 +1,7 @@
 import {
   type Client,
   type CommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
 
@@ -17,8 +18,12 @@ export const Ping: Command = {
   run: async (_: Client, interaction: CommandInteraction) => {
     try {
       await interaction.reply("Pong!")
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Error in ping command:", error)
+      await interaction.followUp({
+        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
+        flags: MessageFlags.Ephemeral,
+      })
     }
   },
 }

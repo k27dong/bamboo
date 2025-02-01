@@ -2,6 +2,7 @@ import {
   type Client,
   type CommandInteraction,
   type GuildMember,
+  MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
 import { useMainPlayer } from "discord-player"
@@ -40,8 +41,12 @@ export const Play: Command = {
       await interaction.editReply(
         `**Queued**: ${result.track.title} ${result.track.author ? ` (${result.track.author}) ` : ""} [${result.track.duration}]`,
       )
-    } catch (error) {
+    } catch (error: any) {
       console.error(`❌ Error in ${Play.name} command:`, error)
+      await interaction.followUp({
+        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
+        flags: MessageFlags.Ephemeral,
+      })
     }
   },
 }
