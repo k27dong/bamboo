@@ -37,3 +37,8 @@ export enum ExtractorSearchType {
 
 export const DISCORD_DROPDOWN_LIMIT = 25
 export const DISCORD_SELECT_MENU_LIMIT = 100
+export const DISCORD_EMBED_DESCRIPTION_LIMIT = 4000
+
+export enum CustomButtonId {
+  ShowDescription = "show_description",
+}

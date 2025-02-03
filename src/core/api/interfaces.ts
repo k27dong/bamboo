@@ -25,6 +25,7 @@ export interface NeteaseAlbum {
   id: number
   name: string
   picUrl: string
+  description: string
 }
 
 export interface NeteaseAlbumDetailed extends NeteaseAlbum {
@@ -66,6 +67,8 @@ export interface NeteaseCloudSearchAlbumResult {
 
 export interface NeteaseAlbumSearchInfo {
   picUrl: string
+  description: string
+  publishTime: number
 }
 
 export interface NeteaseLyric {

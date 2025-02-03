@@ -18,6 +18,8 @@ export const getAlbumSongs = async (
 
       for (const song of songs) {
         song.al.picUrl = albumInfo.picUrl
+        song.al.description = albumInfo.description
+        song.publishTime = albumInfo.publishTime
       }
 
       return songs ?? null

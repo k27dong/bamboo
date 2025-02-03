@@ -1,17 +1,22 @@
 import {
   ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   type Client,
   type CommandInteraction,
   ComponentType,
+  EmbedBuilder,
   type GuildMember,
   MessageFlags,
   SlashCommandBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
 } from "discord.js"
-import { useMainPlayer } from "discord-player"
+import { type Playlist, useMainPlayer } from "discord-player"
 
 import {
+  CustomButtonId,
+  DISCORD_EMBED_DESCRIPTION_LIMIT,
   DISCORD_SELECT_MENU_LIMIT as DISCORD_SELECT_MENU_LIMIT,
   EXTRACTOR_IDENTIFIER,
   ExtractorSearchType,
@@ -19,7 +24,10 @@ import {
 import { timestampToYear } from "@/common/utils/common"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
-import { ErrorMessage } from "@/core/player/embedMessages"
+import {
+  ErrorMessage,
+  NowPlayingPlaylistMessage,
+} from "@/core/player/embedMessages"
 
 const AlbumOption = new SlashCommandBuilder()
   .setName("album")
@@ -27,6 +35,24 @@ const AlbumOption = new SlashCommandBuilder()
   .addStringOption((option) =>
     option.setName("搜索").setDescription("专辑名").setRequired(true),
   )
+
+export const getPlaylistEmbedInfo = (playlist: Playlist) => {
+  const embed = NowPlayingPlaylistMessage(playlist)
+
+  const components = playlist.description?.trim()
+    ? [
+        new ActionRowBuilder<ButtonBuilder>().addComponents(
+          new ButtonBuilder()
+            .setCustomId(CustomButtonId.ShowDescription)
+            .setLabel("Show Description")
+            .setStyle(ButtonStyle.Secondary)
+            .setEmoji("📄"),
+        ),
+      ]
+    : []
+
+  return { embed, components }
+}
 
 export const Album: Command = {
   name: AlbumOption.name,
@@ -44,7 +70,7 @@ export const Album: Command = {
       const voiceChannel = member.voice.channel!
 
       // this result is not tracks but albums
-      const result = await player.search(query, {
+      const albumSearchResult = await player.search(query, {
         requestedBy: interaction.user,
         searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
         requestOptions: {
@@ -52,14 +78,14 @@ export const Album: Command = {
         },
       })
 
-      if (result.isEmpty()) {
+      if (albumSearchResult.isEmpty()) {
         await interaction.editReply({
           embeds: [ErrorMessage(`❌ 未找到专辑: ${query}`)],
         })
         return
       }
 
-      const albumSelectRowOptions = result.tracks.map((track, i) => {
+      const albumSelectRowOptions = albumSearchResult.tracks.map((track, i) => {
         const label =
           track.title.length > DISCORD_SELECT_MENU_LIMIT
             ? `${track.title.slice(0, DISCORD_SELECT_MENU_LIMIT - 3)}...`
@@ -116,11 +142,11 @@ export const Album: Command = {
             })
           } else {
             const selectedAlbumIndex = parseInt(response.values[0], 10)
-            const selectedAlbum = result.tracks[selectedAlbumIndex]
+            const selectedAlbum = albumSearchResult.tracks[selectedAlbumIndex]
 
-            await response.reply({
+            await interaction.editReply({
               content: `**专辑**: ${selectedAlbum.title} (${timestampToYear(parseInt(selectedAlbum.duration, 10))})`,
-              ephemeral: true,
+              components: [],
             })
 
             const albumTracks = await player.search(selectedAlbum.url, {
@@ -130,6 +156,55 @@ export const Album: Command = {
                 searchType: ExtractorSearchType.Album,
               },
             })
+
+            const { embed, components } = getPlaylistEmbedInfo(
+              albumTracks.playlist!,
+            )
+
+            const albumFollowUpResponse = await interaction.followUp({
+              content: "",
+              embeds: [embed],
+              components: components,
+            })
+
+            const selectedAlbumDescription = albumTracks.playlist!.description
+
+            if (components.length > 0) {
+              const albumFollowUpResponseCollector =
+                albumFollowUpResponse.createMessageComponentCollector({
+                  componentType: ComponentType.Button,
+                  time: 60_000,
+                })
+
+              albumFollowUpResponseCollector.on("collect", (response) => {
+                void (async () => {
+                  if (response.customId === CustomButtonId.ShowDescription) {
+                    const updatedEmbed = EmbedBuilder.from(
+                      embed,
+                    ).setDescription(
+                      selectedAlbumDescription.length <=
+                        DISCORD_EMBED_DESCRIPTION_LIMIT
+                        ? selectedAlbumDescription
+                        : `${selectedAlbumDescription.substring(0, DISCORD_EMBED_DESCRIPTION_LIMIT - 4)}\n...`,
+                    )
+
+                    await response.update({
+                      embeds: [updatedEmbed],
+                      components: [],
+                    })
+                    albumFollowUpResponseCollector.stop()
+                  }
+                })()
+              })
+
+              albumFollowUpResponseCollector.on("end", () => {
+                void (async () => {
+                  await albumFollowUpResponse.edit({
+                    components: [],
+                  })
+                })()
+              })
+            }
 
             await player.play(voiceChannel, albumTracks, {
               nodeOptions: {

@@ -24,16 +24,16 @@ export class BambooExtractor extends BaseExtractor {
   private api: BambooApi | null = null
 
   private isDirectUrl(query: string): boolean {
-    try {
-      new URL(query)
-      return true
-    } catch {
-      return false
-    }
+    return /^(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(query)
   }
 
-  public override createBridgeQuery = (track: Track) =>
-    `${track.title} by ${track.author} official audio`
+  private isNumericId(query: string): boolean {
+    return /^\d+$/.test(query)
+  }
+
+  public override createBridgeQuery = (track: Track) => {
+    return track.url
+  }
 
   override async activate(): Promise<void> {
     const initOptions = this.options as {
@@ -57,13 +57,18 @@ export class BambooExtractor extends BaseExtractor {
     query: string,
     queryType?: SearchQueryType,
   ): Promise<boolean> {
-    if (typeof query !== "string" || this.isDirectUrl(query))
-      return Promise.resolve(false)
+    if (typeof query !== "string") return Promise.resolve(false)
 
     return Promise.resolve(
-      ([QueryType.AUTO, QueryType.AUTO_SEARCH] as SearchQueryType[]).some(
-        (r) => r === queryType,
-      ),
+      !this.isDirectUrl(query) &&
+        (this.isNumericId(query) ||
+          (
+            [
+              QueryType.AUTO,
+              QueryType.AUTO_SEARCH,
+              `ext:${EXTRACTOR_IDENTIFIER}`,
+            ] as SearchQueryType[]
+          ).includes(queryType!)),
     )
   }
 
@@ -97,13 +102,13 @@ export class BambooExtractor extends BaseExtractor {
         const album = new Playlist(this.context.player, {
           tracks: albumSongs,
           title: rawAlbumSongs[0].al.name,
-          description: "",
+          description: rawAlbumSongs[0].al.description,
           thumbnail: albumSongs[0].thumbnail,
           source: "arbitrary",
           type: "album",
           author: {
             name: albumSongs[0].author,
-            url: "",
+            url: rawAlbumSongs[0].publishTime.toString(),
           },
           id: query,
           url: "",

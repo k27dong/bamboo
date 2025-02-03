@@ -53,7 +53,7 @@ const formatQueueMessage = (
   }
 
   if (remainingTracks > 0) {
-    queueMessage += `\n... (${remainingTracks} more tracks)`
+    queueMessage += `\n... (${remainingTracks} more)`
   }
 
   if (queueMessage.length + durationLine.length + 6 <= maxLength) {
