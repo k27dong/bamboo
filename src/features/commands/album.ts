@@ -176,26 +176,32 @@ export const Album: Command = {
                   time: 60_000,
                 })
 
-              albumFollowUpResponseCollector.on("collect", (response) => {
-                void (async () => {
-                  if (response.customId === CustomButtonId.ShowDescription) {
-                    const updatedEmbed = EmbedBuilder.from(
-                      embed,
-                    ).setDescription(
-                      selectedAlbumDescription.length <=
-                        DISCORD_EMBED_DESCRIPTION_LIMIT
-                        ? selectedAlbumDescription
-                        : `${selectedAlbumDescription.substring(0, DISCORD_EMBED_DESCRIPTION_LIMIT - 4)}\n...`,
-                    )
+              albumFollowUpResponseCollector.on(
+                "collect",
+                (albumInfoResponse) => {
+                  void (async () => {
+                    if (
+                      albumInfoResponse.customId ===
+                      CustomButtonId.ShowDescription
+                    ) {
+                      const updatedEmbed = EmbedBuilder.from(
+                        embed,
+                      ).setDescription(
+                        selectedAlbumDescription.length <=
+                          DISCORD_EMBED_DESCRIPTION_LIMIT
+                          ? selectedAlbumDescription
+                          : `${selectedAlbumDescription.substring(0, DISCORD_EMBED_DESCRIPTION_LIMIT - 4)}\n...`,
+                      )
 
-                    await response.update({
-                      embeds: [updatedEmbed],
-                      components: [],
-                    })
-                    albumFollowUpResponseCollector.stop()
-                  }
-                })()
-              })
+                      await albumInfoResponse.update({
+                        embeds: [updatedEmbed],
+                        components: [],
+                      })
+                      albumFollowUpResponseCollector.stop()
+                    }
+                  })()
+                },
+              )
 
               albumFollowUpResponseCollector.on("end", () => {
                 void (async () => {
