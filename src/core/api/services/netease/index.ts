@@ -4,6 +4,7 @@ import type {
   BambooMusicApi,
   NeteaseAlbumDetailed,
   NeteaseSong,
+  NeteaseUserProfile,
 } from "@/core/api/interfaces"
 
 import { getAlbumList } from "./getAlbumList"
@@ -11,6 +12,7 @@ import { getAlbumSongs } from "./getAlbumSongs"
 import { getRawLyricById } from "./getRawLyricById"
 import { getSongUrlByTrack } from "./getTrackUrl"
 import { searchSong } from "./searchSong"
+import { searchUser } from "./searchUser"
 
 export class NeteaseService implements BambooMusicApi {
   private cookie?: string
@@ -37,5 +39,9 @@ export class NeteaseService implements BambooMusicApi {
 
   async getLyricById(id: string): Promise<string | null> {
     return getRawLyricById(id, this.cookie)
+  }
+
+  async searchUser(query: string): Promise<NeteaseUserProfile[] | null> {
+    return searchUser(query, this.cookie)
   }
 }

@@ -6,5 +6,6 @@ import { Ping } from "./ping"
 import { Play } from "./play"
 import { Queue } from "./queue"
 import { Skip } from "./skip"
+import { User } from "./user"
 
-export const Commands: Command[] = [Ping, Play, Queue, Skip, Album, Lyric]
+export const Commands: Command[] = [Ping, Play, Queue, Skip, Album, Lyric, User]

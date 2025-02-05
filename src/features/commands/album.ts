@@ -44,7 +44,7 @@ export const getPlaylistEmbedInfo = (playlist: Playlist) => {
         new ActionRowBuilder<ButtonBuilder>().addComponents(
           new ButtonBuilder()
             .setCustomId(CustomButtonId.ShowDescription)
-            .setLabel("Show Description")
+            .setLabel("显示描述")
             .setStyle(ButtonStyle.Secondary)
             .setEmoji("📄"),
         ),

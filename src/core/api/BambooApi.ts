@@ -5,6 +5,7 @@ import type {
   BambooMusicApi,
   NeteaseAlbumDetailed,
   NeteaseSong,
+  NeteaseUserProfile,
 } from "@/core/api/interfaces"
 
 import { NeteaseService } from "./services/netease"
@@ -66,5 +67,13 @@ export class BambooApi implements BambooMusicApi {
   ): Promise<string | null> {
     const service = this.getService(source)
     return await service.getLyricById(id)
+  }
+
+  async searchUser(
+    query: string,
+    source: ApiServiceType = ApiServiceType.Netease,
+  ): Promise<NeteaseUserProfile[] | null> {
+    const service = this.getService(source)
+    return await service.searchUser(query)
   }
 }

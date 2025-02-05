@@ -16,7 +16,11 @@ import {
 import type { ExtractorSearchOptions } from "@/common/types"
 import { millisecondsToTimeString } from "@/common/utils/common"
 import { BambooApi } from "@/core/api/BambooApi"
-import type { NeteaseAlbumDetailed, NeteaseSong } from "@/core/api/interfaces"
+import type {
+  NeteaseAlbumDetailed,
+  NeteaseSong,
+  NeteaseUserProfile,
+} from "@/core/api/interfaces"
 
 export class BambooExtractor extends BaseExtractor {
   static override identifier = EXTRACTOR_IDENTIFIER
@@ -124,6 +128,16 @@ export class BambooExtractor extends BaseExtractor {
 
         return this.createResponse(null, [lyricTrack])
       }
+      case ExtractorSearchType.UserLists: {
+        const rawUsers = await this.api.searchUser(query)
+        if (!rawUsers) throw new Error("Failed to get user list")
+
+        const userTracks = rawUsers.map((user) =>
+          this.buildUserTrack(user, context),
+        )
+
+        return this.createResponse(null, userTracks)
+      }
       case ExtractorSearchType.Track:
       default: {
         const rawTrack = await this.api.getDefaultTrack(query)
@@ -181,6 +195,19 @@ export class BambooExtractor extends BaseExtractor {
   buildLyricTrack(lyric: string, context: ExtractorSearchContext): Track {
     return new Track(this.context.player, {
       title: lyric,
+      requestedBy: context.requestedBy,
+      source: "arbitrary",
+      queryType: context.type!,
+    })
+  }
+
+  buildUserTrack(
+    user: NeteaseUserProfile,
+    context: ExtractorSearchContext,
+  ): Track {
+    return new Track(this.context.player, {
+      title: user.nickname,
+      url: `${user.userId}`,
       requestedBy: context.requestedBy,
       source: "arbitrary",
       queryType: context.type!,

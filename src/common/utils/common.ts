@@ -1,3 +1,5 @@
+import { UserSelectEmojiPool } from "@/common/constants"
+
 /**
  * Converts a duration string (HH:MM:SS, MM:SS, or SS) to total seconds
  * @param duration - The duration string to parse
@@ -91,4 +93,26 @@ export const timestampToYear = (timestamp: number): number => {
   }
 
   return date.getFullYear()
+}
+
+/**
+ * Get a deterministic emoji based on an integer input and a salt.
+ * Ensures f(i, salt) and f(i+1, salt) behave the same way,
+ * but f(i, salt1) and f(i, salt2) give different results.
+ *
+ * @param {number} i - The integer input (e.g., user ID, index)
+ * @param {string | number} salt - A unique value to vary results (e.g., username, seed)
+ * @returns {string} - A consistent emoji from the list
+ */
+export const getAvatarEmoji = (i: number, salt: string | number): string => {
+  // Convert salt into a numeric hash
+  const saltHash = [...String(salt)].reduce(
+    (acc, char) => acc + char.charCodeAt(0),
+    0,
+  )
+
+  // Compute index using both i and saltHash to vary results
+  const index = (i + saltHash) % UserSelectEmojiPool.length
+
+  return UserSelectEmojiPool[index]
 }
