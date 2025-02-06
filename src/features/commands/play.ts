@@ -35,6 +35,7 @@ export const Play: Command = {
       const result = await player.play(voiceChannel, query, {
         nodeOptions: {
           metadata: { channel: interaction.channel },
+          volume: 50,
         },
       })
 

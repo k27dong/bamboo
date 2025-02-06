@@ -35,6 +35,7 @@ export enum ExtractorSearchType {
   Lyric,
   UserLists,
   UserPlaylists,
+  UserPlaylistTracks,
 }
 
 export const DISCORD_DROPDOWN_LIMIT = 25
@@ -87,3 +88,5 @@ export const UserSelectEmojiPool: string[] = [
   "🎁",
   "🧩",
 ]
+
+export const SONG_DETAIL_TRACKID_LIMIT = 1000

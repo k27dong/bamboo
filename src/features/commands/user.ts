@@ -3,6 +3,7 @@ import {
   type Client,
   type CommandInteraction,
   ComponentType,
+  type GuildMember,
   MessageFlags,
   SlashCommandBuilder,
   StringSelectMenuBuilder,
@@ -14,12 +15,15 @@ import { EXTRACTOR_IDENTIFIER, ExtractorSearchType } from "@/common/constants"
 import { getAvatarEmoji } from "@/common/utils/common"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
-import { ErrorMessage } from "@/core/player/embedMessages"
+import {
+  ErrorMessage,
+  NowPlayingUserPlaylistMessage,
+} from "@/core/player/embedMessages"
 
 const handleUserSelect = async (
   users: Track[],
   interaction: CommandInteraction,
-): Promise<string> => {
+): Promise<string[]> => {
   const userSelectRowOptions = users.map((user, i) => {
     return new StringSelectMenuOptionBuilder()
       .setLabel(user.title)
@@ -63,7 +67,7 @@ const handleUserSelect = async (
           components: [],
         })
 
-        resolve(selectedUser.url)
+        resolve([selectedUser.url, selectedUser.title])
         userSelectResponseCollector.stop()
       })()
     })
@@ -97,6 +101,8 @@ export const User: Command = {
 
       const player = useMainPlayer()
       const query = interaction.options.data[0].value as string
+      const member = interaction.member! as GuildMember
+      const voiceChannel = member.voice.channel!
 
       // this result will be a list of users
       const userSearchResult = await player.search(query, {
@@ -114,31 +120,102 @@ export const User: Command = {
         return
       }
 
-      const selectedUserId =
+      const [selectedUserId, selectedUserName] =
         userSearchResult.tracks.length === 1
-          ? userSearchResult.tracks[0].url
+          ? [userSearchResult.tracks[0].url, userSearchResult.tracks[0].title]
           : await handleUserSelect(userSearchResult.tracks, interaction)
 
-      // todo now find playlists
+      const userPlaylistSearchResult = await player.search(selectedUserId, {
+        requestedBy: interaction.user,
+        searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
+        requestOptions: {
+          searchType: ExtractorSearchType.UserPlaylists,
+        },
+      })
 
-      console.log("selected: ", selectedUserId)
+      if (userPlaylistSearchResult.isEmpty()) {
+        await interaction.editReply({
+          embeds: [ErrorMessage(`❌ 未找到用户公开歌单: ${selectedUserName}`)],
+        })
+        return
+      }
 
-      // const userPlaylistSearchResult = await player.search(selectedUserId, {
-      //   requestedBy: interaction.user,
-      //   searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-      //   requestOptions: {
-      //     searchType: ExtractorSearchType.UserPlaylists,
-      //   },
-      // })
+      const playlistSelectRowOptions = userPlaylistSearchResult.tracks.map(
+        (playlist, i) => {
+          return new StringSelectMenuOptionBuilder()
+            .setLabel(playlist.title.toString())
+            .setValue(i.toString())
+            .setDescription(`${playlist.author} 首`)
+        },
+      )
 
-      // if (userPlaylistSearchResult.isEmpty()) {
-      //   await interaction.editReply({
-      //     embeds: [ErrorMessage(`❌ 未找到用户公开歌单: ${selectedUserId}`)],
-      //   })
-      //   return
-      // }
+      const playlistSelectRow =
+        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+          new StringSelectMenuBuilder()
+            .setCustomId("starter")
+            .setPlaceholder("请选择歌单1")
+            .addOptions(playlistSelectRowOptions),
+        )
 
-      await interaction.followUp("done")
+      const responseInteraction = await interaction.editReply({
+        content: "🔍 请选择歌单",
+        components: [playlistSelectRow],
+      })
+
+      const playlistSelectionResponseCollector =
+        responseInteraction.createMessageComponentCollector({
+          componentType: ComponentType.StringSelect,
+          time: 30000,
+        })
+
+      playlistSelectionResponseCollector.on("collect", (response) => {
+        void (async () => {
+          if (response.user.id !== interaction.user.id) {
+            await response.reply({
+              content: "❌ 请不要干扰他人选择",
+              ephemeral: true,
+            })
+          } else {
+            const selectedPlaylistIndex = parseInt(response.values[0], 10)
+            const selectedPlaylist =
+              userPlaylistSearchResult.tracks[selectedPlaylistIndex]
+
+            await interaction.editReply({
+              content: `**歌单**: ${selectedPlaylist.title} (${selectedPlaylist.author} 首)`,
+              components: [],
+            })
+
+            const playlistTracks = await player.search(selectedPlaylist.url, {
+              requestedBy: interaction.user,
+              searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
+              requestOptions: {
+                searchType: ExtractorSearchType.UserPlaylistTracks,
+              },
+            })
+
+            if (playlistTracks.isEmpty()) {
+              await interaction.editReply({
+                embeds: [
+                  ErrorMessage(`❌ 未找到歌单: ${selectedPlaylist.title}`),
+                ],
+              })
+              return
+            }
+
+            await interaction.followUp({
+              content: "",
+              embeds: [NowPlayingUserPlaylistMessage(playlistTracks.playlist!)],
+            })
+
+            await player.play(voiceChannel, playlistTracks, {
+              nodeOptions: {
+                metadata: { channel: interaction.channel },
+                volume: 50,
+              },
+            })
+          }
+        })()
+      })
     } catch (error: any) {
       console.error(`❌ Error in ${User.name} command:`, error)
       await interaction.followUp({

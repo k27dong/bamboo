@@ -3,12 +3,16 @@ import type { Track } from "discord-player"
 import type {
   BambooMusicApi,
   NeteaseAlbumDetailed,
+  NeteasePlaylistSearchResult,
+  NeteasePlaylistTracks,
   NeteaseSong,
   NeteaseUserProfile,
 } from "@/core/api/interfaces"
 
 import { getAlbumList } from "./getAlbumList"
 import { getAlbumSongs } from "./getAlbumSongs"
+import { getPlaylistsByUserId } from "./getPlaylistsByUserId"
+import { getPlaylistTracks } from "./getPlaylistTracks"
 import { getRawLyricById } from "./getRawLyricById"
 import { getSongUrlByTrack } from "./getTrackUrl"
 import { searchSong } from "./searchSong"
@@ -43,5 +47,17 @@ export class NeteaseService implements BambooMusicApi {
 
   async searchUser(query: string): Promise<NeteaseUserProfile[] | null> {
     return searchUser(query, this.cookie)
+  }
+
+  async getUserPlaylists(
+    query: string,
+  ): Promise<NeteasePlaylistSearchResult[] | null> {
+    return getPlaylistsByUserId(query, this.cookie)
+  }
+
+  async getUserPlaylistTracksById(
+    id: string,
+  ): Promise<NeteasePlaylistTracks | null> {
+    return getPlaylistTracks(id, this.cookie)
   }
 }

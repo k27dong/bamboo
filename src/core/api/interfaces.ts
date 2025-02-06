@@ -1,4 +1,5 @@
 import type { Track } from "discord-player"
+import type { SongDetail } from "NeteaseCloudMusicApi"
 
 export interface BambooMusicApi {
   getTrackUrl: (id: Track) => Promise<string>
@@ -7,6 +8,12 @@ export interface BambooMusicApi {
   getAlbumById: (id: string) => Promise<NeteaseSong[] | null>
   getLyricById: (id: string) => Promise<string | null>
   searchUser: (query: string) => Promise<NeteaseUserProfile[] | null>
+  getUserPlaylists: (
+    query: string,
+  ) => Promise<NeteasePlaylistSearchResult[] | null>
+  getUserPlaylistTracksById: (
+    id: string,
+  ) => Promise<NeteasePlaylistTracks | null>
 }
 
 export interface NeteaseCloudSearchSongResult {
@@ -89,4 +96,29 @@ export interface NeteaseUserProfile {
 export interface NeteaseCloudSearchUserResult {
   userprofiles: NeteaseUserProfile[]
   userprofileCount: number
+}
+
+export interface NeteasePlaylistSearchResult {
+  trackCount: number
+  coverImgUrl: string
+  playCount: number
+  name: string
+  id: number
+}
+
+export interface NeteasePlaylistDetailSearchResult {
+  id: number
+  name: string
+  coverImgUrl: string
+  userId: number
+  createTime: number
+  playCount: number
+  description: string
+  trackIds: any[]
+  creator: NeteaseUserProfile
+}
+
+export interface NeteasePlaylistTracks {
+  info: NeteasePlaylistDetailSearchResult
+  tracks: SongDetail[]
 }

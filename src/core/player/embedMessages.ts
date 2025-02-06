@@ -43,3 +43,28 @@ export const NowPlayingPlaylistMessage = (playlist: Playlist) => {
       text: `${playlist.author.name}, ${timestampToYear(parseInt(playlist.author.url, 10))}`,
     })
 }
+
+// todo check this syntax
+export const NowPlayingUserPlaylistMessage = (playlist: Playlist) => {
+  const embed = new EmbedBuilder()
+  return [
+    (embed: EmbedBuilder) =>
+      embed.setAuthor({
+        name: `${playlist.tracks.length} song${playlist.tracks.length > 1 ? "s" : ""} added from playlist`,
+        url: APPLINK,
+        iconURL: ICONLINK,
+      }),
+    (embed: EmbedBuilder) => embed.setTitle(playlist.title),
+    (embed: EmbedBuilder) => embed.setThumbnail(playlist.thumbnail),
+    (embed: EmbedBuilder) => embed.setColor(EmbedColors.Playing),
+    (embed: EmbedBuilder) =>
+      embed.setFooter({
+        text: `From ${playlist.author.name}`,
+        iconURL: playlist.author.url ?? undefined, // Prevent null
+      }),
+    (embed: EmbedBuilder) =>
+      playlist.description?.trim()
+        ? embed.setDescription(playlist.description)
+        : embed,
+  ].reduce((embed, apply) => apply(embed), embed) // <-- Functional reduction
+}

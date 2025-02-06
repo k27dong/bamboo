@@ -7,6 +7,7 @@ import {
   type SearchQueryType,
   Track,
 } from "discord-player"
+import type { SongDetail } from "NeteaseCloudMusicApi"
 
 import {
   type ApiServiceType,
@@ -18,6 +19,7 @@ import { millisecondsToTimeString } from "@/common/utils/common"
 import { BambooApi } from "@/core/api/BambooApi"
 import type {
   NeteaseAlbumDetailed,
+  NeteasePlaylistSearchResult,
   NeteaseSong,
   NeteaseUserProfile,
 } from "@/core/api/interfaces"
@@ -138,6 +140,44 @@ export class BambooExtractor extends BaseExtractor {
 
         return this.createResponse(null, userTracks)
       }
+      case ExtractorSearchType.UserPlaylists: {
+        const rawUserPlaylists = await this.api.getUserPlaylists(query)
+        if (!rawUserPlaylists) throw new Error("Failed to get user playlists")
+
+        const userPlaylists = rawUserPlaylists.map((playlist) =>
+          this.buildPlaylistTrack(playlist, context),
+        )
+
+        return this.createResponse(null, userPlaylists)
+      }
+      case ExtractorSearchType.UserPlaylistTracks: {
+        const rawPlaylistTracks =
+          await this.api.getUserPlaylistTracksById(query)
+        if (!rawPlaylistTracks) throw new Error("Failed to get playlist")
+
+        const playlistInfo = rawPlaylistTracks.info
+
+        const playlistTracks = rawPlaylistTracks.tracks.map((track) =>
+          this.buildNeteaseTrack(track, context),
+        )
+
+        const playlist = new Playlist(this.context.player, {
+          tracks: playlistTracks,
+          title: playlistInfo.name,
+          description: playlistInfo.description,
+          thumbnail: playlistInfo.coverImgUrl,
+          type: "playlist",
+          source: "arbitrary",
+          author: {
+            name: playlistInfo.creator.nickname,
+            url: playlistInfo.creator.avatarUrl,
+          },
+          id: playlistInfo.id.toString(),
+          url: "",
+        })
+
+        return this.createResponse(playlist, playlistTracks)
+      }
       case ExtractorSearchType.Track:
       default: {
         const rawTrack = await this.api.getDefaultTrack(query)
@@ -179,6 +219,21 @@ export class BambooExtractor extends BaseExtractor {
     })
   }
 
+  buildNeteaseTrack(song: SongDetail, context: ExtractorSearchContext): Track {
+    return new Track(this.context.player, {
+      title: song.name,
+      url: `${song.id}`,
+      duration: millisecondsToTimeString(song.dt),
+      thumbnail: song.al.picUrl,
+      author: song.ar[0].name,
+      requestedBy: context.requestedBy,
+      source: "arbitrary",
+      queryType: context.type!,
+      metadata: song,
+      requestMetadata: () => Promise.resolve(song),
+    })
+  }
+
   buildAlbumSelectionItem(albumList: NeteaseAlbumDetailed[]): Track[] {
     return albumList.map((album) => {
       return new Track(this.context.player, {
@@ -208,6 +263,21 @@ export class BambooExtractor extends BaseExtractor {
     return new Track(this.context.player, {
       title: user.nickname,
       url: `${user.userId}`,
+      requestedBy: context.requestedBy,
+      source: "arbitrary",
+      queryType: context.type!,
+    })
+  }
+
+  buildPlaylistTrack(
+    playlist: NeteasePlaylistSearchResult,
+    context: ExtractorSearchContext,
+  ): Track {
+    return new Track(this.context.player, {
+      title: playlist.name,
+      url: `${playlist.id}`,
+      thumbnail: playlist.coverImgUrl,
+      author: playlist.trackCount.toString(),
       requestedBy: context.requestedBy,
       source: "arbitrary",
       queryType: context.type!,
