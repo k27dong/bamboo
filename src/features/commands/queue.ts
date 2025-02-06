@@ -26,7 +26,6 @@ const formatQueueMessage = (
 ): string => {
   if (!displayedTracks.length) return "```Track empty!```"
 
-  const maxLength = DISCORD_MESSAGE_CHAR_LIMIT
   const reservedSpace = 35
   const durationLine = `\n总时长: ${totalDuration}`
   let remainingTracks = 0
@@ -38,7 +37,10 @@ const formatQueueMessage = (
     const queuePosition = startPosition + i + 1
     const currLine = `${queuePosition}) ${title} ${author ? `(${author})` : ""} ${isCurrent}`
 
-    if (queueMessage.length + currLine.length + reservedSpace >= maxLength) {
+    if (
+      queueMessage.length + currLine.length + reservedSpace >=
+      DISCORD_MESSAGE_CHAR_LIMIT
+    ) {
       remainingTracks = totalQueueLength - (startPosition + i + 1)
       queueMessage += `${queuePosition}) ... (${remainingTracks} more)\n`
       break
@@ -56,7 +58,10 @@ const formatQueueMessage = (
     queueMessage += `\n... (${remainingTracks} more)`
   }
 
-  if (queueMessage.length + durationLine.length + 6 <= maxLength) {
+  if (
+    queueMessage.length + durationLine.length + 6 <=
+    DISCORD_MESSAGE_CHAR_LIMIT
+  ) {
     queueMessage += durationLine
   }
 
@@ -86,7 +91,7 @@ export const Queue: Command = {
 
       const currentTrack = queue.currentTrack
       const upcomingTracks = queue.tracks.data
-      const historyTracks = queue.history.tracks.data
+      const historyTracks = queue.history.tracks.data.reverse()
 
       const totalQueueLength = historyTracks.length + 1 + upcomingTracks.length
       const totalDuration = secondsToHumanDuration(

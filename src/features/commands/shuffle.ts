@@ -9,14 +9,14 @@ import { useQueue } from "discord-player"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 
-const SkipOption = new SlashCommandBuilder()
-  .setName("skip")
-  .setDescription("播放下一首")
+const ShuffleOption = new SlashCommandBuilder()
+  .setName("shuffle")
+  .setDescription("随机打乱播放列表")
 
-export const Skip: Command = {
-  name: SkipOption.name,
-  description: SkipOption.description,
-  data: SkipOption,
+export const Shuffle: Command = {
+  name: ShuffleOption.name,
+  description: ShuffleOption.description,
+  data: ShuffleOption,
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)
@@ -30,16 +30,13 @@ export const Skip: Command = {
         return
       }
 
-      if (!queue.isPlaying()) {
-        await interaction.reply("There is no track playing.")
-        return
+      if (queue.tracks.size >= 2) {
+        queue.tracks.shuffle()
       }
-
-      queue.node.skip()
 
       await interaction.reply("done")
     } catch (error: any) {
-      console.error(`❌ Error in ${Skip.name} command:`, error)
+      console.error(`❌ Error in ${Shuffle.name} command:`, error)
       await interaction.followUp({
         content: `❌ **Error**\n\`\`\`${error}\`\`\``,
         flags: MessageFlags.Ephemeral,
