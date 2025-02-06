@@ -103,7 +103,7 @@ export const Queue: Command = {
 
       const displayedTracks: Track[] = [currentTrack]
       const backRatio = 0.3
-      let remaining = 22
+      let remaining = 29
 
       let startPosition = historyTracks.length
       let historyPtr = historyTracks.length - 1

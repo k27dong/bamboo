@@ -1,6 +1,7 @@
 import type { Command } from "@/core/commands/Command"
 
 import { Album } from "./album"
+import { Clear } from "./clear"
 import { Jump } from "./jump"
 import { Lyric } from "./lyric"
 import { Ping } from "./ping"
@@ -19,5 +20,6 @@ export const Commands: Command[] = [
   Lyric,
   User,
   Shuffle,
-  Jump
+  Jump,
+  Clear
 ]
