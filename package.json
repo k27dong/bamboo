@@ -22,7 +22,6 @@
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix && prettier --write .",
     "start": "node --enable-source-maps --no-deprecation --optimize-for-size --max-old-space-size=4096 dist/Bamboo.js",
-    "watch": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
     "deploy:dev": "tsx src/common/scripts/deploy.ts dev",
     "deploy:global": "tsx src/common/scripts/deploy.ts global"
   },
@@ -48,7 +47,7 @@
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.17.0"
   },
-  "packageManager": "pnpm@9.10.0",
+  "packageManager": "pnpm@10.2.1",
   "engines": {
     "node": ">=20",
     "pnpm": ">=9"
