@@ -4,39 +4,35 @@ import {
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
-import { useQueue } from "discord-player"
+import { useHistory, useTimeline } from "discord-player"
 
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 
-const ShuffleOption = new SlashCommandBuilder()
-  .setName("shuffle")
-  .setDescription("随机打乱播放列表")
+const BackOption = new SlashCommandBuilder()
+  .setName("back")
+  .setDescription("播放上一首")
 
-export const Shuffle: Command = {
-  name: ShuffleOption.name,
-  description: ShuffleOption.description,
-  data: ShuffleOption,
+export const Back: Command = {
+  name: BackOption.name,
+  description: BackOption.description,
+  data: BackOption,
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)
 
-      const queue = useQueue(interaction.guild!)!
+      const history = useHistory(interaction.guild!)!
+      const timeline = useTimeline({ node: interaction.guildId! })
 
-      if (!queue) {
-        await interaction.reply(
-          "This server does not have an active player session.",
-        )
-        return
-      }
-
-      if (queue.tracks.size >= 2) {
-        queue.tracks.shuffle()
+      if (!history || history.isEmpty()) {
+        await timeline?.setPosition(0)
+      } else {
+        await history.previous(true)
       }
 
       await interaction.reply("done")
     } catch (error: any) {
-      console.error(`❌ Error in ${Shuffle.name} command:`, error)
+      console.error(`❌ Error in ${Back.name} command:`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

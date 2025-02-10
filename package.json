@@ -17,11 +17,13 @@
   "type": "module",
   "main": "dist/Bamboo.js",
   "scripts": {
-    "build": "tsc && tsc-alias",
-    "dev": "pnpm build && pnpm start",
+    "type-check": "tsc --noEmit",
+    "build": "pnpm type-check && node esbuild.config.js",
+    "start": "node --enable-source-maps --no-deprecation --max-old-space-size=4096 dist/Bamboo.js",
+    "dev": "cross-env NODE_ENV=development pnpm build && pnpm start",
+    "prod": "cross-env NODE_ENV=production pnpm build && pnpm start",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix && prettier --write .",
-    "start": "node --enable-source-maps --no-deprecation --optimize-for-size --max-old-space-size=4096 dist/Bamboo.js",
     "deploy:dev": "tsx src/common/scripts/deploy.ts dev",
     "deploy:global": "tsx src/common/scripts/deploy.ts global"
   },
@@ -39,7 +41,11 @@
     "qrcode-terminal": "^0.12.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.20.0",
     "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.20.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^15.13.0",
     "prettier": "^3.4.1",

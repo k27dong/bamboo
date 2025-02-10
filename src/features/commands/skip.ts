@@ -30,7 +30,7 @@ export const Skip: Command = {
         return
       }
 
-      if (!queue.isPlaying()) {
+      if (!queue.isPlaying() || !queue.currentTrack) {
         await interaction.reply("There is no track playing.")
         return
       }
@@ -40,6 +40,11 @@ export const Skip: Command = {
       await interaction.reply("done")
     } catch (error: any) {
       console.error(`❌ Error in ${Skip.name} command:`, error)
+
+      if (!interaction.deferred && !interaction.replied) {
+        await interaction.deferReply()
+      }
+
       await interaction.followUp({
         content: `❌ **Error**\n\`\`\`${error}\`\`\``,
         flags: MessageFlags.Ephemeral,

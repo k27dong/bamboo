@@ -8,7 +8,7 @@ import tseslint from "typescript-eslint"
 export default tseslint.config(
   {
     name: "k27dong/ignores",
-    ignores: ["dist"],
+    ignores: ["dist", "node_modules", "pnpm-lock.yaml"],
   },
   {
     name: "k27dong/languages",

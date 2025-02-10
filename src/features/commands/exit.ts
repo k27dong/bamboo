@@ -9,14 +9,14 @@ import { useQueue } from "discord-player"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 
-const ShuffleOption = new SlashCommandBuilder()
-  .setName("shuffle")
-  .setDescription("随机打乱播放列表")
+const ExitOption = new SlashCommandBuilder()
+  .setName("exit")
+  .setDescription("退出播放器")
 
-export const Shuffle: Command = {
-  name: ShuffleOption.name,
-  description: ShuffleOption.description,
-  data: ShuffleOption,
+export const Exit: Command = {
+  name: ExitOption.name,
+  description: ExitOption.description,
+  data: ExitOption,
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)
@@ -30,13 +30,11 @@ export const Shuffle: Command = {
         return
       }
 
-      if (queue.tracks.size >= 2) {
-        queue.tracks.shuffle()
-      }
+      queue.delete()
 
       await interaction.reply("done")
     } catch (error: any) {
-      console.error(`❌ Error in ${Shuffle.name} command:`, error)
+      console.error(`❌ Error in ${Exit.name} command:`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

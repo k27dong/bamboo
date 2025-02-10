@@ -57,6 +57,11 @@ export const Jump: Command = {
       await interaction.reply("Done.")
     } catch (error: any) {
       console.error(`❌ Error in ${Jump.name} command:`, error)
+
+      if (!interaction.deferred && !interaction.replied) {
+        await interaction.deferReply()
+      }
+
       await interaction.followUp({
         content: `❌ **Error**\n\`\`\`${error}\`\`\``,
         flags: MessageFlags.Ephemeral,

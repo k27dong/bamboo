@@ -231,6 +231,11 @@ export const User: Command = {
       })
     } catch (error: any) {
       console.error(`❌ Error in ${User.name} command:`, error)
+
+      if (!interaction.deferred && !interaction.replied) {
+        await interaction.deferReply()
+      }
+
       await interaction.followUp({
         content: `❌ **Error**\n\`\`\`${error}\`\`\``,
         flags: MessageFlags.Ephemeral,
