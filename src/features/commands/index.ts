@@ -11,6 +11,7 @@ import { Play } from "./play"
 import { Queue } from "./queue"
 import { Shuffle } from "./shuffle"
 import { Skip } from "./skip"
+import { Sudo } from "./sudo"
 import { User } from "./user"
 
 export const Commands: Command[] = [
@@ -26,4 +27,5 @@ export const Commands: Command[] = [
   Clear,
   Exit,
   Back,
+  Sudo,
 ]

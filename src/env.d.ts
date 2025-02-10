@@ -24,3 +24,9 @@ export interface QRCheckResponse {
   code: number
   cookie: string
 }
+
+export interface StatGuildsRecord {
+  name: string;
+  id: string;
+  joinedTimeClean: string;
+}

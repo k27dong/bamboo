@@ -116,3 +116,32 @@ export const getAvatarEmoji = (i: number, salt: string | number): string => {
 
   return UserSelectEmojiPool[index]
 }
+
+/**
+ * Converts a Unix timestamp (seconds or milliseconds) to a formatted date string (YYYY, MM, DD)
+ * @param timestamp - Unix timestamp (seconds or milliseconds since epoch)
+ * @returns Formatted date string in "YYYY, MM, DD" format (e.g. "2025, 01, 07")
+ * @throws {Error} If timestamp is invalid or out of range
+ * @example
+ * timestampToDate(1717987737)    // "2025, 06, 09" (seconds)
+ * timestampToDate(1717987737000) // "2025, 06, 09" (milliseconds)
+ */
+export const timestampToDate = (timestamp: number): string => {
+  if (typeof timestamp !== "number" || isNaN(timestamp)) {
+    throw new Error("Invalid timestamp: must be a valid number")
+  }
+
+  // Convert seconds-based timestamp to milliseconds if necessary
+  const adjustedTimestamp = timestamp < 1e10 ? timestamp * 1000 : timestamp
+  const date = new Date(adjustedTimestamp)
+
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid timestamp: cannot convert to valid date")
+  }
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0") // Ensure two-digit format
+  const day = String(date.getDate()).padStart(2, "0") // Ensure two-digit format
+
+  return `${year}, ${month}, ${day}`
+}
