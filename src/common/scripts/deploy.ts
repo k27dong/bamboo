@@ -10,9 +10,11 @@ export async function deployCommands(mode: DeployScope) {
   try {
     console.log("🔄 Started refreshing application (/) commands.")
 
-    const commandsData = Commands.map((command) => command.data.toJSON())
+    let commandsData
 
     if (mode === "dev") {
+      // Include all commands for development guild
+      commandsData = Commands.map((command) => command.data.toJSON())
       await rest.put(
         Routes.applicationGuildCommands(APPLICATION_ID, DEV_GUILD),
         { body: commandsData },
@@ -21,6 +23,11 @@ export async function deployCommands(mode: DeployScope) {
         `✅ Successfully reloaded commands for development guild: ${DEV_GUILD}`,
       )
     } else {
+      const globalCommands = Commands.filter(
+        (command) => command.data.name !== "sudo",
+      )
+
+      commandsData = globalCommands.map((command) => command.data.toJSON())
       await rest.put(Routes.applicationCommands(APPLICATION_ID), {
         body: commandsData,
       })
@@ -28,7 +35,6 @@ export async function deployCommands(mode: DeployScope) {
     }
   } catch (error) {
     console.error("❌ Failed to deploy commands:", error)
-
     if (error instanceof Error) {
       console.error("Error details:", {
         message: error.message,
