@@ -38,8 +38,8 @@ export const Jump: Command = {
       const historyTracksCount = queue.history.tracks.data.length
 
       if (
-        jumpPos < historyTracksCount ||
-        jumpPos >= historyTracksCount + upcomingTracksCount
+        jumpPos <= historyTracksCount + 1 ||
+        jumpPos > historyTracksCount + upcomingTracksCount + 1
       ) {
         await interaction.reply(
           "位置错误，请输入正确的位置。输入 `queue` 查看当前播放列表。",

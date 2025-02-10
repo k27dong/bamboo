@@ -170,6 +170,8 @@ export const User: Command = {
 
       playlistSelectionResponseCollector.on("collect", (response) => {
         void (async () => {
+          console.log(response)
+
           if (response.user.id !== interaction.user.id) {
             await response.reply({
               content: "❌ 请不要干扰他人选择",
@@ -212,6 +214,17 @@ export const User: Command = {
                 metadata: { channel: interaction.channel },
                 volume: 50,
               },
+            })
+          }
+        })()
+      })
+
+      playlistSelectionResponseCollector.on("end", (response) => {
+        void (async () => {
+          if (response.size === 0) {
+            await interaction.editReply({
+              content: "❌ 歌单选择超时",
+              components: [],
             })
           }
         })()

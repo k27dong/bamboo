@@ -21,5 +21,5 @@ export const Commands: Command[] = [
   User,
   Shuffle,
   Jump,
-  Clear
+  Clear,
 ]

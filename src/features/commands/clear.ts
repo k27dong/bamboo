@@ -10,8 +10,8 @@ import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 
 const ClearOption = new SlashCommandBuilder()
-.setName("clear")
-.setDescription("清空播放队列")
+  .setName("clear")
+  .setDescription("清空播放队列")
 
 export const Clear: Command = {
   name: ClearOption.name,
