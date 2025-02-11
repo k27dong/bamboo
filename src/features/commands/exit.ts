@@ -17,6 +17,7 @@ export const Exit: Command = {
   name: ExitOption.name,
   description: ExitOption.description,
   data: ExitOption,
+  manual: "停止播放并让Bamboo退出语音频道。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)

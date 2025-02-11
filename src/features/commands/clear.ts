@@ -17,6 +17,7 @@ export const Clear: Command = {
   name: ClearOption.name,
   description: ClearOption.description,
   data: ClearOption,
+  manual: "移除播放队列中的所有歌曲，不影响正在播放的曲目。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)

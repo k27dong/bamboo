@@ -17,6 +17,7 @@ export const Skip: Command = {
   name: SkipOption.name,
   description: SkipOption.description,
   data: SkipOption,
+  manual: "切歌。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)

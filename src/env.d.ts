@@ -6,6 +6,8 @@ export interface Credentials {
   DEV_CHANNEL_ID?: string
   REAL_IP?: string
   OPENAI_API_KEY?: string
+  SUPPORT_SERVER_ID?: string
+  SUPPORT_SERVER_CHANNEL_ID?: string
 }
 
 export type DeployScope = "dev" | "global"

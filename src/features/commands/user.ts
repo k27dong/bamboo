@@ -94,6 +94,8 @@ export const User: Command = {
   name: UserOption.name,
   description: UserOption.description,
   data: UserOption,
+  manual:
+    "在选项中填入用户名，在下拉菜单中选择用户的公开歌单，歌单中的所有歌曲将被添加到播放列表。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await interaction.deferReply({ ephemeral: true })

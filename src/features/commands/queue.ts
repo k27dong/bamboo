@@ -72,6 +72,7 @@ export const Queue: Command = {
   name: QueueOption.name,
   description: QueueOption.description,
   data: QueueOption,
+  manual: "显示当前的播放列表。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       const queue = useQueue(interaction.guild!)!

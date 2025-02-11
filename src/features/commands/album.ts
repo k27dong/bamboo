@@ -58,6 +58,8 @@ export const Album: Command = {
   name: AlbumOption.name,
   description: AlbumOption.description,
   data: AlbumOption,
+  manual:
+    "在选项中填入专辑名，在返回的列表中选择专辑，专辑中的所有歌曲会自动加到播放列表的末尾。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await interaction.deferReply({ ephemeral: true })

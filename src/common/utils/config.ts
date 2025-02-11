@@ -21,6 +21,8 @@ const config: Credentials = {
   DEV_CHANNEL_ID: process.env.DEV_CHANNEL_ID!,
   REAL_IP: process.env.REAL_IP!,
   OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
+  SUPPORT_SERVER_ID: process.env.SUPPORT_SERVER_ID!,
+  SUPPORT_SERVER_CHANNEL_ID: process.env.SUPPORT_SERVER_CHANNEL_ID!,
 }
 
 export const TOKEN = config.TOKEN
@@ -30,4 +32,6 @@ export const OWNER_ID = config.OWNER_ID
 export const DEV_CHANNEL_ID = config.DEV_CHANNEL_ID
 export const REAL_IP = config.REAL_IP
 export const OPENAI_API_KEY = config.OPENAI_API_KEY
+export const SUPPORT_SERVER_ID = config.SUPPORT_SERVER_ID
+export const SUPPORT_SERVER_CHANNEL_ID = config.SUPPORT_SERVER_CHANNEL_ID
 export const CREDENTIALS = config

@@ -17,6 +17,7 @@ export const Shuffle: Command = {
   name: ShuffleOption.name,
   description: ShuffleOption.description,
   data: ShuffleOption,
+  manual: "随机打乱播放列表。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)

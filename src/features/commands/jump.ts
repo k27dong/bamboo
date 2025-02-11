@@ -20,6 +20,7 @@ export const Jump: Command = {
   name: JumpOption.name,
   description: JumpOption.description,
   data: JumpOption,
+  manual: "跳转到播放列表中的指定位置，可使用 queue 指令查看索引。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)

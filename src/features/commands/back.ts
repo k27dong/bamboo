@@ -17,6 +17,7 @@ export const Back: Command = {
   name: BackOption.name,
   description: BackOption.description,
   data: BackOption,
+  manual: "它可以帮你回到上一首播放的歌曲。不过时间是回不去了。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)

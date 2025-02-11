@@ -12,7 +12,7 @@ import { checkInVoiceChannel } from "@/core/player/core"
 
 const PlayOption = new SlashCommandBuilder()
   .setName("play")
-  .setDescription("播放音乐")
+  .setDescription("播放单曲")
   .addStringOption((option) =>
     option.setName("搜索").setDescription("搜索音乐").setRequired(true),
   )

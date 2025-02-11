@@ -85,6 +85,7 @@ export const Lyric: Command = {
   name: LyricOption.name,
   description: LyricOption.description,
   data: LyricOption,
+  manual: "显示当前播放歌曲的歌词。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       const player = useMainPlayer()

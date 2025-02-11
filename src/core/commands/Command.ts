@@ -9,4 +9,5 @@ import type {
 export interface Command extends ChatInputApplicationCommandData {
   data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder
   run: (client: Client, interaction: CommandInteraction) => Promise<void>
+  manual?: string
 }
