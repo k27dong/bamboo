@@ -1,0 +1,61 @@
+{
+  "name": "bamboo",
+  "version": "5.0.0",
+  "private": true,
+  "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
+  "homepage": "https://github.com/k27dong/bamboo#readme",
+  "bugs": {
+    "url": "https://github.com/k27dong/bamboo/issues",
+    "email": "me@kefan.me"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k27dong/bamboo.git"
+  },
+  "license": "MIT",
+  "author": "k27dong",
+  "type": "module",
+  "main": "dist/Bamboo.js",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "build": "pnpm type-check && node esbuild.config.js",
+    "start": "node --enable-source-maps --no-deprecation --max-old-space-size=4096 dist/Bamboo.js",
+    "dev": "cross-env NODE_ENV=development pnpm build && pnpm start",
+    "prod": "cross-env NODE_ENV=production pnpm build && pnpm start",
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --cache --fix && prettier --write .",
+    "deploy:dev": "tsx src/common/scripts/deploy.ts dev",
+    "deploy:global": "tsx src/common/scripts/deploy.ts global"
+  },
+  "dependencies": {
+    "@discord-player/extractor": "^7.1.0",
+    "@discordjs/voice": "^0.18.0",
+    "@types/qrcode-terminal": "^0.12.2",
+    "NeteaseCloudMusicApi": "^4.25.0",
+    "bufferutil": "^4.0.8",
+    "discord-player": "^7.1.0",
+    "discord-player-youtubei": "^1.4.2",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5",
+    "openai": "^4.82.0",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "esbuild": "^0.25.0",
+    "eslint": "^9.20.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^15.13.0",
+    "prettier": "^3.4.1",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.17.0"
+  },
+  "packageManager": "pnpm@10.2.1",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  }
+}
