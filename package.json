@@ -21,7 +21,7 @@
     "build": "pnpm type-check && node esbuild.config.js",
     "start": "node --enable-source-maps --no-deprecation --max-old-space-size=4096 dist/Bamboo.js",
     "dev": "cross-env NODE_ENV=development pnpm build && pnpm start",
-    "prod": "cross-env NODE_ENV=production pnpm build && pnpm start",
+    "prod": "cross-env NODE_ENV=production pnpm build && cross-env NODE_ENV=production pnpm start",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix && prettier --write .",
     "deploy:dev": "tsx src/common/scripts/deploy.ts dev",
