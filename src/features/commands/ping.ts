@@ -17,7 +17,9 @@ export const Ping: Command = {
   data: PingOption,
   run: async (_: Client, interaction: CommandInteraction) => {
     try {
-      await interaction.reply("Pong!")
+      await interaction.reply(
+        `Pong! The latency is ${interaction.client.ws.ping}ms`,
+      )
     } catch (error: any) {
       console.error("❌ Error in ping command:", error)
 

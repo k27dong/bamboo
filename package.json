@@ -25,7 +25,8 @@
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix && prettier --write .",
     "deploy:dev": "tsx src/common/scripts/deploy.ts dev",
-    "deploy:global": "tsx src/common/scripts/deploy.ts global"
+    "deploy:prod": "cross-env NODE_ENV=production tsx src/common/scripts/deploy.ts global",
+    "check": "tsx src/common/scripts/checkDep.ts"
   },
   "dependencies": {
     "@discord-player/extractor": "^7.1.0",
