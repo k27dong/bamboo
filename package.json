@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@discord-player/extractor": "^7.1.0",
+    "@discordjs/opus": "^0.10.0",
     "@discordjs/voice": "^0.18.0",
     "@types/qrcode-terminal": "^0.12.2",
     "NeteaseCloudMusicApi": "^4.25.0",
