@@ -10,7 +10,7 @@ import { Player } from "discord-player"
 import { YoutubeiExtractor } from "discord-player-youtubei"
 
 import { ApiServiceType } from "@/common/constants"
-import { TOKEN } from "@/common/utils/config"
+import { ENVIROMENT, TOKEN } from "@/common/utils/config"
 import { setUpCookie } from "@/common/utils/cookie"
 import { BambooExtractor } from "@/core/extractor/BambooExtractor"
 import * as playerEvents from "@/core/player/events"
@@ -42,6 +42,12 @@ await player.extractors.register(ReverbnationExtractor, {})
 // await player.extractors.register(YoutubeiExtractor, {})
 
 // Log in to Discord
-client.login(TOKEN).catch((error) => {
-  console.error("❌ Failed to log in:", error)
-})
+client
+  .login(TOKEN)
+  .then(() => {
+    console.log(`✅ Successfully started in ${ENVIROMENT}`)
+    console.log("🚀 Bamboo On")
+  })
+  .catch((error) => {
+    console.error("❌ Failed to log in:", error)
+  })

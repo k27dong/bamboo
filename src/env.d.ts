@@ -7,10 +7,12 @@ export interface Credentials {
   REAL_IP?: string
   OPENAI_API_KEY?: string
   SUPPORT_SERVER_ID?: string
-  SUPPORT_SERVER_CHANNEL_ID?: string
+  SUPPORT_SERVER_CHANNEL_ID?: string,
+  ENVIROMENT: Environment
 }
 
 export type DeployScope = "dev" | "global"
+export type Environment = "development" | "production"
 
 export interface QRKeyResponse {
   code: number

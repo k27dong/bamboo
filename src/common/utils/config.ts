@@ -2,9 +2,10 @@ import dotenv from "dotenv"
 import fs from "fs"
 import path from "path"
 
-import type { Credentials } from "@/env"
+import type { Credentials, Environment } from "@/env"
 
-const NODE_ENV = process.env.NODE_ENV || "development"
+const NODE_ENV: Environment =
+  process.env.NODE_ENV === "production" ? "production" : "development"
 const envFilePath = path.resolve(process.cwd(), `.env.${NODE_ENV}`)
 
 if (!fs.existsSync(envFilePath)) {
@@ -23,6 +24,7 @@ const config: Credentials = {
   OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
   SUPPORT_SERVER_ID: process.env.SUPPORT_SERVER_ID!,
   SUPPORT_SERVER_CHANNEL_ID: process.env.SUPPORT_SERVER_CHANNEL_ID!,
+  ENVIROMENT: NODE_ENV,
 }
 
 export const TOKEN = config.TOKEN
@@ -34,4 +36,5 @@ export const REAL_IP = config.REAL_IP
 export const OPENAI_API_KEY = config.OPENAI_API_KEY
 export const SUPPORT_SERVER_ID = config.SUPPORT_SERVER_ID
 export const SUPPORT_SERVER_CHANNEL_ID = config.SUPPORT_SERVER_CHANNEL_ID
+export const ENVIROMENT = config.ENVIROMENT
 export const CREDENTIALS = config
