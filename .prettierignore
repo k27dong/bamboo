@@ -1,0 +1,41 @@
+# Ignore build artifacts
+dist
+
+# Ignore environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Ignore logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Ignore package manager lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore TypeScript cache
+*.tsbuildinfo
+
+# Ignore coverage reports
+coverage
+
+# Ignore generated files
+*.d.ts
+*.d.ts.map
+
+# Ignore IDE settings
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db

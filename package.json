@@ -1,56 +1,62 @@
 {
   "name": "bamboo",
-  "version": "4.0.3",
+  "version": "5.0.0",
+  "private": true,
   "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
-  "main": "index.js",
-  "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "test": "cross-env ./node_modules/.bin/mocha -timeout 10000",
-    "full_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha -timeout 10000",
-    "single_test": "cross-env nyc --reporter=text ./node_modules/.bin/mocha  -timeout 10000 --",
-    "start": "node index.js",
-    "docker:build": "docker build -t bamboo:$npm_package_version .",
-    "docker:build:win": "docker build -t bamboo:%npm_package_version% .",
-    "deploy:dev": "node src/util/deploy_local.js",
-    "deploy:prod": "node src/util/deploy_global.js",
-    "flush:prod": "node src/util/flush_global.js"
+  "homepage": "https://github.com/k27dong/bamboo#readme",
+  "bugs": {
+    "url": "https://github.com/k27dong/bamboo/issues",
+    "email": "me@kefan.me"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/k27dong/bamboo.git"
   },
-  "author": "k27dong",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/k27dong/bamboo/issues"
+  "author": "k27dong",
+  "type": "module",
+  "main": "dist/Bamboo.js",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "build": "pnpm type-check && node esbuild.config.js",
+    "start": "node --enable-source-maps --no-deprecation --max-old-space-size=4096 dist/Bamboo.js",
+    "dev": "cross-env NODE_ENV=development pnpm build && pnpm start",
+    "prod": "cross-env NODE_ENV=production pnpm build && pnpm start",
+    "lint": "eslint . --cache",
+    "lint:fix": "eslint . --cache --fix && prettier --write .",
+    "deploy:dev": "tsx src/common/scripts/deploy.ts dev",
+    "deploy:prod": "cross-env NODE_ENV=production tsx src/common/scripts/deploy.ts global",
+    "check": "tsx src/common/scripts/checkDep.ts"
   },
-  "nyc": {
-    "exclude": [
-      "src/commands/sudo.js",
-      "src/commands/reload.js"
-    ]
-  },
-  "homepage": "https://github.com/k27dong/bamboo#readme",
   "dependencies": {
-    "@discordjs/opus": "^0.9.0",
-    "@discordjs/voice": "^0.16.0",
-    "NeteaseCloudMusicApi": "^4.8.10",
-    "axios": "^1.4.0",
-    "discord.js": "^14.11.0",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "libsodium-wrappers": "^0.7.11",
-    "qrcode": "^1.5.3"
+    "@discord-player/extractor": "^7.1.0",
+    "@discordjs/voice": "^0.18.0",
+    "@types/qrcode-terminal": "^0.12.2",
+    "NeteaseCloudMusicApi": "^4.25.0",
+    "bufferutil": "^4.0.8",
+    "discord-player": "^7.1.0",
+    "discord-player-youtubei": "^1.4.2",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5",
+    "openai": "^4.82.0",
+    "qrcode-terminal": "^0.12.0"
   },
   "devDependencies": {
-    "chai": "^4.3.7",
-    "chai-as-promised": "^7.1.1",
-    "chai-sorted": "^0.2.0",
+    "@eslint/js": "^9.20.0",
+    "concurrently": "^9.1.0",
     "cross-env": "^7.0.3",
-    "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
-    "prettier": "^3.0.1",
-    "proxyquire": "^2.1.3",
-    "sinon": "^15.2.0"
+    "esbuild": "^0.25.0",
+    "eslint": "^9.20.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^15.13.0",
+    "prettier": "^3.4.1",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.17.0"
+  },
+  "packageManager": "pnpm@10.2.1",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
   }
 }
