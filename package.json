@@ -54,6 +54,7 @@
     "globals": "^15.13.0",
     "prettier": "^3.4.1",
     "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.17.0"
   },
