@@ -6,6 +6,7 @@ import {
 } from "discord.js"
 
 import { timestampToDate } from "@/common/utils/common"
+import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import type { StatGuildsRecord } from "@/env"
 
@@ -56,7 +57,7 @@ export const Sudo: Command = {
         }
       }
     } catch (error: any) {
-      console.error(`❌ Error in ${Sudo.name} command:`, error)
+      logger.error(interaction, Sudo, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

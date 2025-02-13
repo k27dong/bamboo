@@ -14,6 +14,7 @@ import {
 } from "@/common/constants"
 import { LYRIC_SANITIZATION_PROMPT } from "@/common/prompts"
 import { OPENAI_API_KEY } from "@/common/utils/config"
+import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 
 const getGptParsedLyric = async (
@@ -127,7 +128,7 @@ export const Lyric: Command = {
       ])
       await interaction.editReply(gptParsedLyric)
     } catch (error: any) {
-      console.error(`❌ Error in ${Lyric.name} command:`, error)
+      logger.error(interaction, Lyric, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

@@ -26,6 +26,7 @@
     "prod": "pnpm build:prod && pnpm start:prod",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix && prettier --write .",
+    "flush:dev": "tsx src/common/scripts/flush.ts",
     "deploy:dev": "tsx src/common/scripts/deploy.ts dev",
     "deploy:prod": "cross-env NODE_ENV=production tsx src/common/scripts/deploy.ts global",
     "check": "tsx src/common/scripts/checkDep.ts"
@@ -37,6 +38,7 @@
     "@types/qrcode-terminal": "^0.12.2",
     "NeteaseCloudMusicApi": "^4.25.0",
     "bufferutil": "^4.0.8",
+    "chalk": "^5.4.1",
     "discord-player": "^7.1.0",
     "discord-player-youtubei": "^1.4.2",
     "discord.js": "^14.16.3",

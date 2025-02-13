@@ -15,6 +15,7 @@ import {
   SUPPORT_SERVER_CHANNEL_ID,
   SUPPORT_SERVER_ID,
 } from "@/common/utils/config"
+import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 
 import { Commands } from "."
@@ -102,7 +103,7 @@ export const Help: Command = {
         components: [component],
       })
     } catch (error: any) {
-      console.error("❌ Error in help command:", error)
+      logger.error(interaction, Help, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

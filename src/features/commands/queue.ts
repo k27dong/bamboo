@@ -11,6 +11,7 @@ import {
   durationStringToSeconds,
   secondsToHumanDuration,
 } from "@/common/utils/common"
+import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 
 const QueueOption = new SlashCommandBuilder()
@@ -158,7 +159,7 @@ export const Queue: Command = {
         ),
       )
     } catch (error: any) {
-      console.error(`❌ Error in ${Queue.name} command:`, error)
+      logger.error(interaction, Queue, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

@@ -13,6 +13,7 @@ import { type Track, useMainPlayer } from "discord-player"
 
 import { EXTRACTOR_IDENTIFIER, ExtractorSearchType } from "@/common/constants"
 import { getAvatarEmoji } from "@/common/utils/common"
+import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 import {
@@ -172,8 +173,6 @@ export const User: Command = {
 
       playlistSelectionResponseCollector.on("collect", (response) => {
         void (async () => {
-          console.log(response)
-
           if (response.user.id !== interaction.user.id) {
             await response.reply({
               content: "❌ 请不要干扰他人选择",
@@ -232,7 +231,7 @@ export const User: Command = {
         })()
       })
     } catch (error: any) {
-      console.error(`❌ Error in ${User.name} command:`, error)
+      logger.error(interaction, User, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

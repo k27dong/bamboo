@@ -6,6 +6,7 @@ import {
 } from "discord.js"
 import { useHistory, useTimeline } from "discord-player"
 
+import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 
@@ -33,7 +34,7 @@ export const Back: Command = {
 
       await interaction.reply("done")
     } catch (error: any) {
-      console.error(`❌ Error in ${Back.name} command:`, error)
+      logger.error(interaction, Back, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

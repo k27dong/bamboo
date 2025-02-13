@@ -4,6 +4,7 @@ import {
   SoundCloudExtractor,
   VimeoExtractor,
 } from "@discord-player/extractor"
+import chalk from "chalk"
 import { Client, GatewayIntentBits } from "discord.js"
 import { Player } from "discord-player"
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -45,8 +46,7 @@ await player.extractors.register(ReverbnationExtractor, {})
 client
   .login(TOKEN)
   .then(() => {
-    console.log(`✅ Successfully started in ${ENVIROMENT}`)
-    console.log("🚀 Bamboo On")
+    console.log(`✅ Successfully started in ${chalk.bold(ENVIROMENT)}`)
   })
   .catch((error) => {
     console.error("❌ Failed to log in:", error)

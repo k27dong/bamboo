@@ -6,6 +6,7 @@ import {
 } from "discord.js"
 import { useQueue } from "discord-player"
 
+import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 
@@ -57,7 +58,7 @@ export const Jump: Command = {
 
       await interaction.reply("Done.")
     } catch (error: any) {
-      console.error(`❌ Error in ${Jump.name} command:`, error)
+      logger.error(interaction, Jump, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

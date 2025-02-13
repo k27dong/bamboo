@@ -6,6 +6,7 @@ import {
 } from "discord.js"
 import { useQueue } from "discord-player"
 
+import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 
@@ -38,7 +39,7 @@ export const Clear: Command = {
 
       await interaction.reply("done")
     } catch (error: any) {
-      console.error(`❌ Error in ${Clear.name} command:`, error)
+      logger.error(interaction, Clear, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

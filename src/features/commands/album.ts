@@ -22,6 +22,7 @@ import {
   ExtractorSearchType,
 } from "@/common/constants"
 import { timestampToYear } from "@/common/utils/common"
+import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 import {
@@ -234,7 +235,7 @@ export const Album: Command = {
         })()
       })
     } catch (error: any) {
-      console.error(`❌ Error in ${Album.name} command:`, error)
+      logger.error(interaction, Album, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

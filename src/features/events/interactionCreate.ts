@@ -1,5 +1,7 @@
 import { type Client, Events, type Interaction } from "discord.js"
 
+import { logger } from "@/common/utils/logger"
+
 import { Commands } from "../commands"
 
 export default (client: Client) => {
@@ -12,6 +14,7 @@ export default (client: Client) => {
           )
 
           if (command) {
+            logger.info(interaction)
             await command.run(client, interaction)
           }
         }
