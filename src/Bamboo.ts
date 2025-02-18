@@ -11,11 +11,16 @@ import { Player } from "discord-player"
 import { YoutubeiExtractor } from "discord-player-youtubei"
 
 import { ApiServiceType } from "@/common/constants"
+import { initializeVersion } from "@/common/utils/common"
 import { ENVIROMENT, TOKEN } from "@/common/utils/config"
 import { setUpCookie } from "@/common/utils/cookie"
 import { BambooExtractor } from "@/core/extractor/BambooExtractor"
 import * as playerEvents from "@/core/player/events"
 import * as clientEvents from "@/features/events"
+
+initializeVersion().catch((error) => {
+  console.error("❌ Failed to initialize version:", error)
+})
 
 // Create new Discord and player clients
 const client = new Client({

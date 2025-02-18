@@ -69,7 +69,8 @@ package-lock.json
 
 # Credentials
 .env
-.env.*
+.env.development
+.env.production
 
 # Build
 dist/

@@ -9,3 +9,7 @@ export interface QueueMetadata {
 export interface ExtractorSearchOptions {
   searchType: ExtractorSearchType
 }
+
+export interface PackageJson {
+  version: string
+}

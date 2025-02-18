@@ -1,6 +1,6 @@
 {
   "name": "bamboo",
-  "version": "5.0.0",
+  "version": "5.0.2",
   "private": true,
   "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
   "homepage": "https://github.com/k27dong/bamboo#readme",
@@ -26,8 +26,8 @@
     "prod": "pnpm build:prod && pnpm start:prod",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix && prettier --write .",
-    "flush:dev": "tsx src/common/scripts/flush.ts",
-    "deploy:dev": "tsx src/common/scripts/deploy.ts dev",
+    "flush:dev": "cross-env NODE_ENV=development tsx src/common/scripts/flush.ts",
+    "deploy:dev": "cross-env NODE_ENV=development tsx src/common/scripts/deploy.ts dev",
     "deploy:prod": "cross-env NODE_ENV=production tsx src/common/scripts/deploy.ts global",
     "check": "tsx src/common/scripts/checkDep.ts"
   },
