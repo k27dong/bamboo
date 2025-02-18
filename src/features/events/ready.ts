@@ -1,5 +1,5 @@
 import { type Client, Events } from "discord.js"
-import AutoPoster from "topgg-autoposter"
+import { AutoPoster } from "topgg-autoposter"
 
 import { ENVIROMENT, TOPGG_TOKEN } from "@/common/utils/config"
 
