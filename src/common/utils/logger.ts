@@ -13,7 +13,10 @@ let lastTimestamp: { time: string; value: string } = { time: "", value: "" }
 const getTimestamp = () => {
   try {
     const now = new Date()
-    const timeString = now.toLocaleTimeString([], { hour12: false })
+    const timeString = now.toLocaleTimeString("en-CA", {
+      hour12: false,
+      timeZone: "America/Toronto",
+    })
 
     if (lastTimestamp.time !== timeString) {
       lastTimestamp = {
