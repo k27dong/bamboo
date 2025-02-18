@@ -7,6 +7,7 @@ module.exports = {
       autorestart: true,
       max_memory_restart: "2G",
       node_args: ["--enable-source-maps", "--no-deprecation"],
+      args: ["--color"],
       env: {
         NODE_ENV: "development",
       },

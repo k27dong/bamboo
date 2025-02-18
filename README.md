@@ -43,16 +43,15 @@ Bamboo is actively developed and maintained. If you encounter any bugs or have s
 
 ### Prerequisites
 
--   [`Node.js`]: Runtime for the project
--   [`pnpm`]: Package manager
--   [`ffmpeg`]: Required for audio processing and streaming
+- [`Node.js`]: Runtime for the project
+- [`pnpm`]: Package manager
+- [`ffmpeg`]: Required for audio processing and streaming
 
 ### Usage
 
 1. `pnpm install`: Install dependencies
 2. create a `.env.development` file in the root directory with the format of `.env.example`, and fill in the required fields
 3. `pnpm dev`: build and run the bot in development mode
-
 
 ## Demo
 

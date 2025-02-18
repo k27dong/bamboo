@@ -18,6 +18,7 @@ esbuild
       "discord-player-youtubei",
       "NeteaseCloudMusicApi",
       "openai",
+      "topgg-autoposter",
     ],
     logLevel: "info",
   })

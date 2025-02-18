@@ -24,6 +24,7 @@ const config: Credentials = {
   OPENAI_API_KEY: process.env.OPENAI_API_KEY!,
   SUPPORT_SERVER_ID: process.env.SUPPORT_SERVER_ID!,
   SUPPORT_SERVER_CHANNEL_ID: process.env.SUPPORT_SERVER_CHANNEL_ID!,
+  TOPGG_TOKEN: process.env.TOPGG_TOKEN!,
   ENVIROMENT: NODE_ENV,
 }
 
@@ -36,5 +37,6 @@ export const REAL_IP = config.REAL_IP
 export const OPENAI_API_KEY = config.OPENAI_API_KEY
 export const SUPPORT_SERVER_ID = config.SUPPORT_SERVER_ID
 export const SUPPORT_SERVER_CHANNEL_ID = config.SUPPORT_SERVER_CHANNEL_ID
+export const TOPGG_TOKEN = config.TOPGG_TOKEN
 export const ENVIROMENT = config.ENVIROMENT
 export const CREDENTIALS = config

@@ -8,6 +8,7 @@ export interface Credentials {
   OPENAI_API_KEY?: string
   SUPPORT_SERVER_ID?: string
   SUPPORT_SERVER_CHANNEL_ID?: string,
+  TOPGG_TOKEN?: string,
   ENVIROMENT: Environment
 }
 
