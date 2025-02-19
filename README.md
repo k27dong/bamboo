@@ -18,12 +18,9 @@
   <a href="https://top.gg/bot/899025207161929768"><img src="https://top.gg/api/widget/servers/899025207161929768.svg"></a>
 </p>
 
-<h3 align="center">
-  <a href="https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands">Invite to Server</a>
-</h3>
-
 <p align="center">
-  <a href="https://www.buymeacoffee.com/kefan">Sponsor Me</a>
+  <a href="https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands"><img src="https://github.com/user-attachments/assets/c2c55d9c-a410-41dd-9713-07a4356e3952" width="180"/></a>
+  <a href="https://www.buymeacoffee.com/kefan"><img src="https://github.com/user-attachments/assets/2c8af35e-e09a-481d-a25e-a9c778359ae2" width="180"/></a>
 </p>
 
 ## Overview
