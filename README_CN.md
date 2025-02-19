@@ -12,95 +12,70 @@
 <h4 align="center">一个播放网易云音乐的Discord机器人</h4>
 
 <p align="center">
-  <a href="https://github.com/discordjs">
-    <img src="https://img.shields.io/badge/discord.js-v14.11.0-f7df1e.svg?logo=pnpm" alt="discord.js badge" />
-  </a>
-  <a href="https://discord.gg/yYrT6qfy">
-    <img src="https://img.shields.io/discord/966754695123177554.svg?logo=discord&colorB=7289DA&label=Support&logoColor=FAFAFA" alt="Support server badge"/>
-  </a>
-  <a href="https://www.buymeacoffee.com/kefan">
-    <img src="https://img.shields.io/badge/Sponser-me-7E598D?logo=Buy Me A Coffee&logoColor=EAB00E" alt="Sponsor page badge"/>
-  </a>
+  <a href="https://github.com/discordjs"><img src="https://img.shields.io/badge/discord.js-v14.16.3-f7df1e.svg?logo=pnpm" alt="discord.js badge" /></a>
+  <a href="https://discord.gg/yYrT6qfy"><img src="https://img.shields.io/discord/966754695123177554.svg?logo=discord&colorB=7289DA&label=Support&logoColor=FAFAFA" alt="Support server badge"/></a>
+  <a href="https://www.codefactor.io/repository/github/k27dong/bamboo"><img src="https://img.shields.io/codefactor/grade/github/k27dong/bamboo/master?logo=CodeFactor"  alt="Code quality badge"/></a>
+  <a href="https://top.gg/bot/899025207161929768"><img src="https://top.gg/api/widget/servers/899025207161929768.svg"></a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/k27dong/bamboo/actions">
-    <img src="https://github.com/k27dong/bamboo/actions/workflows/build.yml/badge.svg" alt="Github action badge"/>
-  </a>
-  <a href="https://stats.uptimerobot.com/n66xyTlXRK">
-    <img src="https://img.shields.io/uptimerobot/status/m795020475-ea6ed10802161d18399aebf6?logo=rescuetime" alt="Uptime badge"/>
-  </a>
-  <a href="https://www.codefactor.io/repository/github/k27dong/bamboo">
-    <img src="https://img.shields.io/codefactor/grade/github/k27dong/bamboo/master?logo=CodeFactor"  alt="Code quality badge"/>
-  </a>
-  <a href="https://github.com/k27dong/bamboo/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License badge">
-  </a>
+  <a href="https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands"><img src="https://github.com/user-attachments/assets/c2c55d9c-a410-41dd-9713-07a4356e3952" width="180"/></a>
+  <a href="https://www.buymeacoffee.com/kefan"><img src="https://github.com/user-attachments/assets/2c8af35e-e09a-481d-a25e-a9c778359ae2" width="180"/></a>
 </p>
 
 ## 介绍
 
-Bamboo(竹) 是一个播放[网易云音乐](https://music.163.com/)的Discord机器人，使用[discord.js](https://discord.js.org/)与JavaScript编写。
+Bamboo(竹) 是一个播放[网易云音乐](https://music.163.com/)的Discord机器人，使用[discord.js](https://discord.js.org/)与TypeScript编写。
 
 [English Readme](https://github.com/k27dong/bamboo/blob/master/README.md)
 
 ## 安装
 
-[添加至服务器](https://discord.com/api/oauth2/authorize?client_id=899025207161929768&permissions=8&scope=bot%20applications.commands)
+Bamboo(竹)部署在作者租用的Vultr服务器上以保证服务的稳定性与24/7在线。项目经过多次迭代已经进入了比较稳定的阶段。为了获得更好的体验，您也可以选择自行部署Bamboo。
 
-Bamboo(竹)部署在作者租用的服务器上以保证长期在线，但是由于服务器性能与带宽有限，在使用高峰期可能会出现卡顿/崩溃的情况。因此，如果您有条件，建议自行部署Bamboo。
+作者会持续更新与维护Bamboo，如果您有任何建议或遇到技术问题，欢迎加入官方服务器与我交流。
 
-本项目依旧处于早期开发阶段。如果在使用中遇到了任何问题或者有任何建议，欢迎加入官方服务器并告诉我。
-
-[官方服务器](https://discord.gg/p6F32GejZT)
+[加入官方服务器](https://discord.gg/p6F32GejZT)
 
 ## 本地开发
 
-> **Note**
-> 截至2023年8月，Linux环境下的`ffmpeg-static`会错误地触发`discord.js`中`AudioPlayerStatus`的事件。因此该环境下的用户必须自行安装`ffmpeg`：
->
-> ```shell
-> $ sudo apt update && sudo apt install ffmpeg
-> ```
->
-> 对于其他OS下的环境，`ffmpeg`可以直接通过`pnpm`安装：
->
-> ```shell
-> $ pnpm install ffmpeg-static
-> ```
->
-> 详情请见[这个帖子](https://github.com/Androz2091/discord-player/issues/1639#issuecomment-1477466885)。
+### 环境要求
 
-- 安装 [Node.js](https://nodejs.org/en/) >= v16 与 [pnpm](https://pnpm.io/)
-- 填写 `.env` 文件，参考 `.env.example`
-- Docker: `docker compose up`
-- Node: `pnpm install && pnpm start`
+- [`Node.js`](https://nodejs.org/en/download): 运行环境
+- [`pnpm`](https://pnpm.io/installation): 包管理器
+- [`ffmpeg`](https://ffmpeg.org/): 音频处理
 
-## 使用 & 截图
+### 快速开始
+
+1. `pnpm install`: 安装依赖
+2. 复制 `.env.example` 为 `.env.development` 并填写。
+3. `pnpm dev`: 启动开发环境
+
+## 使用 & 截图 (请打开声音)
 
 播放整张专辑：
 
-<p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/b28eefca-cc62-4d59-b16c-ed176a21a373" width="95%" height="95%" alt="album_demo"/>
-</p>
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/2ce8fdde-f4db-4fb8-a317-17b662bf1828"/>
+</div>
 
 播放用户歌单：
 
-<p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/8933171a-adfd-44b3-a30c-e28a1565df5f" width="95%" height="95%" alt="playlist_demo"/>
-</p>
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/191fe1c0-6879-4523-be01-f0ca9ac1128b"/>
+</div>
 
 播放歌曲：
 
-<p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/6233aad5-185c-4343-8bdc-663c9709f18d" width="95%" height="95%" alt="play_demo"/>
-</p>
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/6c5d0b8d-6371-4756-8b1c-26e3e32e26e0"/>
+</div>
 
 显示歌词：
 
-<p align="center">
-  <img src="https://github.com/k27dong/bamboo/assets/46537987/99e336cb-886f-4660-af8b-f67b6347cb67" width="95%" height="95%" alt="lyric_demo"/>
-</p>
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/f13f4f1f-b4d3-44b2-932d-decbb96d2cad"/>
+</div>
 
 ## 鸣谢
 

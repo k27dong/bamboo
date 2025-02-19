@@ -25,7 +25,7 @@
 
 ## Overview
 
-Bamboo is a Discord bot written in TypeScript that lets you stream music from [NetEase Cloud Music](https://music.163.com/) to Discord voice channels. It is built using esbuild for optimized performance and deployed on Vultr for reliable uptime.
+Bamboo is a Discord bot written in TypeScript that lets you stream music from [NetEase Cloud Music](https://music.163.com/). It is built with modern toolchain for efficiency and deployed on Vultr for reliable uptime.
 
 [中文文档](https://github.com/k27dong/bamboo/blob/master/README_CN.md)
 
