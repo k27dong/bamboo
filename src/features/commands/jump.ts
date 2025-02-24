@@ -56,7 +56,11 @@ export const Jump: Command = {
         await queue.node.play()
       }
 
-      await interaction.reply("Done.")
+      if (queue.node.isPaused()) {
+        queue.node.resume()
+      }
+
+      await interaction.reply("done")
     } catch (error: any) {
       logger.error(interaction, Jump, error)
 

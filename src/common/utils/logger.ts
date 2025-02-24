@@ -131,6 +131,8 @@ export const logger = {
         0,
         MAX_TITLE_LENGTH,
       )
+
+      const guildName = channel?.guild?.name?.slice(0, 50) || "Direct Message"
       const channelName = channel?.name?.slice(0, 30) || "Unknown channel"
 
       console.log(
@@ -138,7 +140,7 @@ export const logger = {
           timestamp,
           chalk.magentaBright("PLAYER"),
           " |",
-          chalk.greenBright(channelName),
+          chalk.greenBright(`${guildName} (${channelName})`),
           "-",
           chalk.yellowBright(safeTitle),
         ),

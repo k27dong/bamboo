@@ -77,7 +77,6 @@ Bamboo is actively developed and maintained. If you encounter any bugs or have s
   <video src="https://github.com/user-attachments/assets/f13f4f1f-b4d3-44b2-932d-decbb96d2cad"/>
 </div>
 
-
 ## Contributors
 
 <a href="https://github.com/k27dong/bamboo/graphs/contributors">

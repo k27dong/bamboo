@@ -24,12 +24,18 @@ export const Back: Command = {
       await checkInVoiceChannel(interaction)
 
       const history = useHistory(interaction.guild!)!
-      const timeline = useTimeline({ node: interaction.guildId! })
+      const timeline = useTimeline({ node: interaction.guildId! })!
 
       if (!history || history.isEmpty()) {
         await timeline?.setPosition(0)
       } else {
         await history.previous(true)
+      }
+
+      if (timeline.paused) {
+        timeline.resume()
+      } else {
+        timeline.pause()
       }
 
       await interaction.reply("done")

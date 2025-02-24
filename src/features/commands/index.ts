@@ -7,6 +7,7 @@ import { Exit } from "./exit"
 import { Help } from "./help"
 import { Jump } from "./jump"
 import { Lyric } from "./lyric"
+import { Pause } from "./pause"
 import { Ping } from "./ping"
 import { Play } from "./play"
 import { Queue } from "./queue"
@@ -30,4 +31,5 @@ export const Commands: Command[] = [
   Back,
   Sudo,
   Help,
+  Pause,
 ]

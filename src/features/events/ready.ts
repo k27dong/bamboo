@@ -9,8 +9,8 @@ export default (client: Client) => {
 
     if (TOPGG_TOKEN && ENVIROMENT === "production") {
       const autoPoster = AutoPoster(TOPGG_TOKEN, client)
-      autoPoster.on("posted", () => {
-        console.log("✅ Posted stats to top.gg")
+      autoPoster.on("error", (error) => {
+        console.error("❌ Error in top.gg stats posting:", error)
       })
     } else {
       console.log("⚙️ Skipping top.gg stats posting")

@@ -4,48 +4,49 @@ import {
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
-import { useQueue } from "discord-player"
+import { useTimeline } from "discord-player"
 
 import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 
-const SkipOption = new SlashCommandBuilder()
-  .setName("skip")
-  .setDescription("播放下一首")
+const PauseOption = new SlashCommandBuilder()
+  .setName("pause")
+  .setDescription("暂停/继续")
 
-export const Skip: Command = {
-  name: SkipOption.name,
-  description: SkipOption.description,
-  data: SkipOption,
-  manual: "切歌。",
+export const Pause: Command = {
+  name: PauseOption.name,
+  description: PauseOption.description,
+  data: PauseOption,
+  manual: "暂停/继续播放。",
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)
 
-      const queue = useQueue(interaction.guild!)!
+      const timeline = useTimeline({
+        node: interaction.guild!,
+      })!
 
-      if (!queue) {
+      if (!timeline) {
         await interaction.reply(
           "This server does not have an active player session.",
         )
         return
       }
 
-      if (!queue.isPlaying() || !queue.currentTrack) {
-        await interaction.reply("There is no track playing.")
-        return
+      const wasPaused = timeline.paused
+
+      if (wasPaused) {
+        timeline.resume()
+      } else {
+        timeline.pause()
       }
 
-      queue.node.skip()
-
-      if (queue.node.isPaused()) {
-        queue.node.resume()
-      }
-
-      await interaction.reply("done")
+      await interaction.reply(
+        `Now: ${wasPaused ? "**playing**" : "**paused**"}`,
+      )
     } catch (error: any) {
-      logger.error(interaction, Skip, error)
+      logger.error(interaction, Pause, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

@@ -57,6 +57,7 @@ export interface NeteaseSong {
   al: NeteaseAlbum
   dt: number // duration
   publishTime: number
+  s_id: number // to indicate if the song is from clouddisk
 }
 
 export interface NeteaseSongPlayable {
