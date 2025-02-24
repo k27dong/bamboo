@@ -1,6 +1,6 @@
 {
   "name": "bamboo",
-  "version": "5.0.3",
+  "version": "5.0.4",
   "private": true,
   "description": "Discord bot embedded with NetEase Music Api (从网易云播放的discord机器人)",
   "homepage": "https://github.com/k27dong/bamboo#readme",
