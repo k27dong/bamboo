@@ -32,6 +32,7 @@ export async function deployCommands(mode: DeployScope) {
         body: commandsData,
       })
       console.log("✅ Successfully reloaded global application (/) commands.")
+      console.log(" - Commands:", globalCommands.map((c) => c.name).join(", "))
     }
   } catch (error) {
     console.error("❌ Failed to deploy commands:", error)
