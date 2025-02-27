@@ -23,6 +23,12 @@ export const Pause: Command = {
     try {
       await checkInVoiceChannel(interaction)
 
+      await interaction.reply(
+        `temporarily disabled (Feb 26).`,
+      )
+
+      return
+
       const timeline = useTimeline({
         node: interaction.guild!,
       })!
