@@ -36,7 +36,7 @@ export const Help: Command = {
   data: HelpOption,
   run: async (client: Client, interaction: CommandInteraction) => {
     try {
-      const excludedCommands = ["sudo", "help", "ping"]
+      const excludedCommands = ["sudo", "help"]
       const command = interaction.options.data[0]?.value as string | undefined
 
       const availableCommands = Commands.filter(

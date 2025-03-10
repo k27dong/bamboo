@@ -12,7 +12,7 @@ import type { Command } from "@/core/commands/Command"
 
 const CleanOption = new SlashCommandBuilder()
   .setName("clean")
-  .setDescription("Cleans a specified number of messages in the current channel")
+  .setDescription("清理历史消息")
   .addIntegerOption((option) =>
     option
       .setName("amount")
@@ -27,6 +27,7 @@ export const Clean: Command = {
     name: CleanOption.name,
     description: CleanOption.description,
     data: CleanOption,
+    manual: "清理当前文字频道（输入数量的）历史消息，单次最多可清理99条。",
     run: async (_: Client, interaction: CommandInteraction) => {
         try {
             // check the channel type
