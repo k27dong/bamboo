@@ -15,6 +15,7 @@ import { Shuffle } from "./shuffle"
 import { Skip } from "./skip"
 import { Sudo } from "./sudo"
 import { User } from "./user"
+import { Clean } from "./clean"
 
 export const Commands: Command[] = [
   Ping,
@@ -32,4 +33,5 @@ export const Commands: Command[] = [
   Sudo,
   Help,
   Pause,
+  Clean,
 ]
