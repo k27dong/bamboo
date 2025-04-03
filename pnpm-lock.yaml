@@ -47,6 +47,9 @@ importers:
       qrcode-terminal:
         specifier: ^0.12.0
         version: 0.12.0
+      sodium-native:
+        specifier: ^4.3.2
+        version: 4.3.2
       topgg-autoposter:
         specifier: ^2.0.2
         version: 2.0.2
@@ -2356,6 +2359,9 @@ packages:
   socks@2.8.3:
     resolution: {integrity: sha512-l5x7VUUWbjVFbafGLxPWkYsHIhEvmF85tbIeFZWc8ZPtoMyybuEhL7Jye/ooC4/d48FgOjSJXgsF/AJPYCW8Zw==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
+
+  sodium-native@4.3.2:
+    resolution: {integrity: sha512-C/+lDL98iFA1nGo/um6FfLWYRE+Puw0vlSKr5bhWr1EqKjOFVfLLUQ9ccm2PL3RlF8krVWZusL4LTOlNlm2cJA==}
 
   soundcloud.ts@0.5.5:
     resolution: {integrity: sha512-bygjhC1w/w26Nk0Y+4D4cWSEJ1TdxLaE6+w4pCazFzPF+J4mzuB62ggWmFa7BiwnirzNf9lgPbjzrQYGege4Ew==}
@@ -4828,6 +4834,10 @@ snapshots:
     dependencies:
       ip-address: 9.0.5
       smart-buffer: 4.2.0
+
+  sodium-native@4.3.2:
+    dependencies:
+      node-gyp-build: 4.8.4
 
   soundcloud.ts@0.5.5:
     dependencies:
