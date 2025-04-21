@@ -19,7 +19,7 @@ export default (player: Player) => {
       logger.player(queue.channel, track.title)
 
       await channel.send({
-        embeds: [NowPlayingMessage(track)],
+        embeds: [NowPlayingMessage(track, queue)],
       })
     },
   )

@@ -94,4 +94,13 @@ export class BambooApi implements BambooMusicApi {
     const service = this.getService(source)
     return await service.getUserPlaylistTracksById(id)
   }
+
+  async getSimilarTrack(
+    id: string,
+    prevTracks: string[],
+    source: ApiServiceType = ApiServiceType.Netease,
+  ): Promise<NeteaseSong | null> {
+    const service = this.getService(source)
+    return await service.getSimilarTrack(id, prevTracks)
+  }
 }

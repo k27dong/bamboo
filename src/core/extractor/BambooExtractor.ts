@@ -2,6 +2,7 @@ import {
   BaseExtractor,
   type ExtractorInfo,
   type ExtractorSearchContext,
+  type GuildQueueHistory,
   Playlist,
   QueryType,
   type SearchQueryType,
@@ -200,20 +201,32 @@ export class BambooExtractor extends BaseExtractor {
   }
 
   // discord-player calls this method when it wants some tracks for autoplay mode.
-  // override async getRelatedTracks(track): Promise<ExtractorInfo> {
-  //   return this.createResponse(null, [tracks])
-  // }
+  override async getRelatedTracks(
+    track: Track,
+    history: GuildQueueHistory,
+  ): Promise<ExtractorInfo> {
+    if (!this.api) throw new Error("Extractor not activated")
 
-  buildTrack(info: NeteaseSong, context: ExtractorSearchContext): Track {
+    const prevTrackIds = history.tracks.data.map((t) => t.url)
+    const rawTrack = await this.api.getSimilarTrack(track.url, prevTrackIds)
+
+    if (!rawTrack) throw new Error("Failed to get track")
+
+    const relatedTrack = this.buildTrack(rawTrack)
+
+    return this.createResponse(null, [relatedTrack])
+  }
+
+  buildTrack(info: NeteaseSong, context?: ExtractorSearchContext): Track {
     return new Track(this.context.player, {
       title: info.name,
       url: `${info.id}`,
       duration: millisecondsToTimeString(info.dt),
       thumbnail: info.al.picUrl,
       author: info.ar[0].name,
-      requestedBy: context.requestedBy,
+      requestedBy: context?.requestedBy,
       source: "arbitrary",
-      queryType: context.type!,
+      queryType: context?.type ?? QueryType.AUTO,
       metadata: info,
       requestMetadata: () => Promise.resolve(info),
     })

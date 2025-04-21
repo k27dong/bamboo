@@ -5,6 +5,7 @@ import type { DeployScope } from "@/env"
 import { Commands } from "@/features/commands"
 
 const rest = new REST({ version: "10" }).setToken(TOKEN)
+const skippedCommands = ["sudo"]
 
 export async function deployCommands(mode: DeployScope) {
   try {
@@ -24,7 +25,7 @@ export async function deployCommands(mode: DeployScope) {
       )
     } else {
       const globalCommands = Commands.filter(
-        (command) => command.data.name !== "sudo",
+        (command) => !skippedCommands.includes(command.data.name),
       )
 
       commandsData = globalCommands.map((command) => command.data.toJSON())

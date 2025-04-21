@@ -214,6 +214,7 @@ export const User: Command = {
               nodeOptions: {
                 metadata: { channel: interaction.channel },
                 volume: 50,
+                leaveOnEndCooldown: 300_000,
               },
             })
           }

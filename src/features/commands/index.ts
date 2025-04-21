@@ -6,6 +6,7 @@ import { Clear } from "./clear"
 import { Exit } from "./exit"
 import { Help } from "./help"
 import { Jump } from "./jump"
+import { Loop } from "./loop"
 import { Lyric } from "./lyric"
 import { Pause } from "./pause"
 import { Ping } from "./ping"
@@ -32,4 +33,5 @@ export const Commands: Command[] = [
   Sudo,
   Help,
   Pause,
+  Loop,
 ]

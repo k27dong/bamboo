@@ -14,6 +14,7 @@ import { getAlbumSongs } from "./getAlbumSongs"
 import { getPlaylistsByUserId } from "./getPlaylistsByUserId"
 import { getPlaylistTracks } from "./getPlaylistTracks"
 import { getRawLyricById } from "./getRawLyricById"
+import { getSimilarTrackById } from "./getSimilarTrackById"
 import { getSongUrlByTrack } from "./getTrackUrl"
 import { searchSong } from "./searchSong"
 import { searchUser } from "./searchUser"
@@ -59,5 +60,12 @@ export class NeteaseService implements BambooMusicApi {
     id: string,
   ): Promise<NeteasePlaylistTracks | null> {
     return getPlaylistTracks(id, this.cookie)
+  }
+
+  async getSimilarTrack(
+    id: string,
+    prev: string[],
+  ): Promise<NeteaseSong | null> {
+    return getSimilarTrackById(id, prev, this.cookie)
   }
 }

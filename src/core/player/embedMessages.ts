@@ -1,5 +1,10 @@
 import { EmbedBuilder } from "discord.js"
-import type { Playlist, Track } from "discord-player"
+import {
+  type GuildQueue,
+  type Playlist,
+  QueueRepeatMode,
+  type Track,
+} from "discord-player"
 
 import { APP, APPLINK, EmbedColors, ICONLINK } from "@/common/constants"
 import { timestampToYear } from "@/common/utils/common"
@@ -16,8 +21,23 @@ export const ErrorMessage = (message: string) => {
     .setTimestamp()
 }
 
-export const NowPlayingMessage = (track: Track) => {
-  return new EmbedBuilder()
+export const NowPlayingMessage = (track: Track, queue: GuildQueue) => {
+  const repeatModeMsg: string = (() => {
+    switch (queue.repeatMode) {
+      case QueueRepeatMode.OFF:
+        return ""
+      case QueueRepeatMode.TRACK:
+        return "🔂 单曲循环中"
+      case QueueRepeatMode.QUEUE:
+        return "🔁 列表循环中"
+      case QueueRepeatMode.AUTOPLAY:
+        return "♾️ 自动播放中"
+      default:
+        return "Unknown Loop Mode"
+    }
+  })()
+
+  const embed = new EmbedBuilder()
     .setAuthor({
       name: "Now Playing",
       url: APPLINK,
@@ -27,6 +47,14 @@ export const NowPlayingMessage = (track: Track) => {
     .setDescription(`${track.author}\t(${track.duration})`)
     .setThumbnail(track.thumbnail)
     .setColor(EmbedColors.Playing)
+
+  if (queue.repeatMode !== QueueRepeatMode.OFF) {
+    embed.setFooter({
+      text: repeatModeMsg,
+    })
+  }
+
+  return embed
 }
 
 export const NowPlayingPlaylistMessage = (playlist: Playlist) => {

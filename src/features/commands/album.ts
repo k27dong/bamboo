@@ -217,7 +217,11 @@ export const Album: Command = {
 
             await player.play(voiceChannel, albumTracks, {
               nodeOptions: {
-                metadata: { channel: interaction.channel, volume: 50 },
+                metadata: {
+                  channel: interaction.channel,
+                  volume: 50,
+                  leaveOnEndCooldown: 300_000,
+                },
               },
             })
           }

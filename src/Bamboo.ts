@@ -1,9 +1,3 @@
-import {
-  AttachmentExtractor,
-  ReverbnationExtractor,
-  SoundCloudExtractor,
-  VimeoExtractor,
-} from "@discord-player/extractor"
 import chalk from "chalk"
 import { Client, GatewayIntentBits } from "discord.js"
 import { Player } from "discord-player"
@@ -41,10 +35,7 @@ await player.extractors.register(BambooExtractor, {
     [ApiServiceType.Netease]: neteaseCookie,
   },
 })
-// await player.extractors.register(AttachmentExtractor, {})
-// await player.extractors.register(SoundCloudExtractor, {})
-// await player.extractors.register(VimeoExtractor, {})
-// await player.extractors.register(ReverbnationExtractor, {})
+
 // await player.extractors.register(YoutubeiExtractor, {})
 
 // Log in to Discord

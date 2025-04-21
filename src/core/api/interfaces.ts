@@ -14,6 +14,10 @@ export interface BambooMusicApi {
   getUserPlaylistTracksById: (
     id: string,
   ) => Promise<NeteasePlaylistTracks | null>
+  getSimilarTrack: (
+    id: string,
+    prevTracks: string[],
+  ) => Promise<NeteaseSong | null>
 }
 
 export interface NeteaseCloudSearchSongResult {
@@ -122,4 +126,15 @@ export interface NeteasePlaylistDetailSearchResult {
 export interface NeteasePlaylistTracks {
   info: NeteasePlaylistDetailSearchResult
   tracks: SongDetail[]
+}
+
+export interface NeteaseSimilarTrack {
+  fee: NeteaseFeeType
+  popularity: number
+  id: number
+  name: string
+  artists: NeteaseArtist[]
+  album: NeteaseAlbum
+  duration: number
+  publishTime: number
 }
