@@ -18,6 +18,25 @@ export interface BambooMusicApi {
     id: string,
     prevTracks: string[],
   ) => Promise<NeteaseSong | null>
+  getVideoInfo: (id: string) => Promise<BilibiliVideo | null>
+}
+
+export interface BilibiliVideo {
+  bvid: string
+  title: string
+  author: string
+  authorImg: string
+  duration: number
+  cover: string
+  uploadTime: string
+  description: string
+  statusCode: number
+  parts: {
+    cid: number
+    partTitle: string
+    duration: number
+    pageIndex: number
+  }[]
 }
 
 export interface NeteaseCloudSearchSongResult {
@@ -137,4 +156,11 @@ export interface NeteaseSimilarTrack {
   album: NeteaseAlbum
   duration: number
   publishTime: number
+}
+
+export interface BilibiliApiResponse<T> {
+  code: number
+  message?: string
+  ttl?: number
+  data?: T
 }

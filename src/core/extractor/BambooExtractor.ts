@@ -7,18 +7,23 @@ import {
   QueryType,
   type SearchQueryType,
   Track,
+  type TrackSource,
 } from "discord-player"
 import type { SongDetail } from "NeteaseCloudMusicApi"
 
 import {
-  type ApiServiceType,
+  ApiServiceType,
   EXTRACTOR_IDENTIFIER,
   ExtractorSearchType,
 } from "@/common/constants"
 import type { ExtractorSearchOptions } from "@/common/types"
-import { millisecondsToTimeString } from "@/common/utils/common"
+import {
+  millisecondsToTimeString,
+  secondsToTimeString,
+} from "@/common/utils/common"
 import { BambooApi } from "@/core/api/BambooApi"
 import type {
+  BilibiliVideo,
   NeteaseAlbumDetailed,
   NeteasePlaylistSearchResult,
   NeteaseSong,
@@ -111,7 +116,7 @@ export class BambooExtractor extends BaseExtractor {
           title: rawAlbumSongs[0].al.name,
           description: rawAlbumSongs[0].al.description,
           thumbnail: albumSongs[0].thumbnail,
-          source: "arbitrary",
+          source: String(ApiServiceType.Netease) as TrackSource,
           type: "album",
           author: {
             name: albumSongs[0].author,
@@ -122,6 +127,17 @@ export class BambooExtractor extends BaseExtractor {
         })
 
         return this.createResponse(album, albumSongs)
+      }
+      case ExtractorSearchType.BilibiliVideo: {
+        const rawVideoInfo = await this.api.getVideoInfo(
+          query,
+          ApiServiceType.Bilibili,
+        )
+        if (!rawVideoInfo) throw new Error("Failed to get video info")
+
+        const videoTracks = this.buildBVideoTrack(rawVideoInfo, context)
+
+        return this.createResponse(null, videoTracks)
       }
       case ExtractorSearchType.Lyric: {
         const rawLyric = await this.api.getLyricById(query)
@@ -168,7 +184,7 @@ export class BambooExtractor extends BaseExtractor {
           description: playlistInfo.description,
           thumbnail: playlistInfo.coverImgUrl,
           type: "playlist",
-          source: "arbitrary",
+          source: String(ApiServiceType.Netease) as TrackSource,
           author: {
             name: playlistInfo.creator.nickname,
             url: playlistInfo.creator.avatarUrl,
@@ -194,7 +210,13 @@ export class BambooExtractor extends BaseExtractor {
   override async stream(track: Track): Promise<string> {
     if (!this.api) throw new Error("Extractor not activated")
 
-    const streamUrl = await this.api.getTrackUrl(track)
+    console.log("streaming", track)
+
+    const streamUrl = await this.api.getTrackUrl(
+      track,
+      track.source as ApiServiceType,
+    )
+
     if (!streamUrl) throw new Error("Failed to get stream URL")
 
     return streamUrl
@@ -225,7 +247,7 @@ export class BambooExtractor extends BaseExtractor {
       thumbnail: info.al.picUrl,
       author: info.ar[0].name,
       requestedBy: context?.requestedBy,
-      source: "arbitrary",
+      source: String(ApiServiceType.Netease) as TrackSource,
       queryType: context?.type ?? QueryType.AUTO,
       metadata: info,
       requestMetadata: () => Promise.resolve(info),
@@ -240,7 +262,7 @@ export class BambooExtractor extends BaseExtractor {
       thumbnail: song.al.picUrl,
       author: song.ar[0].name,
       requestedBy: context.requestedBy,
-      source: "arbitrary",
+      source: String(ApiServiceType.Netease) as TrackSource,
       queryType: context.type!,
       metadata: song,
       requestMetadata: () => Promise.resolve(song),
@@ -254,7 +276,7 @@ export class BambooExtractor extends BaseExtractor {
         url: `${album.id}`,
         duration: `${album.publishTime}`,
         author: album.artists[0].name,
-        source: "arbitrary",
+        source: String(ApiServiceType.Netease) as TrackSource,
         views: album.size,
       })
     })
@@ -264,7 +286,7 @@ export class BambooExtractor extends BaseExtractor {
     return new Track(this.context.player, {
       title: lyric,
       requestedBy: context.requestedBy,
-      source: "arbitrary",
+      source: String(ApiServiceType.Netease) as TrackSource,
       queryType: context.type!,
     })
   }
@@ -277,7 +299,7 @@ export class BambooExtractor extends BaseExtractor {
       title: user.nickname,
       url: `${user.userId}`,
       requestedBy: context.requestedBy,
-      source: "arbitrary",
+      source: String(ApiServiceType.Netease) as TrackSource,
       queryType: context.type!,
     })
   }
@@ -292,8 +314,35 @@ export class BambooExtractor extends BaseExtractor {
       thumbnail: playlist.coverImgUrl,
       author: playlist.trackCount.toString(),
       requestedBy: context.requestedBy,
-      source: "arbitrary",
+      source: String(ApiServiceType.Netease) as TrackSource,
       queryType: context.type!,
+    })
+  }
+
+  buildBVideoTrack(
+    video: BilibiliVideo,
+    context: ExtractorSearchContext,
+  ): Track[] {
+    return video.parts.map((part) => {
+      return new Track(this.context.player, {
+        title: part.partTitle,
+        url: video.bvid,
+        duration: secondsToTimeString(part.duration),
+        thumbnail: video.cover,
+        author: video.author,
+        requestedBy: context.requestedBy,
+        source: String(ApiServiceType.Bilibili) as TrackSource,
+        queryType: context.type!,
+        metadata: {
+          statusCode: video.statusCode,
+          cid: part.cid,
+          authorImg: video.authorImg,
+          totalDuration: secondsToTimeString(video.duration),
+          totalTitle: video.title,
+          uploadTime: video.uploadTime,
+          description: video.description,
+        },
+      })
     })
   }
 }

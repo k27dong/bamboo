@@ -86,8 +86,6 @@ export const Queue: Command = {
         return
       }
 
-      console.log(queue.options)
-
       if (!queue.currentTrack) {
         await interaction.reply("```Track empty!```")
         return

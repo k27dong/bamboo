@@ -12,6 +12,7 @@ export enum EmbedColors {
 
 export enum ApiServiceType {
   Netease = "netease",
+  Bilibili = "bilibili",
 }
 
 export const QRCodeStatus = {
@@ -36,6 +37,7 @@ export enum ExtractorSearchType {
   UserLists,
   UserPlaylists,
   UserPlaylistTracks,
+  BilibiliVideo,
 }
 
 export const DISCORD_DROPDOWN_LIMIT = 25
@@ -93,3 +95,16 @@ export const SONG_DETAIL_TRACKID_LIMIT = 1000
 
 export const ENABLE_DONATION_LINK = true
 export const DONATION_LINK = "https://www.buymeacoffee.com/kefan"
+
+export const BILIBILI_ERROR_CODES = {
+  SUCCESS: 0,
+  REQUEST_ERROR: -400,
+  PERMISSION_DENIED: -403,
+  NOT_FOUND: -404,
+  VIDEO_INVISIBLE: 62002,
+  VIDEO_UNDER_REVIEW: 62004,
+  VIDEO_PRIVATE: 62012,
+  INVALID_BVID: -1,
+  NO_DATA: -2,
+  UNKNOWN_ERROR: -3,
+} as const

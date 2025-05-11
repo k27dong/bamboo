@@ -2,6 +2,7 @@ import type { Track } from "discord-player"
 
 import type {
   BambooMusicApi,
+  BilibiliVideo,
   NeteaseAlbumDetailed,
   NeteasePlaylistSearchResult,
   NeteasePlaylistTracks,
@@ -67,5 +68,9 @@ export class NeteaseService implements BambooMusicApi {
     prev: string[],
   ): Promise<NeteaseSong | null> {
     return getSimilarTrackById(id, prev, this.cookie)
+  }
+
+  getVideoInfo(): Promise<BilibiliVideo | null> {
+    return Promise.resolve(null)
   }
 }

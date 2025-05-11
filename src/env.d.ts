@@ -35,3 +35,13 @@ export interface StatGuildsRecord {
   id: string;
   joinedTimeClean: string;
 }
+
+export interface BVideoMetadata {
+  statusCode: number,
+  cid: number,
+  authorImg: string,
+  totalDuration: string,
+  totalTitle: string,
+  uploadTime: string,
+  description: string,
+}

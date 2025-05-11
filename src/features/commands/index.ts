@@ -2,6 +2,7 @@ import type { Command } from "@/core/commands/Command"
 
 import { Album } from "./album"
 import { Back } from "./back"
+import { Bili } from "./bili"
 import { Clear } from "./clear"
 import { Exit } from "./exit"
 import { Help } from "./help"
@@ -34,4 +35,5 @@ export const Commands: Command[] = [
   Help,
   Pause,
   Loop,
+  Bili,
 ]

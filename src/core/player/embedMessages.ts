@@ -6,7 +6,13 @@ import {
   type Track,
 } from "discord-player"
 
-import { APP, APPLINK, EmbedColors, ICONLINK } from "@/common/constants"
+import {
+  ApiServiceType,
+  APP,
+  APPLINK,
+  EmbedColors,
+  ICONLINK,
+} from "@/common/constants"
 import { timestampToYear } from "@/common/utils/common"
 
 export const ErrorMessage = (message: string) => {
@@ -22,21 +28,6 @@ export const ErrorMessage = (message: string) => {
 }
 
 export const NowPlayingMessage = (track: Track, queue: GuildQueue) => {
-  const repeatModeMsg: string = (() => {
-    switch (queue.repeatMode) {
-      case QueueRepeatMode.OFF:
-        return ""
-      case QueueRepeatMode.TRACK:
-        return "🔂 单曲循环中"
-      case QueueRepeatMode.QUEUE:
-        return "🔁 列表循环中"
-      case QueueRepeatMode.AUTOPLAY:
-        return "♾️ 自动播放中"
-      default:
-        return "Unknown Loop Mode"
-    }
-  })()
-
   const embed = new EmbedBuilder()
     .setAuthor({
       name: "Now Playing",
@@ -50,8 +41,23 @@ export const NowPlayingMessage = (track: Track, queue: GuildQueue) => {
 
   if (queue.repeatMode !== QueueRepeatMode.OFF) {
     embed.setFooter({
-      text: repeatModeMsg,
+      text: (() => {
+        switch (queue.repeatMode) {
+          case QueueRepeatMode.TRACK:
+            return "🔂 单曲循环中"
+          case QueueRepeatMode.QUEUE:
+            return "🔁 列表循环中"
+          case QueueRepeatMode.AUTOPLAY:
+            return "♾️ 自动播放中"
+          default:
+            return "Unknown Loop Mode"
+        }
+      })(),
     })
+  }
+
+  if (track.source === ApiServiceType.Bilibili) {
+    embed.setURL(`https://www.bilibili.com/video/${track.url}`)
   }
 
   return embed
@@ -72,7 +78,6 @@ export const NowPlayingPlaylistMessage = (playlist: Playlist) => {
     })
 }
 
-// todo check this syntax
 export const NowPlayingUserPlaylistMessage = (playlist: Playlist) => {
   const embed = new EmbedBuilder()
   return [

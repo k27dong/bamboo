@@ -3,14 +3,15 @@ import type { Track } from "discord-player"
 import { ApiServiceType } from "@/common/constants"
 import type {
   BambooMusicApi,
+  BilibiliVideo,
   NeteaseAlbumDetailed,
   NeteasePlaylistSearchResult,
   NeteasePlaylistTracks,
   NeteaseSong,
   NeteaseUserProfile,
 } from "@/core/api/interfaces"
-
-import { NeteaseService } from "./services/netease"
+import { BilibiliService } from "@/core/api/services/bilibili"
+import { NeteaseService } from "@/core/api/services/netease"
 
 export class BambooApi implements BambooMusicApi {
   private services: Record<ApiServiceType, BambooMusicApi>
@@ -20,6 +21,7 @@ export class BambooApi implements BambooMusicApi {
       [ApiServiceType.Netease]: new NeteaseService(
         cookies?.[ApiServiceType.Netease],
       ),
+      [ApiServiceType.Bilibili]: new BilibiliService(),
     }
   }
 
@@ -102,5 +104,13 @@ export class BambooApi implements BambooMusicApi {
   ): Promise<NeteaseSong | null> {
     const service = this.getService(source)
     return await service.getSimilarTrack(id, prevTracks)
+  }
+
+  async getVideoInfo(
+    id: string,
+    source: ApiServiceType = ApiServiceType.Bilibili,
+  ): Promise<BilibiliVideo | null> {
+    const service = this.getService(source)
+    return await service.getVideoInfo(id)
   }
 }

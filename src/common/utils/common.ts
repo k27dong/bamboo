@@ -118,6 +118,27 @@ export const millisecondsToTimeString = (ms: number): string => {
 }
 
 /**
+ * Formats seconds to a colon-separated time string
+ * @param seconds - Seconds to format
+ * @returns Time string in HH:MM:SS or MM:SS format
+ * @throws {Error} If input is negative
+ * @example
+ * secondsToTimeString(90)    // "01:30"
+ * secondsToTimeString(3723)  // "01:02:03"
+ */
+export const secondsToTimeString = (seconds: number): string => {
+  if (seconds < 0) throw new Error("Seconds cannot be negative")
+
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const remainingSeconds = seconds % 60
+
+  return hours > 0
+    ? `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`
+    : `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`
+}
+
+/**
  * Converts a Unix timestamp (seconds or milliseconds) to a 4-digit year
  * @param timestamp - Unix timestamp (seconds or milliseconds since epoch)
  * @returns 4-digit year (e.g. 2024)
@@ -191,4 +212,68 @@ export const timestampToDate = (timestamp: number): string => {
   const day = String(date.getDate()).padStart(2, "0") // Ensure two-digit format
 
   return `${year}, ${month}, ${day}`
+}
+
+/**
+ * Processes a Bilibili URL or ID and returns a valid BV code or error
+ * @param input URL or ID to process
+ * @returns Object with success status, BV code, and error message if any
+ */
+export const processBilibiliUrl = (input: string): string => {
+  try {
+    const bvMatch = input.match(/bilibili\.com\/video\/(BV[a-zA-Z0-9]+)/)
+    if (bvMatch) {
+      return bvMatch[1]
+    }
+
+    const avMatch = input.match(/bilibili\.com\/video\/av(\d+)/)
+    if (avMatch) {
+      const avNum = parseInt(avMatch[1])
+      return convertAvToBv(avNum)
+    }
+
+    if (/^BV[a-zA-Z0-9]+$/.test(input)) {
+      return input
+    }
+
+    if (/^av\d+$/.test(input)) {
+      const avNum = parseInt(input.substring(2))
+      return convertAvToBv(avNum)
+    }
+
+    if (/^\d+$/.test(input)) {
+      const avNum = parseInt(input)
+      return convertAvToBv(avNum)
+    }
+
+    return ""
+  } catch {
+    return ""
+  }
+}
+
+/**
+ * Converts a Bilibili AV ID to a BV ID
+ * @param avNumber - The AV ID to convert
+ * @returns The converted BV ID or an empty string if conversion fails
+ */
+export const convertAvToBv = (avNumber: number): string => {
+  try {
+    const xored = avNumber ^ 177451812
+    const added = xored + 8728348608
+    const base58chars =
+      "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF"
+
+    let num = added
+    let base58 = ""
+    while (base58.length < 6) {
+      const remainder = num % 58
+      base58 = base58chars[remainder] + base58
+      num = Math.floor(num / 58)
+    }
+
+    return `BV1${base58}`
+  } catch {
+    return ""
+  }
 }
