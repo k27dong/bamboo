@@ -18,6 +18,58 @@ const SudoOption = new SlashCommandBuilder()
     option.setName("run").setDescription("commands").setRequired(true),
   )
 
+interface ShardGuildData {
+  guilds: StatGuildsRecord[]
+  memberCount: number
+}
+
+// Aggregates guild data across all shards
+async function getAllGuildsData(client: Client): Promise<ShardGuildData> {
+  // If not sharded, return local data directly
+  if (!client.shard) {
+    const guilds = client.guilds.cache
+      .map((guild) => ({
+        name: guild.name,
+        id: guild.id,
+        joinedTimeClean: timestampToDate(guild.joinedTimestamp),
+        joinedTimestamp: guild.joinedTimestamp,
+      }))
+      .sort((a, b) => a.joinedTimestamp - b.joinedTimestamp)
+      .map(({ joinedTimestamp, ...rest }) => rest)
+
+    const memberCount = client.guilds.cache.reduce(
+      (sum, guild) => sum + guild.memberCount,
+      0,
+    )
+
+    return { guilds, memberCount }
+  }
+
+  // Fetch from all shards
+  const results = await client.shard.broadcastEval((c) => {
+    return c.guilds.cache.map((guild) => ({
+      name: guild.name,
+      id: guild.id,
+      joinedTimestamp: guild.joinedTimestamp,
+      memberCount: guild.memberCount,
+    }))
+  })
+
+  // Flatten and aggregate results from all shards
+  const allGuilds = results.flat()
+  const memberCount = allGuilds.reduce((sum, g) => sum + g.memberCount, 0)
+
+  const guilds = allGuilds
+    .sort((a, b) => a.joinedTimestamp - b.joinedTimestamp)
+    .map((g) => ({
+      name: g.name,
+      id: g.id,
+      joinedTimeClean: timestampToDate(g.joinedTimestamp),
+    }))
+
+  return { guilds, memberCount }
+}
+
 export const Sudo: Command = {
   name: SudoOption.name,
   description: SudoOption.description,
@@ -33,27 +85,14 @@ export const Sudo: Command = {
 
       switch (query) {
         case "ls": {
-          const table: StatGuildsRecord[] = interaction.client.guilds.cache
-            .map((guild) => ({
-              name: guild.name,
-              id: guild.id,
-              joinedTimeClean: timestampToDate(guild.joinedTimestamp),
-            }))
-            .sort(
-              (a, b) =>
-                interaction.client.guilds.cache.get(a.id)!.joinedTimestamp -
-                interaction.client.guilds.cache.get(b.id)!.joinedTimestamp,
-            )
+          const { guilds, memberCount } = await getAllGuildsData(client)
 
-          const count = interaction.client.guilds.cache.reduce(
-            (sum, guild) => sum + guild.memberCount,
-            0,
-          )
+          console.table(guilds)
+          console.log("TOTAL USERS: " + memberCount)
 
-          console.table(table)
-          console.log("TOTAL USERS: " + count)
+          const shardInfo = client.shard ? ` (${client.shard.count} shards)` : ""
           await interaction.editReply(
-            `\`\`\`Number of servers: ${table.length}\nTotal users: ${count}\`\`\``,
+            `\`\`\`Number of servers: ${guilds.length}${shardInfo}\nTotal users: ${memberCount}\`\`\``,
           )
           break
         }
@@ -77,7 +116,8 @@ export const Sudo: Command = {
             .filter(Boolean)
             .join(" ")
 
-          await interaction.editReply(`\`\`\`Uptime: ${parts}\`\`\``)
+          const shardId = client.shard?.ids[0] ?? 0
+          await interaction.editReply(`\`\`\`Uptime: ${parts} (shard ${shardId})\`\`\``)
           break
         }
         case "v":

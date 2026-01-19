@@ -4,10 +4,8 @@ import {
   ButtonStyle,
   type Client,
   type CommandInteraction,
-  type Invite,
   MessageFlags,
   SlashCommandBuilder,
-  type TextChannel,
 } from "discord.js"
 
 import { DONATION_LINK, ENABLE_DONATION_LINK } from "@/common/constants"
@@ -29,6 +27,36 @@ const HelpOption = new SlashCommandBuilder()
       .setDescription("获取具体某一条指令的信息")
       .setRequired(false),
   )
+
+// Fetches support server invite from whichever shard has it
+async function getSupportServerInvite(client: Client): Promise<string | null> {
+  if (!SUPPORT_SERVER_ID || !SUPPORT_SERVER_CHANNEL_ID) return null
+
+  // If not sharded, access directly
+  if (!client.shard) {
+    const channel = client.guilds.cache
+      .get(SUPPORT_SERVER_ID)
+      ?.channels.cache.get(SUPPORT_SERVER_CHANNEL_ID)
+    if (!channel?.isTextBased()) return null
+    const invite = await (channel as any).createInvite()
+    return invite.url
+  }
+
+  // Broadcast to all shards - only the one with the guild will return a URL
+  const results = await client.shard.broadcastEval(
+    async (c, { serverId, channelId }) => {
+      const guild = c.guilds.cache.get(serverId)
+      if (!guild) return null
+      const channel = guild.channels.cache.get(channelId)
+      if (!channel?.isTextBased()) return null
+      const invite = await (channel as any).createInvite()
+      return invite.url as string
+    },
+    { context: { serverId: SUPPORT_SERVER_ID, channelId: SUPPORT_SERVER_CHANNEL_ID } },
+  )
+
+  return results.find((url) => url !== null) ?? null
+}
 
 export const Help: Command = {
   name: HelpOption.name,
@@ -69,20 +97,16 @@ export const Help: Command = {
 
       const component = new ActionRowBuilder<ButtonBuilder>()
 
-      if (!!SUPPORT_SERVER_ID && !!SUPPORT_SERVER_CHANNEL_ID) {
-        const supportServerInvite = client.guilds.cache
-          .get(SUPPORT_SERVER_ID)
-          ?.channels.cache.get(SUPPORT_SERVER_CHANNEL_ID) as TextChannel
-        const invitation: Invite = await supportServerInvite.createInvite()
-
+      const inviteUrl = await getSupportServerInvite(client)
+      if (inviteUrl) {
         if (!command) {
-          messageParts.push(`👥 加入官方服务器：${invitation.url}`)
+          messageParts.push(`👥 加入官方服务器：${inviteUrl}`)
         } else {
           component.addComponents(
             new ButtonBuilder()
               .setLabel("官方")
               .setStyle(ButtonStyle.Link)
-              .setURL(invitation.url)
+              .setURL(inviteUrl)
               .setEmoji("👥"),
           )
         }
