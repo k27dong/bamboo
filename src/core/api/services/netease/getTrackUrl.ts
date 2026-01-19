@@ -17,6 +17,13 @@ export const getSongUrlByTrack = async (
   })
     .then((rawResult) => {
       const result = rawResult.body.data as NeteaseSongPlayable[]
+
+      if (!result || result.length === 0 || !result[0]?.url) {
+        throw new Error(
+          "Track URL not available (may be region-locked or unavailable)",
+        )
+      }
+
       return result[0].url
     })
     .catch((error) => {

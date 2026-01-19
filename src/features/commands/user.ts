@@ -156,7 +156,7 @@ export const User: Command = {
         new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
           new StringSelectMenuBuilder()
             .setCustomId("starter")
-            .setPlaceholder("请选择歌单1")
+            .setPlaceholder("请选择歌单")
             .addOptions(playlistSelectRowOptions),
         )
 

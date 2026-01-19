@@ -30,7 +30,7 @@ const formatQueueMessage = (
   const reservedSpace = 35
   const durationLine = `\n总时长: ${totalDuration}`
   let remainingTracks = 0
-  let queueMessage = ""
+  const lines: string[] = []
 
   for (let i = 0; i < displayedTracks.length; i++) {
     const { title, author } = displayedTracks[i]
@@ -38,16 +38,17 @@ const formatQueueMessage = (
     const queuePosition = startPosition + i + 1
     const currLine = `${queuePosition}) ${title} ${author ? `(${author})` : ""} ${isCurrent}`
 
+    const currentLength = lines.join("").length
     if (
-      queueMessage.length + currLine.length + reservedSpace >=
+      currentLength + currLine.length + reservedSpace >=
       DISCORD_MESSAGE_CHAR_LIMIT
     ) {
       remainingTracks = totalQueueLength - (startPosition + i + 1)
-      queueMessage += `${queuePosition}) ... (${remainingTracks} more)\n`
+      lines.push(`${queuePosition}) ... (${remainingTracks} more)\n`)
       break
     }
 
-    queueMessage += currLine
+    lines.push(currLine)
   }
 
   if (remainingTracks === 0) {
@@ -56,14 +57,16 @@ const formatQueueMessage = (
   }
 
   if (remainingTracks > 0) {
-    queueMessage += `\n... (${remainingTracks} more)`
+    lines.push(`\n... (${remainingTracks} more)`)
   }
+
+  const queueMessage = lines.join("")
 
   if (
     queueMessage.length + durationLine.length + 6 <=
     DISCORD_MESSAGE_CHAR_LIMIT
   ) {
-    queueMessage += durationLine
+    return `\`\`\`${queueMessage}${durationLine}\`\`\``
   }
 
   return `\`\`\`${queueMessage}\`\`\``
@@ -86,8 +89,6 @@ export const Queue: Command = {
         return
       }
 
-      console.log(queue.options)
-
       if (!queue.currentTrack) {
         await interaction.reply("```Track empty!```")
         return
@@ -95,7 +96,7 @@ export const Queue: Command = {
 
       const currentTrack = queue.currentTrack
       const upcomingTracks = queue.tracks.data
-      const historyTracks = queue.history.tracks.data.reverse()
+      const historyTracks = queue.history.tracks.data
 
       const totalQueueLength = historyTracks.length + 1 + upcomingTracks.length
       const totalDuration = secondsToHumanDuration(
@@ -126,7 +127,9 @@ export const Queue: Command = {
         }
 
         if (ratioBalance >= 1 && historyPtr >= 0) {
-          displayedTracks.unshift(historyTracks[historyPtr])
+          const historyTrack =
+            historyTracks[historyTracks.length - 1 - historyPtr]
+          displayedTracks.unshift(historyTrack)
           startPosition--
           historyPtr--
           remaining--
@@ -135,7 +138,9 @@ export const Queue: Command = {
 
         if (upcomingPtr >= upcomingTracks.length && remaining > 0) {
           while (remaining > 0 && historyPtr >= 0) {
-            displayedTracks.unshift(historyTracks[historyPtr])
+            const historyTrack =
+              historyTracks[historyTracks.length - 1 - historyPtr]
+            displayedTracks.unshift(historyTrack)
             startPosition--
             historyPtr--
             remaining--
