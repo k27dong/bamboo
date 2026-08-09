@@ -15,7 +15,6 @@ esbuild
       "discord-player",
       "@discord-player/extractor",
       "discord.js",
-      "discord-player-youtubei",
       "NeteaseCloudMusicApi",
       "openai",
       "topgg-autoposter",

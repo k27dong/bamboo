@@ -1,3 +1,3 @@
-import { generateDependencyReport } from "@discordjs/voice"
+import { DependencyReportGenerator } from "discord-player"
 
-console.log(generateDependencyReport())
+console.log(DependencyReportGenerator.generateString())
