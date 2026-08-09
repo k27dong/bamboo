@@ -1,4 +1,5 @@
 import chalk from "chalk"
+import type { ChildProcess } from "child_process"
 import { ShardingManager } from "discord.js"
 import os from "os"
 import path from "path"
@@ -35,7 +36,7 @@ manager.on("shardCreate", (shard) => {
   })
 
   shard.on("death", (process) => {
-    const child = process as import("child_process").ChildProcess
+    const child = process as ChildProcess
     console.error(
       `${chalk.red("[SHARD]")} Shard ${chalk.bold(shard.id)} died (exit: ${child.exitCode}, signal: ${child.signalCode})`
     )

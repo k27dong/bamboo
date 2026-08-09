@@ -31,11 +31,14 @@ async function getAllGuildsData(client: Client): Promise<ShardGuildData> {
       .map((guild) => ({
         name: guild.name,
         id: guild.id,
-        joinedTimeClean: timestampToDate(guild.joinedTimestamp),
         joinedTimestamp: guild.joinedTimestamp,
       }))
       .sort((a, b) => a.joinedTimestamp - b.joinedTimestamp)
-      .map(({ joinedTimestamp, ...rest }) => rest)
+      .map(({ name, id, joinedTimestamp }) => ({
+        name,
+        id,
+        joinedTimeClean: timestampToDate(joinedTimestamp),
+      }))
 
     const memberCount = client.guilds.cache.reduce(
       (sum, guild) => sum + guild.memberCount,
