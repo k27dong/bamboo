@@ -9,13 +9,9 @@ import { ENVIROMENT, TOKEN } from "@/common/utils/config"
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const botScript = path.join(__dirname, "Bamboo.js")
 
-// For a 2-core system with CPU bottleneck, 2 shards is optimal
-// Discord requires sharding at 2500 guilds; "auto" lets Discord determine the count
-const TOTAL_SHARDS = 2
-
 const manager = new ShardingManager(botScript, {
   token: TOKEN,
-  totalShards: TOTAL_SHARDS,
+  totalShards: "auto",
   mode: "process",
   respawn: true,
 })
