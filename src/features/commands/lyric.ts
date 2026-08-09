@@ -13,6 +13,7 @@ import {
   ExtractorSearchType,
 } from "@/common/constants"
 import { LYRIC_SANITIZATION_PROMPT } from "@/common/prompts"
+import { extractorSearchOptions } from "@/common/types"
 import { OPENAI_API_KEY } from "@/common/utils/config"
 import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
@@ -107,9 +108,9 @@ export const Lyric: Command = {
       const lrcResult = await player.search(trackId, {
         requestedBy: interaction.user,
         searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-        requestOptions: {
+        requestOptions: extractorSearchOptions({
           searchType: ExtractorSearchType.Lyric,
-        },
+        }),
       })
 
       const rawLyric = lrcResult.tracks[0].title
