@@ -36,14 +36,15 @@
     "check": "tsx src/common/scripts/checkDep.ts"
   },
   "dependencies": {
-    "@discord-player/extractor": "^7.1.0",
+    "@discord-player/extractor": "^7.2.0",
     "@discordjs/opus": "^0.10.0",
-    "@discordjs/voice": "^0.18.0",
+    "@discordjs/voice": "^0.19.1",
+    "@snazzah/davey": "0.1.12",
     "@types/qrcode-terminal": "^0.12.2",
     "NeteaseCloudMusicApi": "^4.25.0",
     "bufferutil": "^4.0.8",
     "chalk": "^5.4.1",
-    "discord-player": "^7.1.0",
+    "discord-player": "^7.2.0",
     "discord-player-youtubei": "^1.4.2",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
@@ -68,7 +69,7 @@
   },
   "packageManager": "pnpm@10.3.0",
   "engines": {
-    "node": ">=20",
+    "node": ">=22.12",
     "pnpm": ">=9"
   }
 }
