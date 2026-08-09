@@ -13,7 +13,7 @@
 
 <p align="center">
   <a href="https://github.com/discordjs"><img src="https://img.shields.io/badge/discord.js-v14.16.3-f7df1e.svg?logo=pnpm" alt="discord.js badge" /></a>
-  <a href="https://discord.gg/yYrT6qfy"><img src="https://img.shields.io/discord/966754695123177554.svg?logo=discord&colorB=7289DA&label=Support&logoColor=FAFAFA" alt="Support server badge"/></a>
+  <a href="https://discord.gg/AFSRqK9fVQ"><img src="https://img.shields.io/discord/966754695123177554.svg?logo=discord&colorB=7289DA&label=Support&logoColor=FAFAFA" alt="Support server badge"/></a>
   <a href="https://www.codefactor.io/repository/github/k27dong/bamboo"><img src="https://img.shields.io/codefactor/grade/github/k27dong/bamboo/master?logo=CodeFactor"  alt="Code quality badge"/></a>
   <a href="https://top.gg/bot/899025207161929768"><img src="https://top.gg/api/widget/servers/899025207161929768.svg"></a>
 </p>
@@ -35,21 +35,23 @@ The official instance of Bamboo is hosted on a server that operates 24/7 with au
 
 Bamboo is actively developed and maintained. If you encounter any bugs or have suggestions, feel free to join the support server and share your feedback!
 
-[Join the Official Discord Server](https://discord.gg/p6F32GejZT)
+[Join the Official Discord Server](https://discord.gg/AFSRqK9fVQ)
 
 ## Development
 
 ### Prerequisites
 
-- [`Node.js`]: Runtime for the project
-- [`pnpm`]: Package manager
+- [`Node.js`]: Runtime for the project (22.12 or newer)
+- [`pnpm`]: Package manager (9 or newer)
 - [`ffmpeg`]: Required for audio processing and streaming
 
 ### Usage
 
 1. `pnpm install`: Install dependencies
 2. create a `.env.development` file in the root directory with the format of `.env.example`, and fill in the required fields
-3. `pnpm dev`: build and run the bot in development mode
+3. `pnpm deploy:dev`: register the slash commands in your development server (once, and again whenever commands change)
+4. `pnpm dev`: build and run the bot in development mode
+5. on the first run, a QR code appears in the terminal: scan it with the NetEase Cloud Music app to log in. The session is saved to `cookies/netease.cookie` and reused afterwards
 
 ## Demo (Sound On)
 
