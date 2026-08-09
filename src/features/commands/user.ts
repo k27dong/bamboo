@@ -12,6 +12,7 @@ import {
 import { type Track, useMainPlayer } from "discord-player"
 
 import { EXTRACTOR_IDENTIFIER, ExtractorSearchType } from "@/common/constants"
+import { extractorSearchOptions } from "@/common/types"
 import { getAvatarEmoji } from "@/common/utils/common"
 import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
@@ -111,9 +112,9 @@ export const User: Command = {
       const userSearchResult = await player.search(query, {
         requestedBy: interaction.user,
         searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-        requestOptions: {
+        requestOptions: extractorSearchOptions({
           searchType: ExtractorSearchType.UserLists,
-        },
+        }),
       })
 
       if (userSearchResult.isEmpty()) {
@@ -131,9 +132,9 @@ export const User: Command = {
       const userPlaylistSearchResult = await player.search(selectedUserId, {
         requestedBy: interaction.user,
         searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-        requestOptions: {
+        requestOptions: extractorSearchOptions({
           searchType: ExtractorSearchType.UserPlaylists,
-        },
+        }),
       })
 
       if (userPlaylistSearchResult.isEmpty()) {
@@ -191,9 +192,9 @@ export const User: Command = {
             const playlistTracks = await player.search(selectedPlaylist.url, {
               requestedBy: interaction.user,
               searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-              requestOptions: {
-                searchType: ExtractorSearchType.UserPlaylistTracks,
-              },
+              requestOptions: extractorSearchOptions({
+          searchType: ExtractorSearchType.UserPlaylistTracks,
+        }),
             })
 
             if (playlistTracks.isEmpty()) {

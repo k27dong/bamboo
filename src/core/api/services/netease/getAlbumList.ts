@@ -1,4 +1,4 @@
-import NeteaseCloudMusicApi, { type SearchType } from "NeteaseCloudMusicApi"
+import NeteaseCloudMusicApi from "NeteaseCloudMusicApi"
 
 import { DISCORD_DROPDOWN_LIMIT } from "@/common/constants"
 import { REAL_IP } from "@/common/utils/config"
@@ -13,7 +13,7 @@ export const getAlbumList = async (
 ): Promise<NeteaseAlbumDetailed[] | null> => {
   return NeteaseCloudMusicApi.cloudsearch({
     keywords: query,
-    type: 10 as SearchType,
+    type: 10,
     cookie,
     realIP: REAL_IP,
   })

@@ -37,8 +37,8 @@ async function getSupportServerInvite(client: Client): Promise<string | null> {
     const channel = client.guilds.cache
       .get(SUPPORT_SERVER_ID)
       ?.channels.cache.get(SUPPORT_SERVER_CHANNEL_ID)
-    if (!channel?.isTextBased()) return null
-    const invite = await (channel as any).createInvite()
+    if (!channel?.isTextBased() || channel.isThread()) return null
+    const invite = await channel.createInvite()
     return invite.url
   }
 
@@ -48,9 +48,9 @@ async function getSupportServerInvite(client: Client): Promise<string | null> {
       const guild = c.guilds.cache.get(serverId)
       if (!guild) return null
       const channel = guild.channels.cache.get(channelId)
-      if (!channel?.isTextBased()) return null
-      const invite = await (channel as any).createInvite()
-      return invite.url as string
+      if (!channel?.isTextBased() || channel.isThread()) return null
+      const invite = await channel.createInvite()
+      return invite.url
     },
     { context: { serverId: SUPPORT_SERVER_ID, channelId: SUPPORT_SERVER_CHANNEL_ID } },
   )

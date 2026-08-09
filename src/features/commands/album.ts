@@ -21,6 +21,7 @@ import {
   EXTRACTOR_IDENTIFIER,
   ExtractorSearchType,
 } from "@/common/constants"
+import { extractorSearchOptions } from "@/common/types"
 import { timestampToYear } from "@/common/utils/common"
 import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
@@ -76,9 +77,9 @@ export const Album: Command = {
       const albumSearchResult = await player.search(query, {
         requestedBy: interaction.user,
         searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-        requestOptions: {
+        requestOptions: extractorSearchOptions({
           searchType: ExtractorSearchType.AlbumLists,
-        },
+        }),
       })
 
       if (albumSearchResult.isEmpty()) {
@@ -155,9 +156,9 @@ export const Album: Command = {
             const albumTracks = await player.search(selectedAlbum.url, {
               requestedBy: interaction.user,
               searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-              requestOptions: {
-                searchType: ExtractorSearchType.Album,
-              },
+              requestOptions: extractorSearchOptions({
+          searchType: ExtractorSearchType.Album,
+        }),
             })
 
             const { embed, components } = getPlaylistEmbedInfo(

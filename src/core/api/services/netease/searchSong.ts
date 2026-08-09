@@ -1,4 +1,4 @@
-import NeteaseCloudMusicApi, { type SearchType } from "NeteaseCloudMusicApi"
+import NeteaseCloudMusicApi from "NeteaseCloudMusicApi"
 
 import { REAL_IP } from "@/common/utils/config"
 import type {
@@ -12,7 +12,7 @@ export const searchSong = async (
 ): Promise<NeteaseSong | null> => {
   return NeteaseCloudMusicApi.cloudsearch({
     keywords: query,
-    type: 1 as SearchType,
+    type: 1,
     cookie,
     realIP: REAL_IP,
   })
