@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -77,7 +77,7 @@ export const Queue: Command = {
   description: QueueOption.description,
   data: QueueOption,
   manual: "显示当前的播放列表。",
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       const queue = useQueue(interaction.guild!)!
 

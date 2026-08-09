@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -19,7 +19,7 @@ export const Skip: Command = {
   description: SkipOption.description,
   data: SkipOption,
   manual: "切歌。",
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)
 

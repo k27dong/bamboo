@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -16,7 +16,7 @@ export const Ping: Command = {
   name: PingOption.name,
   description: PingOption.description,
   data: PingOption,
-  run: async (_: Client, interaction: CommandInteraction) => {
+  run: async (_: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await interaction.reply(
         `Pong! The latency is ${interaction.client.ws.ping}ms`,

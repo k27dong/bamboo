@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -43,7 +43,7 @@ export const Loop: Command = {
   description: LoopOption.description,
   data: LoopOption,
   manual: "改变循环模式。",
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)
       const mode = interaction.options.data[0].value as QueueRepeatMode

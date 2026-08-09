@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   type GuildMember,
   MessageFlags,
   SlashCommandBuilder,
@@ -22,7 +22,7 @@ export const Play: Command = {
   name: PlayOption.name,
   description: PlayOption.description,
   data: PlayOption,
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await interaction.deferReply()
       await checkInVoiceChannel(interaction)

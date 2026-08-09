@@ -1,5 +1,5 @@
 import chalk from "chalk"
-import type { CommandInteraction, VoiceBasedChannel } from "discord.js"
+import type { ChatInputCommandInteraction, VoiceBasedChannel } from "discord.js"
 
 import type { Command } from "@/core/commands/Command"
 
@@ -38,7 +38,7 @@ const getSafeValue = (value: unknown, fallback = ""): string => {
 
 const isValidInteraction = (
   interaction: unknown,
-): interaction is CommandInteraction => {
+): interaction is ChatInputCommandInteraction => {
   return Boolean(
     interaction &&
       typeof interaction === "object" &&
@@ -52,7 +52,7 @@ const safeJoin = (...parts: (string | undefined)[]): string =>
   parts.filter(Boolean).join(" ")
 
 export const logger = {
-  info(interaction: CommandInteraction) {
+  info(interaction: ChatInputCommandInteraction) {
     try {
       if (!isValidInteraction(interaction)) {
         console.error("Invalid interaction object")
@@ -90,7 +90,7 @@ export const logger = {
     }
   },
 
-  error(interaction: CommandInteraction, command: Command, error: unknown) {
+  error(interaction: ChatInputCommandInteraction, command: Command, error: unknown) {
     try {
       if (!isValidInteraction(interaction)) return
 

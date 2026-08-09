@@ -2,8 +2,8 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   ComponentType,
   EmbedBuilder,
   type GuildMember,
@@ -62,7 +62,7 @@ export const Album: Command = {
   data: AlbumOption,
   manual:
     "在选项中填入专辑名，在返回的列表中选择专辑，专辑中的所有歌曲会自动加到播放列表的末尾。",
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await interaction.deferReply({ ephemeral: true })
       await checkInVoiceChannel(interaction)

@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -19,7 +19,7 @@ export const Shuffle: Command = {
   description: ShuffleOption.description,
   data: ShuffleOption,
   manual: "随机打乱播放列表。",
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)
 

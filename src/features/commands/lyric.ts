@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -88,7 +88,7 @@ export const Lyric: Command = {
   description: LyricOption.description,
   data: LyricOption,
   manual: "显示当前播放歌曲的歌词。",
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       const player = useMainPlayer()
       const queue = useQueue(interaction.guild!)!

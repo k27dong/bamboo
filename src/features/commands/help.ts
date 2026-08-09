@@ -2,8 +2,8 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -62,7 +62,7 @@ export const Help: Command = {
   name: HelpOption.name,
   description: HelpOption.description,
   data: HelpOption,
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       const excludedCommands = ["sudo", "help", "ping"]
       const command = interaction.options.data[0]?.value as string | undefined

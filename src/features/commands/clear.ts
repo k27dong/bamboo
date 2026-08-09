@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -19,7 +19,7 @@ export const Clear: Command = {
   description: ClearOption.description,
   data: ClearOption,
   manual: "移除播放队列中的所有歌曲，不影响正在播放的曲目。",
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)
 

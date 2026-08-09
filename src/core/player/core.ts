@@ -1,12 +1,12 @@
 import {
-  type CommandInteraction,
+  type ChatInputCommandInteraction,
   GuildMember,
   PermissionsBitField,
 } from "discord.js"
 
 import { ErrorMessage } from "./embedMessages"
 
-export const checkInVoiceChannel = async (interaction: CommandInteraction) => {
+export const checkInVoiceChannel = async (interaction: ChatInputCommandInteraction) => {
   // 1. Check if user is in a voice channel
   if (
     !(interaction.member instanceof GuildMember) ||

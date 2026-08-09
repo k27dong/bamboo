@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -19,7 +19,7 @@ export const Back: Command = {
   description: BackOption.description,
   data: BackOption,
   manual: "它可以帮你回到上一首播放的歌曲。不过时间是回不去了。",
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await checkInVoiceChannel(interaction)
 
