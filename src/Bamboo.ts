@@ -12,6 +12,13 @@ import { BambooExtractor } from "@/core/extractor/BambooExtractor"
 import * as playerEvents from "@/core/player/events"
 import * as clientEvents from "@/features/events"
 
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled rejection:", error)
+})
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught exception:", error)
+})
+
 initializeVersion().catch((error) => {
   console.error("❌ Failed to initialize version:", error)
 })
@@ -46,4 +53,5 @@ client
   })
   .catch((error) => {
     console.error("❌ Failed to log in:", error)
+    setTimeout(() => process.exit(1), 15_000)
   })
