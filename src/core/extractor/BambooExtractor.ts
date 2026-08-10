@@ -8,7 +8,6 @@ import {
   type SearchQueryType,
   Track,
 } from "discord-player"
-import type { SongDetail } from "NeteaseCloudMusicApi"
 
 import {
   type ApiServiceType,
@@ -23,6 +22,7 @@ import type {
   NeteasePlaylistSearchResult,
   NeteaseSong,
   NeteaseUserProfile,
+  SongDetail,
 } from "@/core/api/interfaces"
 
 export class BambooExtractor extends BaseExtractor {

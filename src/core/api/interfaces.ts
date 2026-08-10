@@ -1,5 +1,9 @@
+import type { song_detail } from "@neteasecloudmusicapienhanced/api"
 import type { Track } from "discord-player"
-import type { SongDetail } from "NeteaseCloudMusicApi"
+
+export type SongDetail = Awaited<
+  ReturnType<typeof song_detail>
+>["body"]["songs"][number]
 
 export interface BambooMusicApi {
   getTrackUrl: (id: Track) => Promise<string>

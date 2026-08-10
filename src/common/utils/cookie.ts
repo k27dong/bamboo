@@ -1,5 +1,5 @@
+import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 import { promises as fs } from "fs"
-import NeteaseCloudMusicApi from "NeteaseCloudMusicApi"
 import path from "path"
 import qrcode from "qrcode-terminal"
 
