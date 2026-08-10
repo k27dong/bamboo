@@ -8,7 +8,7 @@ export default (client: Client) => {
   client.on(Events.InteractionCreate, (interaction: Interaction) => {
     void (async () => {
       try {
-        if (interaction.isCommand()) {
+        if (interaction.isChatInputCommand()) {
           const command = Commands.find(
             (command) => command.name === interaction.commandName,
           )

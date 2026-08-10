@@ -1,7 +1,7 @@
 import {
   ActionRowBuilder,
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   ComponentType,
   type GuildMember,
   MessageFlags,
@@ -24,7 +24,7 @@ import {
 
 const handleUserSelect = async (
   users: Track[],
-  interaction: CommandInteraction,
+  interaction: ChatInputCommandInteraction,
 ): Promise<string[]> => {
   const userSelectRowOptions = users.map((user, i) => {
     return new StringSelectMenuOptionBuilder()
@@ -98,7 +98,7 @@ export const User: Command = {
   data: UserOption,
   manual:
     "在选项中填入用户名，在下拉菜单中选择用户的公开歌单，歌单中的所有歌曲将被添加到播放列表。",
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await interaction.deferReply({ ephemeral: true })
       await checkInVoiceChannel(interaction)

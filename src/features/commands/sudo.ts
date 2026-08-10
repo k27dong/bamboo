@@ -1,6 +1,6 @@
 import {
+  type ChatInputCommandInteraction,
   type Client,
-  type CommandInteraction,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
@@ -77,7 +77,7 @@ export const Sudo: Command = {
   name: SudoOption.name,
   description: SudoOption.description,
   data: SudoOption,
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     try {
       await interaction.deferReply({ ephemeral: true })
       const query = interaction.options.data[0].value as string
