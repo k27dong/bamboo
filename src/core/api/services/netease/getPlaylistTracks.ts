@@ -1,4 +1,4 @@
-import NeteaseCloudMusicApi from "NeteaseCloudMusicApi"
+import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
 import { SONG_DETAIL_TRACKID_LIMIT } from "@/common/constants"
 import { REAL_IP } from "@/common/utils/config"

@@ -1,6 +1,5 @@
+import NeteaseCloudMusicApi, { type SoundQualityType } from "@neteasecloudmusicapienhanced/api"
 import type { Track } from "discord-player"
-import type { SoundQualityType } from "NeteaseCloudMusicApi"
-import NeteaseCloudMusicApi from "NeteaseCloudMusicApi"
 
 import { REAL_IP } from "@/common/utils/config"
 import type { NeteaseSongPlayable } from "@/core/api/interfaces"
