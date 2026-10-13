@@ -12,6 +12,7 @@ if (!fs.existsSync(envFilePath)) {
   throw new Error(`⚠️  .env file not found for environment: ${NODE_ENV}`)
 }
 
+process.env.DOTENV_CONFIG_QUIET = "true"
 dotenv.config({ path: envFilePath })
 
 const config: Credentials = {

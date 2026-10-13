@@ -1,4 +1,3 @@
-import generateConfig from "@neteasecloudmusicapienhanced/api/generateConfig.js"
 import chalk from "chalk"
 import { Client, GatewayIntentBits } from "discord.js"
 import { Player } from "discord-player"
@@ -31,8 +30,6 @@ const player = new Player(client)
 // Load Discord and player events
 Object.values(clientEvents).forEach((event) => event(client))
 Object.values(playerEvents).forEach((event) => event(player))
-
-await generateConfig()
 
 // Set up cookies for APIs
 const neteaseCookie = await setUpCookie(ApiServiceType.Netease)

@@ -1,9 +1,6 @@
 packages:
   - "."
 
-minimumReleaseAgeExclude:
-  - "@neteasecloudmusicapienhanced/api"
-
 allowBuilds:
   "@discordjs/opus": false
   bufferutil: false

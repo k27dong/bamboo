@@ -1,18 +1,26 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
+import { randomBytes } from "crypto"
 import { promises as fs } from "fs"
 import path from "path"
 import qrcode from "qrcode-terminal"
 
-import { ApiServiceType } from "@/common/constants"
+import { ApiServiceType, NETEASE_EAPI_DOMAIN } from "@/common/constants"
 import type { QRCheckResponse, QRCodeResponse, QRKeyResponse } from "@/env"
 
 const COOKIE_DIR = path.join(process.cwd(), "cookies")
 const NETEASE_COOKIE_PATH = path.join(COOKIE_DIR, "netease.cookie")
+const NETEASE_CLIENT_COOKIE = [
+  "os=iPhone OS",
+  "appver=9.0.90",
+  "osver=16.2",
+  "channel=distribution",
+  `deviceId=${randomBytes(26).toString("hex").toUpperCase()}`,
+].join("; ")
 
 export const setUpCookie = async (source: ApiServiceType) => {
   switch (source) {
     case ApiServiceType.Netease:
-      return await getNeteaseCookie()
+      return `${await getNeteaseCookie()}; ${NETEASE_CLIENT_COOKIE}`
     default:
       throw new Error(`Unsupported source when setting up cookie`)
   }
@@ -52,7 +60,10 @@ const getNeteaseCookie = async (): Promise<string> => {
 
   console.log("Logging in to Netease Music...")
 
-  const qrKeyRes = await NeteaseCloudMusicApi.login_qr_key({})
+  const qrKeyRes = await NeteaseCloudMusicApi.login_qr_key({
+    cookie: NETEASE_CLIENT_COOKIE,
+    domain: NETEASE_EAPI_DOMAIN,
+  })
   if (qrKeyRes.status !== 200) {
     throw new Error(`Failed to get QR key: ${qrKeyRes.status}`)
   }
@@ -85,7 +96,11 @@ const waitForNeteaseQRConfirmation = async (
   const startTime = Date.now()
 
   while (Date.now() - startTime < MAX_DURATION) {
-    const result = await NeteaseCloudMusicApi.login_qr_check({ key: unikey })
+    const result = await NeteaseCloudMusicApi.login_qr_check({
+      key: unikey,
+      cookie: NETEASE_CLIENT_COOKIE,
+      domain: NETEASE_EAPI_DOMAIN,
+    })
 
     const response = result.body as QRCheckResponse
 

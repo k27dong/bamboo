@@ -1,9 +1,11 @@
-import type { song_detail } from "@neteasecloudmusicapienhanced/api"
 import type { Track } from "discord-player"
 
-export type SongDetail = Awaited<
-  ReturnType<typeof song_detail>
->["body"]["songs"][number]
+declare module "@neteasecloudmusicapienhanced/api" {
+  interface RequestBaseConfig {
+    crypto?: "eapi"
+    domain?: string
+  }
+}
 
 export interface BambooMusicApi {
   getTrackUrl: (id: Track) => Promise<string>
@@ -125,6 +127,14 @@ export interface NeteasePlaylistDetailSearchResult {
   description: string
   trackIds: any[]
   creator: NeteaseUserProfile
+}
+
+export interface SongDetail {
+  name: string
+  id: number
+  dt: number
+  al: { picUrl: string }
+  ar: { name: string }[]
 }
 
 export interface NeteasePlaylistTracks {

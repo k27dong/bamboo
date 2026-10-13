@@ -1,6 +1,6 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
-import { DISCORD_DROPDOWN_LIMIT } from "@/common/constants"
+import { DISCORD_DROPDOWN_LIMIT, NETEASE_EAPI_DOMAIN } from "@/common/constants"
 import { REAL_IP } from "@/common/utils/config"
 import type {
   NeteaseCloudSearchUserResult,
@@ -16,6 +16,7 @@ export const searchUser = async (
     type: 1002,
     cookie,
     realIP: REAL_IP,
+    domain: NETEASE_EAPI_DOMAIN,
   })
     .then((rawResult) => {
       const result = rawResult.body.result as NeteaseCloudSearchUserResult

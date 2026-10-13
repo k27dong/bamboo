@@ -1,6 +1,9 @@
-import NeteaseCloudMusicApi, { type SoundQualityType } from "@neteasecloudmusicapienhanced/api"
+import NeteaseCloudMusicApi, {
+  type SoundQualityType,
+} from "@neteasecloudmusicapienhanced/api"
 import type { Track } from "discord-player"
 
+import { NETEASE_EAPI_DOMAIN } from "@/common/constants"
 import { REAL_IP } from "@/common/utils/config"
 import type { NeteaseSongPlayable } from "@/core/api/interfaces"
 
@@ -13,6 +16,8 @@ export const getSongUrlByTrack = async (
     level: "standard" as SoundQualityType,
     cookie,
     realIP: REAL_IP,
+    crypto: "eapi",
+    domain: NETEASE_EAPI_DOMAIN,
   })
     .then((rawResult) => {
       const result = rawResult.body.data as NeteaseSongPlayable[]
