@@ -1,6 +1,9 @@
-import NeteaseCloudMusicApi from "NeteaseCloudMusicApi"
+import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
-import { SONG_DETAIL_TRACKID_LIMIT } from "@/common/constants"
+import {
+  NETEASE_EAPI_DOMAIN,
+  SONG_DETAIL_TRACKID_LIMIT,
+} from "@/common/constants"
 import { REAL_IP } from "@/common/utils/config"
 import type {
   NeteasePlaylistDetailSearchResult,
@@ -16,6 +19,7 @@ export const getPlaylistTracks = async (
       id: id,
       cookie,
       realIP: REAL_IP,
+      domain: NETEASE_EAPI_DOMAIN,
     })
 
     const result = rawResult.body.playlist as NeteasePlaylistDetailSearchResult

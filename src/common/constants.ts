@@ -91,5 +91,7 @@ export const UserSelectEmojiPool: string[] = [
 
 export const SONG_DETAIL_TRACKID_LIMIT = 1000
 
+export const NETEASE_EAPI_DOMAIN = "https://interface.music.163.com"
+
 export const ENABLE_DONATION_LINK = true
 export const DONATION_LINK = "https://www.buymeacoffee.com/kefan"

@@ -1,5 +1,11 @@
 import type { Track } from "discord-player"
-import type { SongDetail } from "NeteaseCloudMusicApi"
+
+declare module "@neteasecloudmusicapienhanced/api" {
+  interface RequestBaseConfig {
+    crypto?: "eapi"
+    domain?: string
+  }
+}
 
 export interface BambooMusicApi {
   getTrackUrl: (id: Track) => Promise<string>
@@ -121,6 +127,14 @@ export interface NeteasePlaylistDetailSearchResult {
   description: string
   trackIds: any[]
   creator: NeteaseUserProfile
+}
+
+export interface SongDetail {
+  name: string
+  id: number
+  dt: number
+  al: { picUrl: string }
+  ar: { name: string }[]
 }
 
 export interface NeteasePlaylistTracks {

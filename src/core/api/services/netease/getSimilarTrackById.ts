@@ -1,4 +1,4 @@
-import NeteaseCloudMusicApi from "NeteaseCloudMusicApi"
+import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
 import { REAL_IP } from "@/common/utils/config"
 import type { NeteaseSimilarTrack, NeteaseSong } from "@/core/api/interfaces"
