@@ -6,6 +6,8 @@ const rest = new REST({ version: "10" }).setToken(TOKEN)
 
 async function flushGuildCommands() {
   try {
+    if (!DEV_GUILD) throw new Error("Missing setting DISCORD_DEV_SERVER_ID")
+
     console.log(`🔄 Starting to delete all commands for guild: ${DEV_GUILD}`)
 
     await rest.put(Routes.applicationGuildCommands(APPLICATION_ID, DEV_GUILD), {

@@ -187,9 +187,6 @@ importers:
       discord.js:
         specifier: ^14.27.0
         version: 14.27.0(bufferutil@4.1.0)
-      dotenv:
-        specifier: ^17.4.2
-        version: 17.4.2
       openai:
         specifier: ^7.4.0
         version: 7.4.0(ws@8.19.0(bufferutil@4.1.0))
