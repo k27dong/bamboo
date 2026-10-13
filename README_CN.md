@@ -51,6 +51,12 @@ Bamboo(竹)部署在作者租用的Vultr服务器上以保证服务的稳定性�
 2. 复制 `.env.example` 为 `.env.development` 并填写。
 3. `pnpm dev`: 启动开发环境
 
+### 测试
+
+- `pnpm test`: 检查机器人发送给网易云的请求，离线运行，无需任何凭据
+- `pnpm test:netease`: 使用已保存的登录，对真实的网易云服务运行各个接口
+- `pnpm test:bot`: 启动构建后的机器人，然后在 `DEV_VOICE_CHANNEL_ID` 指定的语音频道播放一首歌
+
 ## 使用 & 截图 (请打开声音)
 
 播放整张专辑：

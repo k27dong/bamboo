@@ -53,6 +53,12 @@ Bamboo is actively developed and maintained. If you encounter any bugs or have s
 4. `pnpm dev`: build and run the bot in development mode
 5. on the first run, a QR code appears in the terminal: scan it with the NetEase Cloud Music app to log in. The session is saved to `cookies/netease.cookie` and reused afterwards
 
+### Tests
+
+- `pnpm test`: checks what the bot sends to NetEase. Runs offline and needs no credentials
+- `pnpm test:netease`: runs the NetEase calls against the real service with the saved login
+- `pnpm test:bot`: boots the built bot, then plays a song in the voice channel set by `DEV_VOICE_CHANNEL_ID`
+
 ## Demo (Sound On)
 
 ### Play songs from an album:
