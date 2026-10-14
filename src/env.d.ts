@@ -1,10 +1,10 @@
 export interface Credentials {
   TOKEN: string
   APPLICATION_ID: string
-  DEV_GUILD: string
   OWNER_ID: string
-  DEV_CHANNEL_ID?: string
+  DEV_GUILD?: string
   REAL_IP?: string
+  NETEASE_COOKIE?: string
   OPENAI_API_KEY?: string
   SUPPORT_SERVER_ID?: string
   SUPPORT_SERVER_CHANNEL_ID?: string,

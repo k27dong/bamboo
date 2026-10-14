@@ -5,6 +5,7 @@ import path from "path"
 import qrcode from "qrcode-terminal"
 
 import { ApiServiceType, NETEASE_EAPI_DOMAIN } from "@/common/constants"
+import { NETEASE_COOKIE } from "@/common/utils/config"
 import type { QRCheckResponse, QRCodeResponse, QRKeyResponse } from "@/env"
 
 const COOKIE_DIR = path.join(process.cwd(), "cookies")
@@ -58,6 +59,11 @@ const saveCookie = async (source: ApiServiceType, cookie: string) => {
 }
 
 const getNeteaseCookie = async (): Promise<string> => {
+  if (NETEASE_COOKIE) {
+    console.log(`✅ Cookie ${ApiServiceType.Netease} provided, skipping login`)
+    return NETEASE_COOKIE
+  }
+
   const savedCookie = await loadCookie(ApiServiceType.Netease)
   if (savedCookie) {
     console.log(`✅ Cookie ${ApiServiceType.Netease} found, skipping login`)

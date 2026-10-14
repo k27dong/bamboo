@@ -14,6 +14,8 @@ export async function deployCommands(mode: DeployScope) {
     let commandsData
 
     if (mode === "dev") {
+      if (!DEV_GUILD) throw new Error("Missing setting DISCORD_DEV_SERVER_ID")
+
       // Include all commands for development guild
       commandsData = Commands.map((command) => command.data.toJSON())
       await rest.put(

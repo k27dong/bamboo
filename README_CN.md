@@ -48,8 +48,12 @@ Bamboo(竹)部署在作者租用的Vultr服务器上以保证服务的稳定性�
 ### 快速开始
 
 1. `pnpm install`: 安装依赖
-2. 复制 `.env.example` 为 `.env.development` 并填写。
+2. 复制 `.env.example` 为 `.env` 并填写。
 3. `pnpm dev`: 启动开发环境
+
+### 使用 Infisical 管理配置
+
+配置也可以来自 Infisical，不需要 `.env` 文件。安装 [`Infisical CLI`](https://infisical.com/docs/cli/overview) 后，在根目录运行 `infisical init` 关联项目，项目的 `dev` 和 `prod` 环境需要包含 `.env.example` 中的变量。只要存在 `.infisical.json`，脚本就会使用 Infisical，否则读取 `.env`。
 
 ## 使用 & 截图 (请打开声音)
 

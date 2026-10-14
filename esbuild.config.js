@@ -11,7 +11,6 @@ esbuild
     sourcemap: true,
     minify: process.env.NODE_ENV === "production",
     external: [
-      "dotenv",
       "discord-player",
       "@discord-player/extractor",
       "discord.js",
