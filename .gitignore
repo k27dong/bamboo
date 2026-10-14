@@ -72,6 +72,9 @@ package-lock.json
 .env.development
 .env.production
 
+# Infisical
+.infisical.json
+
 # Build
 dist/
 

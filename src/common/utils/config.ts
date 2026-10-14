@@ -7,7 +7,7 @@ const required = (name: string) => {
   const value = process.env[name]
   if (!value) {
     throw new Error(
-      `⚠️  Missing setting ${name}. Start through "infisical run", or see the README for running from an env file.`,
+      `⚠️  Missing setting ${name}. Set it in your .env file or your Infisical project.`,
     )
   }
   return value

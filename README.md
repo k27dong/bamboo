@@ -44,22 +44,18 @@ Bamboo is actively developed and maintained. If you encounter any bugs or have s
 - [`Node.js`]: Runtime for the project (22.12 or newer)
 - [`pnpm`]: Package manager (12 or newer)
 - [`ffmpeg`]: Required for audio processing and streaming
-- [`Infisical CLI`]: Loads the bot's settings. Optional, see [Without Infisical](#without-infisical)
 
 ### Usage
 
 1. `pnpm install`: Install dependencies
-2. `infisical login`: the scripts read the settings from the Infisical project named in `.infisical.json`
+2. create a `.env` file in the root directory with the format of `.env.example`, and fill in the required fields
 3. `pnpm deploy:dev`: register the slash commands in your development server (once, and again whenever commands change)
 4. `pnpm dev`: build and run the bot in development mode
 5. if no NetEase login is saved yet, a QR code appears in the terminal on the first run: scan it with the NetEase Cloud Music app to log in. The session is saved to `cookies/netease.cookie` and reused afterwards
 
-### Without Infisical
+### Settings from Infisical
 
-The bot reads its settings from the environment, so any way of setting them works. Copy `.env.example` to `.env`, fill it in, and use Node's env file option:
-
-- `pnpm build && node --env-file=.env dist/sharding.js`: build and run the bot
-- `node --env-file=.env --import tsx src/common/scripts/deploy.ts dev`: register the slash commands in your development server
+The settings can come from Infisical instead of a `.env` file. With the [`Infisical CLI`] installed, run `infisical init` in the root directory to link a project whose `dev` and `prod` environments hold the settings named in `.env.example`. The scripts use Infisical whenever `.infisical.json` is present, and the `.env` file otherwise.
 
 ## Demo (Sound On)
 

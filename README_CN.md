@@ -44,20 +44,16 @@ Bamboo(竹)部署在作者租用的Vultr服务器上以保证服务的稳定性�
 - [`Node.js`](https://nodejs.org/en/download): 运行环境
 - [`pnpm`](https://pnpm.io/installation): 包管理器
 - [`ffmpeg`](https://ffmpeg.org/): 音频处理
-- [`Infisical CLI`](https://infisical.com/docs/cli/overview): 读取机器人的配置（可选，见下文）
 
 ### 快速开始
 
 1. `pnpm install`: 安装依赖
-2. `infisical login`: 脚本会从 `.infisical.json` 指定的 Infisical 项目读取配置
+2. 复制 `.env.example` 为 `.env` 并填写。
 3. `pnpm dev`: 启动开发环境
 
-### 不使用 Infisical
+### 使用 Infisical 管理配置
 
-机器人从环境变量读取配置。复制 `.env.example` 为 `.env` 并填写，然后使用 Node 的 env 文件选项：
-
-- `pnpm build && node --env-file=.env dist/sharding.js`: 构建并运行机器人
-- `node --env-file=.env --import tsx src/common/scripts/deploy.ts dev`: 在开发服务器注册斜杠命令
+配置也可以来自 Infisical，不需要 `.env` 文件。安装 [`Infisical CLI`](https://infisical.com/docs/cli/overview) 后，在根目录运行 `infisical init` 关联项目，项目的 `dev` 和 `prod` 环境需要包含 `.env.example` 中的变量。只要存在 `.infisical.json`，脚本就会使用 Infisical，否则读取 `.env`。
 
 ## 使用 & 截图 (请打开声音)
 

@@ -19,16 +19,16 @@
   "scripts": {
     "type-check": "tsc --noEmit",
     "build": "pnpm type-check && NODE_ENV=development node esbuild.config.js",
-    "start": "infisical run --env=dev --silent -- node --enable-source-maps --no-deprecation dist/sharding.js",
+    "start": "node withSettings.js dev node --enable-source-maps --no-deprecation dist/sharding.js",
     "dev": "pnpm build && pnpm start",
     "build:prod": "pnpm type-check && NODE_ENV=production node esbuild.config.js",
-    "start:prod": "infisical run --env=prod --silent -- node --enable-source-maps --no-deprecation dist/sharding.js",
+    "start:prod": "node withSettings.js prod node --enable-source-maps --no-deprecation dist/sharding.js",
     "prod": "pnpm build:prod && pnpm start:prod",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix && prettier --write .",
-    "flush:dev": "infisical run --env=dev --silent -- tsx src/common/scripts/flush.ts",
-    "deploy:dev": "infisical run --env=dev --silent -- tsx src/common/scripts/deploy.ts dev",
-    "deploy:prod": "infisical run --env=prod --silent -- tsx src/common/scripts/deploy.ts global",
+    "flush:dev": "node withSettings.js dev tsx src/common/scripts/flush.ts",
+    "deploy:dev": "node withSettings.js dev tsx src/common/scripts/deploy.ts dev",
+    "deploy:prod": "node withSettings.js prod tsx src/common/scripts/deploy.ts global",
     "check": "tsx src/common/scripts/checkDep.ts"
   },
   "dependencies": {
