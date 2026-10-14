@@ -41,7 +41,7 @@ Bamboo is actively developed and maintained. If you encounter any bugs or have s
 
 ### Prerequisites
 
-- [`Node.js`]: Runtime for the project (22.12 or newer)
+- [`Node.js`]: Runtime for the project (22.18 or newer)
 - [`pnpm`]: Package manager (12 or newer)
 - [`ffmpeg`]: Required for audio processing and streaming
 
