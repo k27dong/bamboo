@@ -1,7 +1,6 @@
 import type { Command as ClientCommand } from "@/core/commands/Command"
 import { Album } from "@/features/commands/album"
 import { Lyric } from "@/features/commands/lyric"
-import { Play } from "@/features/commands/play"
 import { User } from "@/features/commands/user"
 
 import { Back } from "./back"
@@ -13,6 +12,7 @@ import { Jump } from "./jump"
 import { Loop } from "./loop"
 import { Pause } from "./pause"
 import { Ping } from "./ping"
+import { Play } from "./play"
 import { Queue } from "./queue"
 import { Shuffle } from "./shuffle"
 import { Skip } from "./skip"
@@ -26,7 +26,7 @@ const adapt = (command: ClientCommand): Command => ({
 
 export const commands: readonly Command[] = [
   Ping,
-  adapt(Play),
+  Play,
   Queue,
   Skip,
   adapt(Album),
