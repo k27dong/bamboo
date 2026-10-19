@@ -1,7 +1,7 @@
 import { type Client, Events } from "discord.js"
 import { AutoPoster } from "topgg-autoposter"
 
-import { ENVIROMENT, TOPGG_TOKEN } from "@/common/utils/config"
+import { config, Environment } from "@/config"
 
 export default (client: Client) => {
   client.on(Events.ClientReady, () => {
@@ -10,8 +10,12 @@ export default (client: Client) => {
 
     // Only post Top.gg stats from shard 0 to avoid duplicate stats
     const isPrimaryShard = shardId === 0
-    if (TOPGG_TOKEN && ENVIROMENT === "production" && isPrimaryShard) {
-      const autoPoster = AutoPoster(TOPGG_TOKEN, client)
+    if (
+      config.topggToken &&
+      config.environment === Environment.Production &&
+      isPrimaryShard
+    ) {
+      const autoPoster = AutoPoster(config.topggToken, client)
       autoPoster.on("error", (error) => {
         console.error("❌ Error in top.gg stats posting:", error)
       })

@@ -6,9 +6,9 @@ import {
 } from "discord.js"
 import { QueueRepeatMode, useQueue } from "discord-player"
 
-import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
+import { logger } from "@/logger"
 
 const LoopOption = new SlashCommandBuilder()
   .setName("loop")
@@ -64,7 +64,7 @@ export const Loop: Command = {
 
       await interaction.reply(`播放方式：**${modeName}**.`)
     } catch (error: any) {
-      logger.error(interaction, Loop, error)
+      logger.error(`/${Loop.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

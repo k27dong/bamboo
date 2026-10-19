@@ -1,6 +1,6 @@
 import { type Client, Events, type Interaction } from "discord.js"
 
-import { logger } from "@/common/utils/logger"
+import { logger } from "@/logger"
 
 import { Commands } from "../commands"
 
@@ -14,8 +14,12 @@ export default (client: Client) => {
           )
 
           if (command) {
-            logger.info(interaction)
-            await command.run(client, interaction)
+            const started = performance.now()
+            try {
+              await command.run(client, interaction)
+            } finally {
+              logger.command(interaction, performance.now() - started)
+            }
           }
         }
       } catch (error) {

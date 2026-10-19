@@ -1,6 +1,6 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
-import { REAL_IP } from "@/common/utils/config"
+import { config } from "@/config"
 import type { NeteaseAlbumSearchInfo, NeteaseSong } from "@/core/api/interfaces"
 
 export const getAlbumSongs = async (
@@ -10,7 +10,7 @@ export const getAlbumSongs = async (
   return NeteaseCloudMusicApi.album({
     id: query,
     cookie,
-    realIP: REAL_IP,
+    realIP: config.netease.realIp,
   })
     .then((rawResult) => {
       const songs = rawResult.body.songs as NeteaseSong[]

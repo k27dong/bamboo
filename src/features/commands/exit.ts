@@ -6,9 +6,9 @@ import {
 } from "discord.js"
 import { useQueue } from "discord-player"
 
-import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
+import { logger } from "@/logger"
 
 const ExitOption = new SlashCommandBuilder()
   .setName("exit")
@@ -36,7 +36,7 @@ export const Exit: Command = {
 
       await interaction.reply("done")
     } catch (error: any) {
-      logger.error(interaction, Exit, error)
+      logger.error(`/${Exit.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

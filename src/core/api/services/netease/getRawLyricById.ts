@@ -1,7 +1,7 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
-import { NETEASE_EAPI_DOMAIN } from "@/common/constants"
-import { REAL_IP } from "@/common/utils/config"
+import { config } from "@/config"
+import { NETEASE_EAPI_DOMAIN } from "@/constants"
 import type { NeteaseLyric } from "@/core/api/interfaces"
 
 export const getRawLyricById = async (
@@ -11,7 +11,7 @@ export const getRawLyricById = async (
   return NeteaseCloudMusicApi.lyric({
     id: id,
     cookie,
-    realIP: REAL_IP,
+    realIP: config.netease.realIp,
     domain: NETEASE_EAPI_DOMAIN,
   })
     .then((rawResult) => {

@@ -7,23 +7,23 @@ import {
 import { useMainPlayer, useQueue } from "discord-player"
 import OpenAI from "openai"
 
+import { extractorSearchOptions } from "@/common/types"
+import { config } from "@/config"
 import {
   DISCORD_MESSAGE_CHAR_LIMIT,
   EXTRACTOR_IDENTIFIER,
   ExtractorSearchType,
-} from "@/common/constants"
-import { LYRIC_SANITIZATION_PROMPT } from "@/common/prompts"
-import { extractorSearchOptions } from "@/common/types"
-import { OPENAI_API_KEY } from "@/common/utils/config"
-import { logger } from "@/common/utils/logger"
+} from "@/constants"
 import type { Command } from "@/core/commands/Command"
+import { logger } from "@/logger"
+import { LYRIC_SANITIZATION_PROMPT } from "@/prompts"
 
 const getGptParsedLyric = async (
   rawLyric: string,
   parsedLyric: string,
 ): Promise<string> => {
   const openai = new OpenAI({
-    apiKey: OPENAI_API_KEY,
+    apiKey: config.openaiApiKey,
   })
   const response = await openai.chat.completions.create({
     messages: [
@@ -129,7 +129,7 @@ export const Lyric: Command = {
       ])
       await interaction.editReply(gptParsedLyric)
     } catch (error: any) {
-      logger.error(interaction, Lyric, error)
+      logger.error(`/${Lyric.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

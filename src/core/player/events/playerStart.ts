@@ -6,7 +6,7 @@ import {
 } from "discord-player"
 
 import type { QueueMetadata } from "@/common/types"
-import { logger } from "@/common/utils/logger"
+import { logger } from "@/logger"
 
 import { NowPlayingMessage } from "../embedMessages"
 

@@ -1,52 +1,3 @@
-import { exec } from "child_process"
-import { readFile } from "fs/promises"
-import { resolve } from "path"
-import { promisify } from "util"
-
-import { UserSelectEmojiPool } from "@/common/constants"
-import type { PackageJson } from "@/common/types"
-
-const execAsync = promisify(exec)
-
-// Version Info System
-let versionInfo = "Version: Not initialized"
-
-/**
- * Initializes version information from package.json and git commit hash
- * @example
- * await initializeVersion()
- * getVersion() // "```1.2.3 (a1b2c3d)```"
- */
-export const initializeVersion = async () => {
-  try {
-    const packageJsonPath = resolve(process.cwd(), "package.json")
-    const contents = await readFile(packageJsonPath, "utf8")
-    const packageJson: PackageJson = JSON.parse(contents)
-
-    const commitHash =
-      process.env.COMMIT_HASH ||
-      (await execAsync("git rev-parse --short HEAD")
-        .then(({ stdout }) => stdout.trim())
-        .catch((error) => {
-          console.error("Failed to get git commit hash:", error)
-          return "unknown"
-        }))
-
-    versionInfo = `${packageJson.version} (${commitHash})`
-  } catch (error) {
-    console.error("Version initialization failed:", error)
-    versionInfo = "Version: Unavailable"
-  }
-}
-
-/**
- * Returns formatted version information
- * @returns Version string
- * @example
- * getVersion() // "1.2.3 (a1b2c3d)"
- */
-export const getVersion = () => versionInfo
-
 /**
  * Converts a duration string (HH:MM:SS, MM:SS, or SS) to total seconds
  * @param duration - The duration string to parse
@@ -140,28 +91,6 @@ export const timestampToYear = (timestamp: number): number => {
   }
 
   return date.getFullYear()
-}
-
-/**
- * Get a deterministic emoji based on an integer input and a salt.
- * Ensures f(i, salt) and f(i+1, salt) behave the same way,
- * but f(i, salt1) and f(i, salt2) give different results.
- *
- * @param {number} i - The integer input (e.g., user ID, index)
- * @param {string | number} salt - A unique value to vary results (e.g., username, seed)
- * @returns {string} - A consistent emoji from the list
- */
-export const getAvatarEmoji = (i: number, salt: string | number): string => {
-  // Convert salt into a numeric hash
-  const saltHash = [...String(salt)].reduce(
-    (acc, char) => acc + char.charCodeAt(0),
-    0,
-  )
-
-  // Compute index using both i and saltHash to vary results
-  const index = (i + saltHash) % UserSelectEmojiPool.length
-
-  return UserSelectEmojiPool[index]
 }
 
 /**

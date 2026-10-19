@@ -6,9 +6,9 @@ import {
 } from "discord.js"
 import { useTimeline } from "discord-player"
 
-import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
+import { logger } from "@/logger"
 
 const PauseOption = new SlashCommandBuilder()
   .setName("pause")
@@ -46,7 +46,7 @@ export const Pause: Command = {
         `Now: ${wasPaused ? "**playing**" : "**paused**"}`,
       )
     } catch (error: any) {
-      logger.error(interaction, Pause, error)
+      logger.error(`/${Pause.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

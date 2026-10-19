@@ -5,13 +5,13 @@ import os from "os"
 import path from "path"
 import { fileURLToPath } from "url"
 
-import { ENVIROMENT, TOKEN } from "@/common/utils/config"
+import { config } from "@/config"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const botScript = path.join(__dirname, "Bamboo.js")
 
 const manager = new ShardingManager(botScript, {
-  token: TOKEN,
+  token: config.discord.token,
   totalShards: "auto",
   mode: "process",
   respawn: true,
@@ -63,7 +63,7 @@ manager
   })
   .then((shards) => {
     console.log(
-      `${chalk.magenta("[MANAGER]")} All ${shards.size} shard(s) spawned in ${ENVIROMENT} mode`,
+      `${chalk.magenta("[MANAGER]")} All ${shards.size} shard(s) spawned in ${config.environment} mode`,
     )
 
     const cpuCount = os.cpus().length

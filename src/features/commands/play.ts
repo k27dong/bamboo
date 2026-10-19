@@ -7,9 +7,9 @@ import {
 } from "discord.js"
 import { useMainPlayer } from "discord-player"
 
-import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
+import { logger } from "@/logger"
 
 const PlayOption = new SlashCommandBuilder()
   .setName("play")
@@ -45,7 +45,7 @@ export const Play: Command = {
         `**Queued**: ${result.track.title} ${result.track.author ? ` (${result.track.author}) ` : ""} [${result.track.duration}]`,
       )
     } catch (error: any) {
-      logger.error(interaction, Play, error)
+      logger.error(`/${Play.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

@@ -14,22 +14,22 @@ import {
 } from "discord.js"
 import { type Playlist, useMainPlayer } from "discord-player"
 
+import { extractorSearchOptions } from "@/common/types"
 import {
   CustomButtonId,
   DISCORD_EMBED_DESCRIPTION_LIMIT,
   DISCORD_SELECT_MENU_LIMIT as DISCORD_SELECT_MENU_LIMIT,
   EXTRACTOR_IDENTIFIER,
   ExtractorSearchType,
-} from "@/common/constants"
-import { extractorSearchOptions } from "@/common/types"
-import { timestampToYear } from "@/common/utils/common"
-import { logger } from "@/common/utils/logger"
+} from "@/constants"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 import {
   ErrorMessage,
   NowPlayingPlaylistMessage,
 } from "@/core/player/embedMessages"
+import { timestampToYear } from "@/format"
+import { logger } from "@/logger"
 
 const AlbumOption = new SlashCommandBuilder()
   .setName("album")
@@ -240,7 +240,7 @@ export const Album: Command = {
         })()
       })
     } catch (error: any) {
-      logger.error(interaction, Album, error)
+      logger.error(`/${Album.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

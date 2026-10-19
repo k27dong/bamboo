@@ -6,13 +6,10 @@ import {
 } from "discord.js"
 import { type Track, useQueue } from "discord-player"
 
-import { DISCORD_MESSAGE_CHAR_LIMIT } from "@/common/constants"
-import {
-  durationStringToSeconds,
-  secondsToHumanDuration,
-} from "@/common/utils/common"
-import { logger } from "@/common/utils/logger"
+import { DISCORD_MESSAGE_CHAR_LIMIT } from "@/constants"
 import type { Command } from "@/core/commands/Command"
+import { durationStringToSeconds, secondsToHumanDuration } from "@/format"
+import { logger } from "@/logger"
 
 const QueueOption = new SlashCommandBuilder()
   .setName("queue")
@@ -166,7 +163,7 @@ export const Queue: Command = {
         ),
       )
     } catch (error: any) {
-      logger.error(interaction, Queue, error)
+      logger.error(`/${Queue.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

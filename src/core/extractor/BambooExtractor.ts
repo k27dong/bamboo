@@ -9,13 +9,12 @@ import {
   Track,
 } from "discord-player"
 
+import type { ExtractorSearchOptions } from "@/common/types"
 import {
   type ApiServiceType,
   EXTRACTOR_IDENTIFIER,
   ExtractorSearchType,
-} from "@/common/constants"
-import type { ExtractorSearchOptions } from "@/common/types"
-import { millisecondsToTimeString } from "@/common/utils/common"
+} from "@/constants"
 import { BambooApi } from "@/core/api/BambooApi"
 import type {
   NeteaseAlbumDetailed,
@@ -24,6 +23,7 @@ import type {
   NeteaseUserProfile,
   SongDetail,
 } from "@/core/api/interfaces"
+import { millisecondsToTimeString } from "@/format"
 
 export class BambooExtractor extends BaseExtractor {
   static override identifier = EXTRACTOR_IDENTIFIER
