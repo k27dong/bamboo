@@ -5,10 +5,9 @@ import {
   type Track,
 } from "discord-player"
 
+import { NowPlayingMessage } from "@/core/player/embedMessages"
 import { logger } from "@/logger"
 import type { QueueMetadata } from "@/player/player"
-
-import { NowPlayingMessage } from "../embedMessages"
 
 export default (player: Player) => {
   player.events.on(

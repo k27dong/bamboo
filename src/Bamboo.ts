@@ -2,8 +2,8 @@ import chalk from "chalk"
 import { Client, GatewayIntentBits } from "discord.js"
 
 import { config } from "@/config"
-import * as playerEvents from "@/core/player/events"
 import * as clientEvents from "@/features/events"
+import { registerPlayerEvents } from "@/player/events"
 import { createPlayer } from "@/player/player"
 import { registerSources } from "@/sources"
 
@@ -22,7 +22,7 @@ const player = createPlayer(client)
 
 // Load Discord and player events
 Object.values(clientEvents).forEach((event) => event(client))
-Object.values(playerEvents).forEach((event) => event(player))
+registerPlayerEvents(player)
 
 await registerSources(player)
 
