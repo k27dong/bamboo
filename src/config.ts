@@ -26,7 +26,7 @@ export const config: Readonly<{
     supportChannelId?: string
   }
   netease: { realIp?: string; cookie?: string }
-  openaiApiKey?: string
+  openrouterApiKey: string
   topggToken?: string
 }> = {
   environment:
@@ -45,6 +45,6 @@ export const config: Readonly<{
     realIp: process.env.NETEASE_REAL_IP,
     cookie: process.env.NETEASE_COOKIE,
   },
-  openaiApiKey: process.env.OPENAI_API_KEY,
+  openrouterApiKey: required("OPENROUTER_API_KEY"),
   topggToken: process.env.TOPGG_TOKEN,
 }
