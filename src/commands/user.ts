@@ -37,7 +37,9 @@ const getAvatarEmoji = (i: number, salt: string | number): string => {
   // Compute index using both i and saltHash to vary results
   const index = (i + saltHash) % UserSelectEmojiPool.length
 
-  return UserSelectEmojiPool[index]
+  const emoji = UserSelectEmojiPool[index]
+  if (emoji === undefined) throw new Error(`No avatar emoji at ${index}`)
+  return emoji
 }
 
 const pickUser = async (

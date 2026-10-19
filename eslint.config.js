@@ -49,20 +49,13 @@ export default tseslint.config(
           allowDeclarations: true,
         },
       ],
+      "@typescript-eslint/no-non-null-assertion": "error",
       "@typescript-eslint/no-unused-expressions": [
         "error",
         {
           allowShortCircuit: true,
         },
       ],
-      "@typescript-eslint/no-empty-object-type": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unsafe-argument": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-enum-comparison": "off",
-      "@typescript-eslint/no-unsafe-function-type": "off",
-      "@typescript-eslint/no-unsafe-return": "off",
     },
   },
   {

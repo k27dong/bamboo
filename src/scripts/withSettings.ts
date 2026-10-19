@@ -14,7 +14,9 @@ if (existsSync(".infisical.json")) {
   process.exit(1)
 }
 
-const child = spawn(command[0], command.slice(1), { stdio: "inherit" })
+const [file, ...args] = command
+if (file === undefined) throw new Error("No command to run")
+const child = spawn(file, args, { stdio: "inherit" })
 process.on("SIGINT", () => child.kill("SIGINT"))
 process.on("SIGTERM", () => child.kill("SIGTERM"))
 child.on("exit", (code) => process.exit(code ?? 1))
