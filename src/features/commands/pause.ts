@@ -46,7 +46,7 @@ export const Pause: Command = {
         `Now: ${wasPaused ? "**playing**" : "**paused**"}`,
       )
     } catch (error: any) {
-      logger.error(interaction, Pause, error)
+      logger.error(`/${Pause.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

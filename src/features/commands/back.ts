@@ -40,7 +40,7 @@ export const Back: Command = {
 
       await interaction.reply("done")
     } catch (error: any) {
-      logger.error(interaction, Back, error)
+      logger.error(`/${Back.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

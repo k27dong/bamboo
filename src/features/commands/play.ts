@@ -45,7 +45,7 @@ export const Play: Command = {
         `**Queued**: ${result.track.title} ${result.track.author ? ` (${result.track.author}) ` : ""} [${result.track.duration}]`,
       )
     } catch (error: any) {
-      logger.error(interaction, Play, error)
+      logger.error(`/${Play.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

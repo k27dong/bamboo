@@ -1,156 +1,79 @@
-import chalk from "chalk"
+import { inspect } from "node:util"
+
+import chalk, { type ChalkInstance } from "chalk"
 import type { ChatInputCommandInteraction, VoiceBasedChannel } from "discord.js"
 
-import type { Command } from "@/core/commands/Command"
+import {
+  LOG_COMMAND_WIDTH,
+  LOG_LEVEL_COLORS,
+  LOG_LEVEL_WIDTH,
+  LOG_TIME_FORMAT,
+  LogLevel,
+} from "@/common/constants"
+import { activeRequest } from "@/common/context"
 
-const COMMAND_NAME_LENGTH = 7
-const FALLBACK_TIMESTAMP = chalk.grey(`[00:00:00]`)
-const MAX_TITLE_LENGTH = 100
-
-// Memoize timestamp generation for same-second calls
-let lastTimestamp: { time: string; value: string } = { time: "", value: "" }
-
-const getTimestamp = () => {
-  try {
-    const now = new Date()
-    const timeString = now.toLocaleTimeString("en-CA", {
-      hour12: false,
-      timeZone: "America/Toronto",
-    })
-
-    if (lastTimestamp.time !== timeString) {
-      lastTimestamp = {
-        time: timeString,
-        value: chalk.grey(`[${timeString}]`),
-      }
-    }
-    return lastTimestamp.value
-  } catch {
-    return FALLBACK_TIMESTAMP
-  }
-}
-
-const getSafeValue = (value: unknown, fallback = ""): string => {
-  if (typeof value === "string") return value.slice(0, 200)
-  if (typeof value === "number") return String(value)
-  return fallback
-}
-
-const isValidInteraction = (
-  interaction: unknown,
-): interaction is ChatInputCommandInteraction => {
-  return Boolean(
-    interaction &&
-    typeof interaction === "object" &&
-    "commandName" in interaction &&
-    "options" in interaction &&
-    "user" in interaction,
+const timestamp = () => {
+  const { year, month, day, hour, minute, second } = Object.fromEntries(
+    LOG_TIME_FORMAT.formatToParts().map(
+      ({ type, value }) => [type, value] as const,
+    ),
   )
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`
 }
 
-const safeJoin = (...parts: (string | undefined)[]): string =>
-  parts.filter(Boolean).join(" ")
+const line = (level: LogLevel, message: string) =>
+  [
+    chalk.grey(`[${timestamp()}] [s${process.env.SHARDS ?? 0}]`),
+    LOG_LEVEL_COLORS[level](level.padEnd(LOG_LEVEL_WIDTH)),
+    message,
+  ].join(" ")
+
+const column = (label: string, color: ChalkInstance) =>
+  `${color(label.padEnd(LOG_COMMAND_WIDTH))} | `
+
+const inRequest = (message: string) => {
+  const current = activeRequest()
+  if (!current) return message
+  const server = chalk.greenBright(current.guildId ?? "DM")
+  return `${column(current.command, chalk.cyanBright)}${server} | ${message}`
+}
+
+const duration = (ms: number) =>
+  ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(1)} s`
 
 export const logger = {
-  info(interaction: ChatInputCommandInteraction) {
-    try {
-      if (!isValidInteraction(interaction)) {
-        console.error("Invalid interaction object")
-        return
-      }
-
-      const timestamp = getTimestamp()
-      const commandName = getSafeValue(
-        interaction.commandName,
-        "unknown",
-      ).padEnd(COMMAND_NAME_LENGTH)
-
-      const username = getSafeValue(interaction.user?.tag, "unknown-user")
-      const guildName =
-        interaction.guild?.name?.slice(0, 50) || "Direct Message"
-      const query = interaction.options?.data?.[0]?.value
-
-      const safeQuery = query
-        ? `: ${chalk.yellowBright(getSafeValue(query))}`
-        : ""
-
-      console.log(
-        safeJoin(
-          timestamp,
-          chalk.cyanBright(commandName),
-          "|",
-          chalk.blueBright(username),
-          "in",
-          chalk.greenBright(guildName),
-          safeQuery,
-        ),
-      )
-    } catch (error) {
-      console.error("Logger info failed:", error)
-    }
+  warn(message: string) {
+    console.warn(line(LogLevel.Warn, inRequest(message)))
   },
 
-  error(
-    interaction: ChatInputCommandInteraction,
-    command: Command,
-    error: unknown,
-  ) {
-    try {
-      if (!isValidInteraction(interaction)) return
+  error(message: string, error?: unknown) {
+    console.error(line(LogLevel.Error, inRequest(message)))
+    if (error !== undefined) console.error(inspect(error))
+  },
 
-      const timestamp = getTimestamp()
-      const commandName = getSafeValue(command?.name, "unknown-command")
-      const query = interaction.options?.data?.[0]?.value
-
-      const safeQuery = query
-        ? chalk.yellowBright(`"${getSafeValue(query)}"`)
-        : ""
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error"
-
-      console.error(
-        safeJoin(
-          timestamp,
-          chalk.redBright("❌ERROR"),
-          "|",
-          chalk.cyanBright(commandName),
-          safeQuery,
-          "-",
-          errorMessage,
-        ),
-      )
-
-      if (error instanceof Error && error.stack) {
-        console.error("Stack trace:", error.stack)
-      }
-    } catch (loggerError) {
-      console.error("Logger error failed:", loggerError)
-    }
+  command(interaction: ChatInputCommandInteraction, durationMs: number) {
+    const user = chalk.blueBright(interaction.user.tag)
+    const server = chalk.greenBright(
+      interaction.guild?.name ?? "Direct Message",
+    )
+    const value = interaction.options.data[0]?.value
+    const query = value === undefined ? "" : `: ${chalk.yellowBright(value)}`
+    console.log(
+      line(
+        LogLevel.Info,
+        `${column(interaction.commandName, chalk.cyanBright)}${user} in ${server}${query} (${duration(durationMs)})`,
+      ),
+    )
   },
 
   player(channel: VoiceBasedChannel | null, title: string) {
-    try {
-      const timestamp = getTimestamp()
-      const safeTitle = getSafeValue(title, "Untitled").slice(
-        0,
-        MAX_TITLE_LENGTH,
-      )
-
-      const guildName = channel?.guild?.name?.slice(0, 50) || "Direct Message"
-      const channelName = channel?.name?.slice(0, 30) || "Unknown channel"
-
-      console.log(
-        safeJoin(
-          timestamp,
-          chalk.magentaBright("PLAYER"),
-          " |",
-          chalk.greenBright(`${guildName} (${channelName})`),
-          "-",
-          chalk.yellowBright(safeTitle),
-        ),
-      )
-    } catch (error) {
-      console.error("Logger player failed:", error)
-    }
+    const server = channel?.guild.name ?? "Direct Message"
+    const voice = channel?.name ?? "Unknown channel"
+    console.log(
+      line(
+        LogLevel.Info,
+        `${column("PLAYER", chalk.magentaBright)}${chalk.greenBright(`${server} (${voice})`)} - ${chalk.yellowBright(title)}`,
+      ),
+    )
   },
 }

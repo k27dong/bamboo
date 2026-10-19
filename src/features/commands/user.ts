@@ -233,7 +233,7 @@ export const User: Command = {
         })()
       })
     } catch (error: any) {
-      logger.error(interaction, User, error)
+      logger.error(`/${User.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()
