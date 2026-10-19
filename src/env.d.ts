@@ -1,3 +1,7 @@
+declare global {
+  const BAMBOO_VERSION: string
+}
+
 export interface QRKeyResponse {
   code: number
   unikey: string

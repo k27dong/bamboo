@@ -15,7 +15,3 @@ export interface ExtractorSearchOptions extends RequestOptions {
 export const extractorSearchOptions = (
   options: ExtractorSearchOptions,
 ): ExtractorSearchOptions => options
-
-export interface PackageJson {
-  version: string
-}

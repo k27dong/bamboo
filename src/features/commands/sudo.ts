@@ -5,7 +5,6 @@ import {
   SlashCommandBuilder,
 } from "discord.js"
 
-import { getVersion } from "@/common/utils/common"
 import { config } from "@/config"
 import type { Command } from "@/core/commands/Command"
 import type { StatGuildsRecord } from "@/env"
@@ -130,7 +129,7 @@ export const Sudo: Command = {
         }
         case "v":
         case "version": {
-          await interaction.editReply(`\`\`\`Version: ${getVersion()}\`\`\``)
+          await interaction.editReply(`\`\`\`Version: ${BAMBOO_VERSION}\`\`\``)
           break
         }
         default: {
