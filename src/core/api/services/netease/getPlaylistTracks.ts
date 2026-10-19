@@ -4,7 +4,7 @@ import {
   NETEASE_EAPI_DOMAIN,
   SONG_DETAIL_TRACKID_LIMIT,
 } from "@/common/constants"
-import { REAL_IP } from "@/common/utils/config"
+import { config } from "@/config"
 import type {
   NeteasePlaylistDetailSearchResult,
   NeteasePlaylistTracks,
@@ -18,7 +18,7 @@ export const getPlaylistTracks = async (
     const rawResult = await NeteaseCloudMusicApi.playlist_detail({
       id: id,
       cookie,
-      realIP: REAL_IP,
+      realIP: config.netease.realIp,
       domain: NETEASE_EAPI_DOMAIN,
     })
 
@@ -38,7 +38,7 @@ export const getPlaylistTracks = async (
       NeteaseCloudMusicApi.song_detail({
         ids: chunk.join(","),
         cookie,
-        realIP: REAL_IP,
+        realIP: config.netease.realIp,
       }),
     )
 

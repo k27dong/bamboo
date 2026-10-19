@@ -1,6 +1,6 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
-import { REAL_IP } from "@/common/utils/config"
+import { config } from "@/config"
 import type { NeteaseSimilarTrack, NeteaseSong } from "@/core/api/interfaces"
 
 export const getSimilarTrackById = async (
@@ -11,7 +11,7 @@ export const getSimilarTrackById = async (
   return NeteaseCloudMusicApi.simi_song({
     id: id,
     cookie,
-    realIP: REAL_IP,
+    realIP: config.netease.realIp,
   })
     .then((rawResult) => {
       const result = rawResult.body.songs as NeteaseSimilarTrack[]

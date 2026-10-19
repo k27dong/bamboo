@@ -1,10 +1,14 @@
 import { REST, Routes } from "discord.js"
 
-import { APPLICATION_ID, DEV_GUILD, TOKEN } from "@/common/utils/config"
-import type { DeployScope } from "@/env"
+import { config } from "@/config"
 import { Commands } from "@/features/commands"
 
-const rest = new REST({ version: "10" }).setToken(TOKEN)
+enum DeployScope {
+  Dev = "dev",
+  Global = "global",
+}
+
+const rest = new REST({ version: "10" }).setToken(config.discord.token)
 const skippedCommands = ["sudo"]
 
 export async function deployCommands(mode: DeployScope) {
@@ -13,17 +17,21 @@ export async function deployCommands(mode: DeployScope) {
 
     let commandsData
 
-    if (mode === "dev") {
-      if (!DEV_GUILD) throw new Error("Missing setting DISCORD_DEV_SERVER_ID")
+    if (mode === DeployScope.Dev) {
+      if (!config.discord.devGuildId)
+        throw new Error("Missing setting DISCORD_DEV_SERVER_ID")
 
       // Include all commands for development guild
       commandsData = Commands.map((command) => command.data.toJSON())
       await rest.put(
-        Routes.applicationGuildCommands(APPLICATION_ID, DEV_GUILD),
+        Routes.applicationGuildCommands(
+          config.discord.applicationId,
+          config.discord.devGuildId,
+        ),
         { body: commandsData },
       )
       console.log(
-        `✅ Successfully reloaded commands for development guild: ${DEV_GUILD}`,
+        `✅ Successfully reloaded commands for development guild: ${config.discord.devGuildId}`,
       )
     } else {
       const globalCommands = Commands.filter(
@@ -31,7 +39,7 @@ export async function deployCommands(mode: DeployScope) {
       )
 
       commandsData = globalCommands.map((command) => command.data.toJSON())
-      await rest.put(Routes.applicationCommands(APPLICATION_ID), {
+      await rest.put(Routes.applicationCommands(config.discord.applicationId), {
         body: commandsData,
       })
       console.log("✅ Successfully reloaded global application (/) commands.")
@@ -52,7 +60,7 @@ export async function deployCommands(mode: DeployScope) {
 
 const mode = process.argv[2] as DeployScope
 
-if (mode !== "dev" && mode !== "global") {
+if (mode !== DeployScope.Dev && mode !== DeployScope.Global) {
   console.error("❌ Invalid mode. Use 'dev' or 'global'.")
   process.exit(1)
 }

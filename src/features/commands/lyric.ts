@@ -14,8 +14,8 @@ import {
 } from "@/common/constants"
 import { LYRIC_SANITIZATION_PROMPT } from "@/common/prompts"
 import { extractorSearchOptions } from "@/common/types"
-import { OPENAI_API_KEY } from "@/common/utils/config"
 import { logger } from "@/common/utils/logger"
+import { config } from "@/config"
 import type { Command } from "@/core/commands/Command"
 
 const getGptParsedLyric = async (
@@ -23,7 +23,7 @@ const getGptParsedLyric = async (
   parsedLyric: string,
 ): Promise<string> => {
   const openai = new OpenAI({
-    apiKey: OPENAI_API_KEY,
+    apiKey: config.openaiApiKey,
   })
   const response = await openai.chat.completions.create({
     messages: [

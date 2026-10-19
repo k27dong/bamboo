@@ -4,8 +4,8 @@ import { Player } from "discord-player"
 
 import { ApiServiceType } from "@/common/constants"
 import { initializeVersion } from "@/common/utils/common"
-import { ENVIROMENT, TOKEN } from "@/common/utils/config"
 import { setUpCookie } from "@/common/utils/cookie"
+import { config } from "@/config"
 import { BambooExtractor } from "@/core/extractor/BambooExtractor"
 import * as playerEvents from "@/core/player/events"
 import * as clientEvents from "@/features/events"
@@ -43,9 +43,9 @@ await player.extractors.register(BambooExtractor, {
 
 // Log in to Discord
 client
-  .login(TOKEN)
+  .login(config.discord.token)
   .then(() => {
-    console.log(`✅ Successfully started in ${chalk.bold(ENVIROMENT)}`)
+    console.log(`✅ Successfully started in ${chalk.bold(config.environment)}`)
   })
   .catch((error) => {
     console.error("❌ Failed to log in:", error)

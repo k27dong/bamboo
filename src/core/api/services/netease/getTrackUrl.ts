@@ -4,7 +4,7 @@ import NeteaseCloudMusicApi, {
 import type { Track } from "discord-player"
 
 import { NETEASE_EAPI_DOMAIN } from "@/common/constants"
-import { REAL_IP } from "@/common/utils/config"
+import { config } from "@/config"
 import type { NeteaseSongPlayable } from "@/core/api/interfaces"
 
 export const getSongUrlByTrack = async (
@@ -15,7 +15,7 @@ export const getSongUrlByTrack = async (
     id: Number(track.url),
     level: "standard" as SoundQualityType,
     cookie,
-    realIP: REAL_IP,
+    realIP: config.netease.realIp,
     crypto: "eapi",
     domain: NETEASE_EAPI_DOMAIN,
   })

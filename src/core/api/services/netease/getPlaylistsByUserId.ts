@@ -1,7 +1,7 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
 import { DISCORD_DROPDOWN_LIMIT } from "@/common/constants"
-import { REAL_IP } from "@/common/utils/config"
+import { config } from "@/config"
 import type { NeteasePlaylistSearchResult } from "@/core/api/interfaces"
 
 export const getPlaylistsByUserId = async (
@@ -11,7 +11,7 @@ export const getPlaylistsByUserId = async (
   return NeteaseCloudMusicApi.user_playlist({
     uid: id,
     cookie,
-    realIP: REAL_IP,
+    realIP: config.netease.realIp,
   })
     .then((rawResult) => {
       const result = rawResult.body.playlist as NeteasePlaylistSearchResult[]

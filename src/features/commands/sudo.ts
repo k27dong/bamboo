@@ -6,8 +6,8 @@ import {
 } from "discord.js"
 
 import { getVersion, timestampToDate } from "@/common/utils/common"
-import { OWNER_ID } from "@/common/utils/config"
 import { logger } from "@/common/utils/logger"
+import { config } from "@/config"
 import type { Command } from "@/core/commands/Command"
 import type { StatGuildsRecord } from "@/env"
 
@@ -82,7 +82,7 @@ export const Sudo: Command = {
       await interaction.deferReply({ ephemeral: true })
       const query = interaction.options.data[0].value as string
 
-      if (interaction.user.id !== OWNER_ID) {
+      if (interaction.user.id !== config.discord.ownerId) {
         throw new Error("⚠️ Permission denied, you are not the owner.")
       }
 

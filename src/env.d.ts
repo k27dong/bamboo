@@ -1,20 +1,3 @@
-export interface Credentials {
-  TOKEN: string
-  APPLICATION_ID: string
-  OWNER_ID: string
-  DEV_GUILD?: string
-  REAL_IP?: string
-  NETEASE_COOKIE?: string
-  OPENAI_API_KEY?: string
-  SUPPORT_SERVER_ID?: string
-  SUPPORT_SERVER_CHANNEL_ID?: string,
-  TOPGG_TOKEN?: string,
-  ENVIROMENT: Environment
-}
-
-export type DeployScope = "dev" | "global"
-export type Environment = "development" | "production"
-
 export interface QRKeyResponse {
   code: number
   unikey: string
