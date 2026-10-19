@@ -48,9 +48,9 @@ const column = (label: string, color: ChalkInstance) =>
 
 const inRequest = (message: string) => {
   const current = request.getStore()
-  return current
-    ? `${column(current.command, chalk.cyanBright)}${message}`
-    : message
+  if (!current) return message
+  const server = chalk.greenBright(current.guildId ?? "DM")
+  return `${column(current.command, chalk.cyanBright)}${server} | ${message}`
 }
 
 const duration = (ms: number) =>
