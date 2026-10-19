@@ -10,6 +10,7 @@ import {
   StringSelectMenuOptionBuilder,
 } from "discord.js"
 import { type Playlist, useMainPlayer } from "discord-player"
+import { isMatching } from "ts-pattern"
 
 import {
   CustomButtonId,
@@ -86,7 +87,7 @@ const showAlbumCard = async (
 
   clicks.on("collect", (click) => {
     void (async () => {
-      if (click.customId !== CustomButtonId.ShowDescription) return
+      if (!isMatching(CustomButtonId.ShowDescription, click.customId)) return
       await click.update({
         embeds: [
           EmbedBuilder.from(embed).setDescription(

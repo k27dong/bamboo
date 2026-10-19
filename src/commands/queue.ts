@@ -7,6 +7,12 @@ import { durationStringToSeconds, secondsToHumanDuration } from "@/format"
 import { type Command, CommandName } from "./command"
 import { requireQueue } from "./guards"
 
+const trackAt = (tracks: Track[], index: number): Track => {
+  const track = tracks[index]
+  if (!track) throw new Error(`The queue has no track at ${index}`)
+  return track
+}
+
 const formatQueueMessage = (
   displayedTracks: Track[],
   currentIndex: number,
@@ -21,8 +27,7 @@ const formatQueueMessage = (
   let remainingTracks = 0
   const lines: string[] = []
 
-  for (let i = 0; i < displayedTracks.length; i++) {
-    const { title, author } = displayedTracks[i]
+  for (const [i, { title, author }] of displayedTracks.entries()) {
     const isCurrent = i === currentIndex ? "   ◄———— \n" : "\n"
     const queuePosition = startPosition + i + 1
     const currLine = `${queuePosition}) ${title} ${author ? `(${author})` : ""} ${isCurrent}`
@@ -100,15 +105,17 @@ export const Queue: Command = {
       (historyPtr >= 0 || upcomingPtr < upcomingTracks.length)
     ) {
       if (upcomingPtr < upcomingTracks.length) {
-        displayedTracks.push(upcomingTracks[upcomingPtr])
+        displayedTracks.push(trackAt(upcomingTracks, upcomingPtr))
         upcomingPtr++
         remaining--
         ratioBalance += backRatio
       }
 
       if (ratioBalance >= 1 && historyPtr >= 0) {
-        const historyTrack =
-          historyTracks[historyTracks.length - 1 - historyPtr]
+        const historyTrack = trackAt(
+          historyTracks,
+          historyTracks.length - 1 - historyPtr,
+        )
         displayedTracks.unshift(historyTrack)
         startPosition--
         historyPtr--
@@ -118,8 +125,10 @@ export const Queue: Command = {
 
       if (upcomingPtr >= upcomingTracks.length && remaining > 0) {
         while (remaining > 0 && historyPtr >= 0) {
-          const historyTrack =
-            historyTracks[historyTracks.length - 1 - historyPtr]
+          const historyTrack = trackAt(
+            historyTracks,
+            historyTracks.length - 1 - historyPtr,
+          )
           displayedTracks.unshift(historyTrack)
           startPosition--
           historyPtr--
@@ -127,7 +136,7 @@ export const Queue: Command = {
         }
       } else if (historyPtr < 0 && remaining > 0) {
         while (remaining > 0 && upcomingPtr < upcomingTracks.length) {
-          displayedTracks.push(upcomingTracks[upcomingPtr])
+          displayedTracks.push(trackAt(upcomingTracks, upcomingPtr))
           upcomingPtr++
           remaining--
         }

@@ -30,7 +30,7 @@ const getGptParsedLyric = async (
     model: "gpt-4o-mini",
   })
 
-  const { content } = response.choices[0].message
+  const content = response.choices[0]?.message.content ?? null
   if (content === null) throw new Error("The model returned no lyrics")
   return content
 }
