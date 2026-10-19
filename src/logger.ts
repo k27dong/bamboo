@@ -3,45 +3,28 @@ import { inspect } from "node:util"
 import chalk, { type ChalkInstance } from "chalk"
 import type { ChatInputCommandInteraction, VoiceBasedChannel } from "discord.js"
 
-import { LOG_COMMAND_WIDTH, LOG_LEVEL_WIDTH, LOG_TIME_ZONE } from "@/constants"
+import {
+  LOG_COMMAND_WIDTH,
+  LOG_LEVEL_COLORS,
+  LOG_LEVEL_WIDTH,
+  LOG_TIME_FORMAT,
+  LogLevel,
+} from "@/constants"
 import { activeRequest } from "@/context"
-
-enum Level {
-  Info = "info",
-  Warn = "warn",
-  Error = "error",
-}
-
-const LEVEL_COLORS: Record<Level, ChalkInstance> = {
-  [Level.Info]: chalk.green,
-  [Level.Warn]: chalk.yellow,
-  [Level.Error]: chalk.redBright,
-}
-
-const TIME_FORMAT = new Intl.DateTimeFormat("en-CA", {
-  timeZone: LOG_TIME_ZONE,
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-  hourCycle: "h23",
-})
 
 const timestamp = () => {
   const { year, month, day, hour, minute, second } = Object.fromEntries(
-    TIME_FORMAT.formatToParts().map(
+    LOG_TIME_FORMAT.formatToParts().map(
       ({ type, value }) => [type, value] as const,
     ),
   )
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`
 }
 
-const line = (level: Level, message: string) =>
+const line = (level: LogLevel, message: string) =>
   [
     chalk.grey(`[${timestamp()}] [s${process.env.SHARDS ?? 0}]`),
-    LEVEL_COLORS[level](level.padEnd(LOG_LEVEL_WIDTH)),
+    LOG_LEVEL_COLORS[level](level.padEnd(LOG_LEVEL_WIDTH)),
     message,
   ].join(" ")
 
@@ -60,11 +43,11 @@ const duration = (ms: number) =>
 
 export const logger = {
   warn(message: string) {
-    console.warn(line(Level.Warn, inRequest(message)))
+    console.warn(line(LogLevel.Warn, inRequest(message)))
   },
 
   error(message: string, error?: unknown) {
-    console.error(line(Level.Error, inRequest(message)))
+    console.error(line(LogLevel.Error, inRequest(message)))
     if (error !== undefined) console.error(inspect(error))
   },
 
@@ -77,7 +60,7 @@ export const logger = {
     const query = value === undefined ? "" : `: ${chalk.yellowBright(value)}`
     console.log(
       line(
-        Level.Info,
+        LogLevel.Info,
         `${column(interaction.commandName, chalk.cyanBright)}${user} in ${server}${query} (${duration(durationMs)})`,
       ),
     )
@@ -88,7 +71,7 @@ export const logger = {
     const voice = channel?.name ?? "Unknown channel"
     console.log(
       line(
-        Level.Info,
+        LogLevel.Info,
         `${column("PLAYER", chalk.magentaBright)}${chalk.greenBright(`${server} (${voice})`)} - ${chalk.yellowBright(title)}`,
       ),
     )

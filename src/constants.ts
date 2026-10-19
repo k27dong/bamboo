@@ -1,3 +1,5 @@
+import chalk, { type ChalkInstance } from "chalk"
+
 export const APP = "Bamboo"
 
 export const ICONLINK = "https://www.kefan.me/bamboo.jpg"
@@ -94,6 +96,28 @@ export const HTTP_STATUS = {
   OK: 200,
 } as const
 
+export enum LogLevel {
+  Info = "info",
+  Warn = "warn",
+  Error = "error",
+}
+
+export const LOG_LEVEL_COLORS: Record<LogLevel, ChalkInstance> = {
+  [LogLevel.Info]: chalk.green,
+  [LogLevel.Warn]: chalk.yellow,
+  [LogLevel.Error]: chalk.redBright,
+}
+
 export const LOG_TIME_ZONE = "America/Toronto"
+export const LOG_TIME_FORMAT = new Intl.DateTimeFormat("en-CA", {
+  timeZone: LOG_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+})
 export const LOG_LEVEL_WIDTH = 5
 export const LOG_COMMAND_WIDTH = 7
