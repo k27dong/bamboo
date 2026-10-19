@@ -4,6 +4,7 @@ import OpenAI from "openai"
 import { config } from "@/config"
 import { DISCORD_MESSAGE_CHAR_LIMIT } from "@/constants"
 import { BambooError, ErrorKind } from "@/errors"
+import { logger } from "@/logger"
 import { LYRIC_SANITIZATION_PROMPT } from "@/prompts"
 import { netease, songFromTrack } from "@/sources"
 
@@ -31,7 +32,9 @@ const getGptParsedLyric = async (
     model: "gpt-4o-mini",
   })
 
-  return response.choices[0].message.content!
+  const { content } = response.choices[0].message
+  if (content === null) throw new Error("The model returned no lyrics")
+  return content
 }
 
 const parseLrc = (lrc: string): string => {
@@ -95,7 +98,10 @@ export const Lyric: Command = {
           900000,
         ),
       ),
-    ])
-    await interaction.editReply(gptParsedLyric)
+    ]).catch((error: unknown) => {
+      logger.warn(`Lyric tidy-up failed: ${String(error)}`)
+      return null
+    })
+    if (gptParsedLyric !== null) await interaction.editReply(gptParsedLyric)
   },
 }
