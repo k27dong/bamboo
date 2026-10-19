@@ -93,7 +93,9 @@ export const Sudo: Command = {
           console.table(guilds)
           console.log("TOTAL USERS: " + memberCount)
 
-          const shardInfo = client.shard ? ` (${client.shard.count} shards)` : ""
+          const shardInfo = client.shard
+            ? ` (${client.shard.count} shards)`
+            : ""
           await interaction.editReply(
             `\`\`\`Number of servers: ${guilds.length}${shardInfo}\nTotal users: ${memberCount}\`\`\``,
           )
@@ -120,7 +122,9 @@ export const Sudo: Command = {
             .join(" ")
 
           const shardId = client.shard?.ids[0] ?? 0
-          await interaction.editReply(`\`\`\`Uptime: ${parts} (shard ${shardId})\`\`\``)
+          await interaction.editReply(
+            `\`\`\`Uptime: ${parts} (shard ${shardId})\`\`\``,
+          )
           break
         }
         case "v":

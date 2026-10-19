@@ -157,8 +157,8 @@ export const Album: Command = {
               requestedBy: interaction.user,
               searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
               requestOptions: extractorSearchOptions({
-          searchType: ExtractorSearchType.Album,
-        }),
+                searchType: ExtractorSearchType.Album,
+              }),
             })
 
             const { embed, components } = getPlaylistEmbedInfo(
