@@ -13,6 +13,7 @@ import { DISCORD_DROPDOWN_LIMIT, ExtractorSearchType } from "@/constants"
 import { recordFailure } from "@/context"
 import { BambooError } from "@/errors"
 import { millisecondsToTimeString } from "@/format"
+import { logger } from "@/logger"
 import { isLink, type Song } from "@/sources/source"
 
 import {
@@ -25,7 +26,7 @@ import {
 } from "./api"
 import { EXTRACTOR_IDENTIFIER, SONG_LINK } from "./constants"
 
-const songOf = (track: Track): Song => ({
+const songFromTrack = (track: Track): Song => ({
   id: songIdFromLink(track.url),
   title: track.title,
   artist: track.author,
@@ -89,7 +90,10 @@ export class NeteaseExtractor extends BaseExtractor {
               thumbnail: album.thumbnail,
               source: "arbitrary",
               type: "album",
-              author: { name: album.artist, url: `${album.publishedAt}` },
+              author: {
+                name: songs.at(0)?.artist ?? album.artist,
+                url: `${album.publishedAt}`,
+              },
               id: album.id,
               url: album.url,
             }),
@@ -169,14 +173,14 @@ export class NeteaseExtractor extends BaseExtractor {
         }
       }
     } catch (error) {
-      if (!(error instanceof BambooError)) throw error
-      recordFailure(error)
+      if (error instanceof BambooError) recordFailure(error)
+      else logger.error(`Lookup failed for ${query}`, error)
       return this.createResponse()
     }
   }
 
   override async stream(track: Track): Promise<string> {
-    return netease.getStreamUrl(songOf(track))
+    return netease.getStreamUrl(songFromTrack(track))
   }
 
   // discord-player calls this method when it wants some tracks for autoplay mode.
@@ -185,8 +189,8 @@ export class NeteaseExtractor extends BaseExtractor {
     history: GuildQueueHistory,
   ): Promise<ExtractorInfo> {
     const related = await netease.findRelated(
-      songOf(track),
-      history.tracks.data.map(songOf),
+      songFromTrack(track),
+      history.tracks.data.map(songFromTrack),
     )
     return this.createResponse(null, related ? [this.trackOf(related)] : [])
   }

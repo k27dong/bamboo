@@ -49,14 +49,15 @@ const waitForQrConfirmation = async (unikey: string): Promise<string> => {
       domain: NETEASE_EAPI_DOMAIN,
     })
     const status = QR_STATUS_BY_CODE[body.code]
-    if (!status) throw new Error(`Unexpected QR login code ${body.code}`)
-    const cookie = match(status)
-      .with(QrStatus.Confirmed, () => body.cookie)
-      .with(QrStatus.Expired, () => {
-        throw new Error("QR code expired")
-      })
-      .with(QrStatus.Waiting, QrStatus.Scanned, () => null)
-      .exhaustive()
+    const cookie = status
+      ? match(status)
+          .with(QrStatus.Confirmed, () => body.cookie)
+          .with(QrStatus.Expired, () => {
+            throw new Error("QR code expired")
+          })
+          .with(QrStatus.Waiting, QrStatus.Scanned, () => null)
+          .exhaustive()
+      : null
     if (cookie) return cookie
     await sleep(QR_POLL_MS)
   }

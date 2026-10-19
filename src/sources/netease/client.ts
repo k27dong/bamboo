@@ -1,3 +1,5 @@
+import { inspect } from "node:util"
+
 import type {
   RequestBaseConfig,
   Response as NeteaseAnswer,
@@ -16,7 +18,6 @@ export enum NeteaseHost {
   Default = "default",
 }
 
-// Method types stay bivariant, so the library's precisely typed calls fit.
 type NeteaseCall = {
   call(params: RequestBaseConfig): Promise<NeteaseAnswer<unknown>>
 }["call"]
@@ -54,6 +55,9 @@ const settle = (answer: Promise<NeteaseAnswer<unknown>>): Promise<Outcome> => {
   ]).finally(() => clearTimeout(timer))
 }
 
+const describe = (value: unknown) =>
+  inspect(value, { depth: 1, breakLength: Infinity })
+
 const sourceDown = (why: string): never => {
   logger.warn(`NetEase ${why}`)
   throw new BambooError(ErrorKind.SourceDown)
@@ -70,6 +74,7 @@ export const request = async <T>(
       cookie,
       realIP: config.netease.realIp,
       domain: DOMAIN_BY_HOST[host],
+      timeout: REQUEST_TIMEOUT_MS,
     }),
   )
   return match(outcome)
@@ -80,16 +85,24 @@ export const request = async <T>(
     .with({ settled: "answered", body: { code: P.number } }, ({ body }) =>
       sourceDown(`answered with code ${body.code}`),
     )
-    .with({ settled: "answered" }, () => sourceDown("answered without a code"))
+    .with({ settled: "answered" }, ({ body }) =>
+      sourceDown(`answered without a code: ${describe(body)}`),
+    )
     .with(
       { settled: "rejected", reason: { body: { code: P.number } } },
       ({ reason }) => sourceDown(`failed with code ${reason.body.code}`),
     )
+    .with({ settled: "rejected", reason: { status: P.number } }, ({ reason }) =>
+      sourceDown(`failed with status ${reason.status}`),
+    )
     .with({ settled: "rejected", reason: P.instanceOf(Error) }, ({ reason }) =>
       sourceDown(`failed: ${reason.message}`),
+    )
+    .with({ settled: "rejected" }, ({ reason }) =>
+      sourceDown(`failed: ${describe(reason)}`),
     )
     .with({ settled: "timed out" }, () =>
       sourceDown(`gave no answer in ${REQUEST_TIMEOUT_MS} ms`),
     )
-    .otherwise(() => sourceDown("failed"))
+    .otherwise((unexpected) => sourceDown(`failed: ${describe(unexpected)}`))
 }

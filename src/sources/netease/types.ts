@@ -1,6 +1,7 @@
 declare module "@neteasecloudmusicapienhanced/api" {
   interface RequestBaseConfig {
     domain?: string
+    timeout?: number
   }
 }
 
@@ -10,16 +11,16 @@ export type RawSong = {
   id: number
   name: string
   dt: number
-  ar: RawArtist[]
-  al: { picUrl: string }
+  ar?: RawArtist[]
+  al?: { picUrl?: string }
 }
 
 export type RawSimilarSong = {
   id: number
   name: string
   duration: number
-  artists: RawArtist[]
-  album: { picUrl: string }
+  artists?: RawArtist[]
+  album?: { picUrl?: string }
 }
 
 export type RawAlbum = {

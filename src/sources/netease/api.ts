@@ -1,6 +1,7 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
 import { BambooError, ErrorKind } from "@/errors"
+import { logger } from "@/logger"
 import {
   type Album,
   type MusicSource,
@@ -41,23 +42,35 @@ export const songIdFromLink = (link: string): string => {
   return id
 }
 
-const songOf = (raw: RawSong, thumbnail = raw.al.picUrl): Song => ({
-  id: String(raw.id),
-  title: raw.name,
-  artist: raw.ar[0].name,
-  durationMs: raw.dt,
-  thumbnail,
-  url: `${SONG_LINK}${raw.id}`,
-})
+const songOf = (raw: RawSong, thumbnail = raw.al?.picUrl): Song | null => {
+  const artist = raw.ar?.[0]?.name
+  if (!artist || !thumbnail) return null
+  return {
+    id: String(raw.id),
+    title: raw.name,
+    artist,
+    durationMs: raw.dt,
+    thumbnail,
+    url: `${SONG_LINK}${raw.id}`,
+  }
+}
 
-const similarSongOf = (raw: RawSimilarSong): Song => ({
-  id: String(raw.id),
-  title: raw.name,
-  artist: raw.artists[0].name,
-  durationMs: raw.duration,
-  thumbnail: raw.album.picUrl,
-  url: `${SONG_LINK}${raw.id}`,
-})
+const songsOf = (raws: RawSong[], thumbnail?: string): Song[] =>
+  raws.map((raw) => songOf(raw, thumbnail)).filter((song) => song !== null)
+
+const similarSongOf = (raw: RawSimilarSong): Song | null => {
+  const artist = raw.artists?.[0]?.name
+  const thumbnail = raw.album?.picUrl
+  if (!artist || !thumbnail) return null
+  return {
+    id: String(raw.id),
+    title: raw.name,
+    artist,
+    durationMs: raw.duration,
+    thumbnail,
+    url: `${SONG_LINK}${raw.id}`,
+  }
+}
 
 const albumOf = (raw: RawAlbum): Album => ({
   id: String(raw.id),
@@ -87,7 +100,7 @@ const searchSongs = async (query: string): Promise<Song[]> => {
     { keywords: query, type: SEARCH_TYPE.SONG },
     NeteaseHost.Eapi,
   )
-  return (result?.songs ?? []).map((raw) => songOf(raw))
+  return songsOf(result?.songs ?? [])
 }
 
 const streamUrlOf = async (id: string): Promise<string> => {
@@ -97,7 +110,10 @@ const streamUrlOf = async (id: string): Promise<string> => {
     NeteaseHost.Eapi,
   )
   const url = data?.[0]?.url
-  if (!url) throw new BambooError(ErrorKind.Unplayable)
+  if (!url) {
+    logger.warn(`NetEase gave no link for song ${id}`)
+    throw new BambooError(ErrorKind.Unplayable)
+  }
   return url
 }
 
@@ -110,9 +126,14 @@ const relatedTo = async (
     { id },
     NeteaseHost.Default,
   )
-  const picked =
-    songs?.find((song) => !playedIds.includes(String(song.id))) ?? songs?.[0]
-  return picked ? similarSongOf(picked) : null
+  const candidates = (songs ?? [])
+    .map(similarSongOf)
+    .filter((song) => song !== null)
+  return (
+    candidates.find((song) => !playedIds.includes(song.id)) ??
+    candidates.at(0) ??
+    null
+  )
 }
 
 export const lyricsOf = async (id: string): Promise<string | null> => {
@@ -142,7 +163,7 @@ export const albumWithSongs = async (id: string) => {
   if (!album?.id) throw new BambooError(ErrorKind.NotFound)
   return {
     album: albumOf(album),
-    songs: (songs ?? []).map((raw) => songOf(raw, album.picUrl)),
+    songs: songsOf(songs ?? [], album.picUrl),
   }
 }
 
@@ -195,7 +216,7 @@ export const playlistWithSongs = async (id: string) => {
   )
   return {
     playlist: playlistOf(playlist),
-    songs: details.flatMap(({ songs }) => songs.map((raw) => songOf(raw))),
+    songs: songsOf(details.flatMap(({ songs }) => songs)),
   }
 }
 
