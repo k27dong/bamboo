@@ -3,7 +3,7 @@ import {
   MessageFlags,
   RESTJSONErrorCodes,
 } from "discord.js"
-import { match, P } from "ts-pattern"
+import { isMatching, match, P } from "ts-pattern"
 
 import { type Request, request } from "@/context"
 import { ErrorMessage } from "@/core/player/embedMessages"
@@ -13,6 +13,12 @@ import { logger } from "@/logger"
 import type { Command } from "./command"
 
 const NO_RESULT_CODE = "ERR_NO_RESULT"
+const EXPIRED = { code: RESTJSONErrorCodes.UnknownInteraction } as const
+
+const expired = () => {
+  logger.warn("The interaction expired before it was answered")
+  return null
+}
 
 const explain = (error: unknown, recorded: BambooError | null) =>
   match(error)
@@ -25,22 +31,28 @@ const explain = (error: unknown, recorded: BambooError | null) =>
       logger.warn(message)
       return message
     })
-    .with({ code: RESTJSONErrorCodes.UnknownInteraction }, () => {
-      logger.warn("The interaction expired before it was answered")
-      return null
-    })
+    .with(EXPIRED, expired)
     .otherwise(() => {
       logger.error("Unexpected error", error)
       return UNEXPECTED_ERROR_TEXT
     })
 
-const reply = (interaction: ChatInputCommandInteraction, text: string) =>
-  interaction.deferred || interaction.replied
-    ? interaction.editReply({ embeds: [ErrorMessage(text)] })
-    : interaction.reply({
-        embeds: [ErrorMessage(text)],
-        flags: MessageFlags.Ephemeral,
-      })
+const reply = async (
+  interaction: ChatInputCommandInteraction,
+  text: string,
+) => {
+  const embeds = [ErrorMessage(text)]
+  try {
+    if (interaction.deferred || interaction.replied) {
+      await interaction.editReply({ embeds })
+    } else {
+      await interaction.reply({ embeds, flags: MessageFlags.Ephemeral })
+    }
+  } catch (error) {
+    if (isMatching(EXPIRED, error)) expired()
+    else logger.error("The error reply failed", error)
+  }
+}
 
 export const dispatch = async (
   command: Command,
@@ -50,6 +62,7 @@ export const dispatch = async (
     command: interaction.commandName,
     guildId: interaction.guildId,
     failure: null,
+    finished: false,
   }
   await request.run(context, async () => {
     const started = performance.now()
@@ -59,6 +72,7 @@ export const dispatch = async (
       const text = explain(error, context.failure)
       if (text !== null) await reply(interaction, text)
     } finally {
+      context.finished = true
       logger.command(interaction, performance.now() - started)
     }
   })
