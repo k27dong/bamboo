@@ -21,6 +21,8 @@ export default (player: Player) => {
         await channel.send({
           embeds: [NowPlayingMessage(track, queue)],
         })
+      } else {
+        logger.warn(`No channel to post Now Playing for ${track.title}`)
       }
     },
   )
