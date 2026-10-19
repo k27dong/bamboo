@@ -150,7 +150,7 @@ const relatedTo = async (
   )
 }
 
-export const lyricsOf = async (id: string): Promise<string | null> => {
+const lyricsOf = async (id: string): Promise<string | null> => {
   const { lrc } = await request<LyricAnswer>(
     NeteaseCloudMusicApi.lyric,
     { id },

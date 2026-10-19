@@ -18,7 +18,6 @@ import { isLink, type Song } from "@/sources/source"
 
 import {
   albumWithSongs,
-  lyricsOf,
   netease,
   playlistsOf,
   playlistWithSongs,
@@ -26,7 +25,7 @@ import {
 } from "./api"
 import { EXTRACTOR_IDENTIFIER, SONG_LINK } from "./constants"
 
-const songFromTrack = (track: Track): Song => ({
+export const songFromTrack = (track: Track): Song => ({
   id: songIdFromLink(track.url),
   title: track.title,
   artist: track.author,
@@ -99,18 +98,6 @@ export class NeteaseExtractor extends BaseExtractor {
             }),
             tracks,
           )
-        }
-        case ExtractorSearchType.Lyric: {
-          const lyrics = await lyricsOf(query)
-          if (!lyrics) return this.createResponse()
-          return this.createResponse(null, [
-            new Track(this.context.player, {
-              title: lyrics,
-              requestedBy: context.requestedBy,
-              source: "arbitrary",
-              queryType: context.type ?? QueryType.AUTO,
-            }),
-          ])
         }
         case ExtractorSearchType.UserLists: {
           const users = await netease.users.search(query)
