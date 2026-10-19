@@ -91,19 +91,6 @@ export const UserSelectEmojiPool: string[] = [
   "🧩",
 ]
 
-export const EXTRACTOR_IDENTIFIER = "com.k27dong.bamboo.bamboo-extractor"
-
-export enum ExtractorSearchType {
-  AlbumLists,
-  Album,
-  Track,
-  TrackInfo,
-  Lyric,
-  UserLists,
-  UserPlaylists,
-  UserPlaylistTracks,
-}
-
 export enum LogLevel {
   Info = "info",
   Warn = "warn",
