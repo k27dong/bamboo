@@ -12,9 +12,11 @@ import {
 import { type Track, useMainPlayer } from "discord-player"
 
 import { EXTRACTOR_IDENTIFIER, ExtractorSearchType } from "@/common/constants"
+import { BambooError, ErrorKind } from "@/common/errors"
 import { extractorSearchOptions } from "@/common/types"
 import { getAvatarEmoji } from "@/common/utils/common"
 import { logger } from "@/common/utils/logger"
+import { isLink } from "@/core/api/interfaces"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 import {
@@ -105,6 +107,7 @@ export const User: Command = {
 
       const player = useMainPlayer()
       const query = interaction.options.data[0].value as string
+      if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
       const member = interaction.member! as GuildMember
       const voiceChannel = member.voice.channel!
 
