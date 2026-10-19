@@ -6,11 +6,17 @@ export type Request = {
   command: string
   guildId: string | null
   failure: BambooError | null
+  finished: boolean
 }
 
 export const request = new AsyncLocalStorage<Request>()
 
-export const recordFailure = (error: BambooError) => {
+export const activeRequest = () => {
   const current = request.getStore()
+  return current && !current.finished ? current : null
+}
+
+export const recordFailure = (error: BambooError) => {
+  const current = activeRequest()
   if (current) current.failure = error
 }

@@ -4,7 +4,7 @@ import chalk, { type ChalkInstance } from "chalk"
 import type { ChatInputCommandInteraction, VoiceBasedChannel } from "discord.js"
 
 import { LOG_COMMAND_WIDTH, LOG_LEVEL_WIDTH, LOG_TIME_ZONE } from "@/constants"
-import { request } from "@/context"
+import { activeRequest } from "@/context"
 
 enum Level {
   Info = "info",
@@ -18,20 +18,22 @@ const LEVEL_COLORS: Record<Level, ChalkInstance> = {
   [Level.Error]: chalk.redBright,
 }
 
+const TIME_FORMAT = new Intl.DateTimeFormat("en-CA", {
+  timeZone: LOG_TIME_ZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+})
+
 const timestamp = () => {
   const { year, month, day, hour, minute, second } = Object.fromEntries(
-    new Intl.DateTimeFormat("en-CA", {
-      timeZone: LOG_TIME_ZONE,
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hourCycle: "h23",
-    })
-      .formatToParts()
-      .map(({ type, value }) => [type, value] as const),
+    TIME_FORMAT.formatToParts().map(
+      ({ type, value }) => [type, value] as const,
+    ),
   )
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`
 }
@@ -47,7 +49,7 @@ const column = (label: string, color: ChalkInstance) =>
   `${color(label.padEnd(LOG_COMMAND_WIDTH))} | `
 
 const inRequest = (message: string) => {
-  const current = request.getStore()
+  const current = activeRequest()
   if (!current) return message
   const server = chalk.greenBright(current.guildId ?? "DM")
   return `${column(current.command, chalk.cyanBright)}${server} | ${message}`
@@ -57,10 +59,6 @@ const duration = (ms: number) =>
   ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(1)} s`
 
 export const logger = {
-  info(message: string) {
-    console.log(line(Level.Info, inRequest(message)))
-  },
-
   warn(message: string) {
     console.warn(line(Level.Warn, inRequest(message)))
   },
