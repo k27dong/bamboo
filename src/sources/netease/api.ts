@@ -38,9 +38,9 @@ import type {
   UserSearchAnswer,
 } from "./types"
 
-export const songIdFromLink = (link: string): string => {
+export const idFromLink = (link: string): string => {
   const id = new URL(link).searchParams.get("id")
-  if (!id) throw new Error(`Not a NetEase song link: ${link}`)
+  if (!id) throw new Error(`Not a NetEase link: ${link}`)
   return id
 }
 
@@ -91,7 +91,7 @@ const albumOf = (raw: RawAlbum): Album | null => {
     artist: artist.name,
     songCount: raw.size,
     publishedAt: raw.publishTime,
-    description: raw.description,
+    description: raw.description ?? "",
     thumbnail: raw.picUrl,
     url: `${ALBUM_LINK}${raw.id}`,
   }
@@ -150,7 +150,7 @@ const relatedTo = async (
   )
 }
 
-export const lyricsOf = async (id: string): Promise<string | null> => {
+const lyricsOf = async (id: string): Promise<string | null> => {
   const { lrc } = await request<LyricAnswer>(
     NeteaseCloudMusicApi.lyric,
     { id },
@@ -200,7 +200,7 @@ const searchUsers = async (query: string): Promise<User[]> => {
     }))
 }
 
-export const playlistsOf = async (userId: string): Promise<Playlist[]> => {
+const playlistsOf = async (userId: string): Promise<Playlist[]> => {
   const { playlist } = await request<UserPlaylistsAnswer>(
     NeteaseCloudMusicApi.user_playlist,
     { uid: userId },

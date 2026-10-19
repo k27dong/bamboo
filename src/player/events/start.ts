@@ -5,9 +5,9 @@ import {
   type Track,
 } from "discord-player"
 
-import { NowPlayingMessage } from "@/core/player/embedMessages"
 import { logger } from "@/logger"
 import type { QueueMetadata } from "@/player/player"
+import { NowPlayingMessage } from "@/ui/embeds"
 
 export default (player: Player) => {
   player.events.on(
@@ -17,9 +17,13 @@ export default (player: Player) => {
 
       logger.player(queue.channel, track.title)
 
-      await channel.send({
-        embeds: [NowPlayingMessage(track, queue)],
-      })
+      if (channel) {
+        await channel.send({
+          embeds: [NowPlayingMessage(track, queue)],
+        })
+      } else {
+        logger.warn(`No channel to post Now Playing for ${track.title}`)
+      }
     },
   )
 }

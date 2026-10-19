@@ -54,6 +54,7 @@ export const QR_POLL_MS = 1_000
 export const SONG_LINK = "https://music.163.com/song?id="
 export const ALBUM_LINK = "https://music.163.com/album?id="
 export const PLAYLIST_LINK = "https://music.163.com/playlist?id="
+export const NETEASE_LINKS = [SONG_LINK, ALBUM_LINK, PLAYLIST_LINK]
 
 export const EXTRACTOR_IDENTIFIER = "com.k27dong.bamboo.bamboo-extractor"
 export const SONG_DETAIL_TRACKID_LIMIT = 1000
