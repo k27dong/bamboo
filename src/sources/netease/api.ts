@@ -91,7 +91,7 @@ const albumOf = (raw: RawAlbum): Album | null => {
     artist: artist.name,
     songCount: raw.size,
     publishedAt: raw.publishTime,
-    description: raw.description,
+    description: raw.description ?? "",
     thumbnail: raw.picUrl,
     url: `${ALBUM_LINK}${raw.id}`,
   }

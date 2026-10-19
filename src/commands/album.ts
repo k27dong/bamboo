@@ -150,7 +150,7 @@ export const Album: Command = {
     })
     const failure = recordedFailure()
     if (failure) throw failure
-    if (!result.playlist?.tracks.length) {
+    if (!result.playlist || result.isEmpty()) {
       await interaction.editReply({
         embeds: [ErrorMessage(`❌ 未找到专辑: ${album.title}`)],
       })
