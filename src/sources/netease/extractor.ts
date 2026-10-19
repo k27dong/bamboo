@@ -7,26 +7,26 @@ import {
   QueryType,
   Track,
 } from "discord-player"
+import { match, P } from "ts-pattern"
 
-import type { ExtractorSearchOptions } from "@/common/types"
-import { ExtractorSearchType } from "@/constants"
 import { recordFailure } from "@/context"
 import { BambooError } from "@/errors"
 import { millisecondsToTimeString } from "@/format"
 import { logger } from "@/logger"
 import { isLink, type Song } from "@/sources/source"
 
+import { albumWithSongs, idFromLink, netease, playlistWithSongs } from "./api"
 import {
-  albumWithSongs,
-  netease,
-  playlistsOf,
-  playlistWithSongs,
-  songIdFromLink,
-} from "./api"
-import { EXTRACTOR_IDENTIFIER, SONG_LINK } from "./constants"
+  ALBUM_LINK,
+  EXTRACTOR_IDENTIFIER,
+  PLAYLIST_LINK,
+  SONG_LINK,
+} from "./constants"
+
+const NETEASE_LINKS = [SONG_LINK, ALBUM_LINK, PLAYLIST_LINK]
 
 export const songFromTrack = (track: Track): Song => ({
-  id: songIdFromLink(track.url),
+  id: idFromLink(track.url),
   title: track.title,
   artist: track.author,
   durationMs: track.durationMS,
@@ -50,115 +50,24 @@ export class NeteaseExtractor extends BaseExtractor {
   }
 
   override validate(query: string): Promise<boolean> {
-    return Promise.resolve(query.startsWith(SONG_LINK) || !isLink(query))
+    return Promise.resolve(
+      NETEASE_LINKS.some((link) => query.startsWith(link)) || !isLink(query),
+    )
   }
 
   override async handle(
     query: string,
     context: ExtractorSearchContext,
   ): Promise<ExtractorInfo> {
-    const kind = (context.requestOptions as ExtractorSearchOptions | undefined)
-      ?.searchType
     try {
-      switch (kind) {
-        case ExtractorSearchType.AlbumLists: {
-          const albums = await netease.albums.search(query)
-          return this.createResponse(
-            null,
-            albums.map(
-              (album) =>
-                new Track(this.context.player, {
-                  title: album.title,
-                  url: album.id,
-                  duration: `${album.publishedAt}`,
-                  author: album.artist,
-                  source: "arbitrary",
-                  views: album.songCount,
-                }),
-            ),
-          )
-        }
-        case ExtractorSearchType.Album: {
-          const { album, songs } = await albumWithSongs(query)
-          const tracks = songs.map((song) => this.trackOf(song, context))
-          return this.createResponse(
-            new Playlist(this.context.player, {
-              tracks,
-              title: album.title,
-              description: album.description,
-              thumbnail: album.thumbnail,
-              source: "arbitrary",
-              type: "album",
-              author: {
-                name: songs.at(0)?.artist ?? album.artist,
-                url: `${album.publishedAt}`,
-              },
-              id: album.id,
-              url: album.url,
-            }),
-            tracks,
-          )
-        }
-        case ExtractorSearchType.UserLists: {
-          const users = await netease.users.search(query)
-          return this.createResponse(
-            null,
-            users.map(
-              (user) =>
-                new Track(this.context.player, {
-                  title: user.name,
-                  url: user.id,
-                  requestedBy: context.requestedBy,
-                  source: "arbitrary",
-                  queryType: context.type ?? QueryType.AUTO,
-                }),
-            ),
-          )
-        }
-        case ExtractorSearchType.UserPlaylists: {
-          const playlists = await playlistsOf(query)
-          return this.createResponse(
-            null,
-            playlists.map(
-              (playlist) =>
-                new Track(this.context.player, {
-                  title: playlist.title,
-                  url: playlist.id,
-                  thumbnail: playlist.thumbnail,
-                  author: `${playlist.songCount}`,
-                  requestedBy: context.requestedBy,
-                  source: "arbitrary",
-                  queryType: context.type ?? QueryType.AUTO,
-                }),
-            ),
-          )
-        }
-        case ExtractorSearchType.UserPlaylistTracks: {
-          const { playlist, songs } = await playlistWithSongs(query)
-          const tracks = songs.map((song) => this.trackOf(song, context))
-          return this.createResponse(
-            new Playlist(this.context.player, {
-              tracks,
-              title: playlist.title,
-              description: playlist.description,
-              thumbnail: playlist.thumbnail,
-              type: "playlist",
-              source: "arbitrary",
-              author: { name: playlist.ownerName, url: playlist.ownerAvatar },
-              id: playlist.id,
-              url: playlist.url,
-            }),
-            tracks,
-          )
-        }
-        default: {
-          const [song] = await netease.searchSongs(query)
-          return this.createResponse(
-            null,
-            song ? [this.trackOf(song, context)] : [],
-          )
-        }
-      }
+      return await match(query)
+        .with(P.string.startsWith(ALBUM_LINK), (link) =>
+          this.album(link, context),
+        )
+        .with(P.string.startsWith(PLAYLIST_LINK), (link) =>
+          this.playlist(link, context),
+        )
+        .otherwise((text) => this.firstHit(text, context))
     } catch (error) {
       if (error instanceof BambooError) recordFailure(error)
       else logger.error(`Lookup failed for ${query}`, error)
@@ -180,6 +89,61 @@ export class NeteaseExtractor extends BaseExtractor {
       history.tracks.data.map(songFromTrack),
     )
     return this.createResponse(null, related ? [this.trackOf(related)] : [])
+  }
+
+  private async firstHit(
+    text: string,
+    context: ExtractorSearchContext,
+  ): Promise<ExtractorInfo> {
+    const [song] = await netease.searchSongs(text)
+    return this.createResponse(null, song ? [this.trackOf(song, context)] : [])
+  }
+
+  private async album(
+    link: string,
+    context: ExtractorSearchContext,
+  ): Promise<ExtractorInfo> {
+    const { album, songs } = await albumWithSongs(idFromLink(link))
+    const tracks = songs.map((song) => this.trackOf(song, context))
+    return this.createResponse(
+      new Playlist(this.context.player, {
+        tracks,
+        title: album.title,
+        description: album.description,
+        thumbnail: album.thumbnail,
+        source: "arbitrary",
+        type: "album",
+        author: {
+          name: songs.at(0)?.artist ?? album.artist,
+          url: `${album.publishedAt}`,
+        },
+        id: album.id,
+        url: album.url,
+      }),
+      tracks,
+    )
+  }
+
+  private async playlist(
+    link: string,
+    context: ExtractorSearchContext,
+  ): Promise<ExtractorInfo> {
+    const { playlist, songs } = await playlistWithSongs(idFromLink(link))
+    const tracks = songs.map((song) => this.trackOf(song, context))
+    return this.createResponse(
+      new Playlist(this.context.player, {
+        tracks,
+        title: playlist.title,
+        description: playlist.description,
+        thumbnail: playlist.thumbnail,
+        type: "playlist",
+        source: "arbitrary",
+        author: { name: playlist.ownerName, url: playlist.ownerAvatar },
+        id: playlist.id,
+        url: playlist.url,
+      }),
+      tracks,
+    )
   }
 
   private trackOf(song: Song, context?: ExtractorSearchContext): Track {

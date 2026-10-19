@@ -1,7 +1,4 @@
-import type { Command as ClientCommand } from "@/core/commands/Command"
-import { Album } from "@/features/commands/album"
-import { User } from "@/features/commands/user"
-
+import { Album } from "./album"
 import { Back } from "./back"
 import { Clear } from "./clear"
 import type { Command } from "./command"
@@ -17,21 +14,16 @@ import { Queue } from "./queue"
 import { Shuffle } from "./shuffle"
 import { Skip } from "./skip"
 import { Sudo } from "./sudo"
-
-const adapt = (command: ClientCommand): Command => ({
-  data: command.data,
-  manual: command.manual,
-  run: ({ interaction }) => command.run(interaction.client, interaction),
-})
+import { User } from "./user"
 
 export const commands: readonly Command[] = [
   Ping,
   Play,
   Queue,
   Skip,
-  adapt(Album),
+  Album,
   Lyric,
-  adapt(User),
+  User,
   Shuffle,
   Jump,
   Clear,
