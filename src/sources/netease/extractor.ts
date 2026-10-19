@@ -9,7 +9,7 @@ import {
 } from "discord-player"
 
 import type { ExtractorSearchOptions } from "@/common/types"
-import { DISCORD_DROPDOWN_LIMIT, ExtractorSearchType } from "@/constants"
+import { ExtractorSearchType } from "@/constants"
 import { recordFailure } from "@/context"
 import { BambooError } from "@/errors"
 import { millisecondsToTimeString } from "@/format"
@@ -66,7 +66,7 @@ export class NeteaseExtractor extends BaseExtractor {
           const albums = await netease.albums.search(query)
           return this.createResponse(
             null,
-            albums.slice(0, DISCORD_DROPDOWN_LIMIT).map(
+            albums.map(
               (album) =>
                 new Track(this.context.player, {
                   title: album.title,
@@ -116,7 +116,7 @@ export class NeteaseExtractor extends BaseExtractor {
           const users = await netease.users.search(query)
           return this.createResponse(
             null,
-            users.slice(0, DISCORD_DROPDOWN_LIMIT).map(
+            users.map(
               (user) =>
                 new Track(this.context.player, {
                   title: user.name,
@@ -132,7 +132,7 @@ export class NeteaseExtractor extends BaseExtractor {
           const playlists = await playlistsOf(query)
           return this.createResponse(
             null,
-            playlists.slice(0, DISCORD_DROPDOWN_LIMIT).map(
+            playlists.map(
               (playlist) =>
                 new Track(this.context.player, {
                   title: playlist.title,

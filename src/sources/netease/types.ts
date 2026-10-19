@@ -12,7 +12,7 @@ export type RawSong = {
   name: string
   dt: number
   ar?: RawArtist[]
-  al?: { picUrl?: string }
+  al?: { picUrl: string }
 }
 
 export type RawSimilarSong = {
@@ -20,7 +20,7 @@ export type RawSimilarSong = {
   name: string
   duration: number
   artists?: RawArtist[]
-  album?: { picUrl?: string }
+  album?: { picUrl: string }
 }
 
 export type RawAlbum = {

@@ -1,5 +1,6 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
+import { DISCORD_DROPDOWN_LIMIT } from "@/constants"
 import { BambooError, ErrorKind } from "@/errors"
 import { logger } from "@/logger"
 import {
@@ -42,15 +43,15 @@ export const songIdFromLink = (link: string): string => {
   return id
 }
 
-const songOf = (raw: RawSong, thumbnail = raw.al?.picUrl): Song | null => {
-  const artist = raw.ar?.[0]?.name
-  if (!artist || !thumbnail) return null
+const songOf = (raw: RawSong, thumbnail?: string): Song | null => {
+  const artist = raw.ar?.[0]
+  if (!artist || !raw.al) return null
   return {
     id: String(raw.id),
     title: raw.name,
-    artist,
+    artist: artist.name,
     durationMs: raw.dt,
-    thumbnail,
+    thumbnail: thumbnail ?? raw.al.picUrl,
     url: `${SONG_LINK}${raw.id}`,
   }
 }
@@ -59,15 +60,14 @@ const songsOf = (raws: RawSong[], thumbnail?: string): Song[] =>
   raws.map((raw) => songOf(raw, thumbnail)).filter((song) => song !== null)
 
 const similarSongOf = (raw: RawSimilarSong): Song | null => {
-  const artist = raw.artists?.[0]?.name
-  const thumbnail = raw.album?.picUrl
-  if (!artist || !thumbnail) return null
+  const artist = raw.artists?.[0]
+  if (!artist || !raw.album) return null
   return {
     id: String(raw.id),
     title: raw.name,
-    artist,
+    artist: artist.name,
     durationMs: raw.duration,
-    thumbnail,
+    thumbnail: raw.album.picUrl,
     url: `${SONG_LINK}${raw.id}`,
   }
 }
@@ -151,7 +151,7 @@ const searchAlbums = async (query: string): Promise<Album[]> => {
     { keywords: query, type: SEARCH_TYPE.ALBUM },
     NeteaseHost.Eapi,
   )
-  return (result?.albums ?? []).map(albumOf)
+  return (result?.albums ?? []).slice(0, DISCORD_DROPDOWN_LIMIT).map(albumOf)
 }
 
 export const albumWithSongs = async (id: string) => {
@@ -173,11 +173,13 @@ const searchUsers = async (query: string): Promise<User[]> => {
     { keywords: query, type: SEARCH_TYPE.USER },
     NeteaseHost.Eapi,
   )
-  return (result?.userprofiles ?? []).map((raw) => ({
-    id: String(raw.userId),
-    name: raw.nickname,
-    avatar: raw.avatarUrl,
-  }))
+  return (result?.userprofiles ?? [])
+    .slice(0, DISCORD_DROPDOWN_LIMIT)
+    .map((raw) => ({
+      id: String(raw.userId),
+      name: raw.nickname,
+      avatar: raw.avatarUrl,
+    }))
 }
 
 export const playlistsOf = async (userId: string): Promise<Playlist[]> => {
@@ -186,7 +188,7 @@ export const playlistsOf = async (userId: string): Promise<Playlist[]> => {
     { uid: userId },
     NeteaseHost.Default,
   )
-  return (playlist ?? []).map(playlistOf)
+  return (playlist ?? []).slice(0, DISCORD_DROPDOWN_LIMIT).map(playlistOf)
 }
 
 export const playlistWithSongs = async (id: string) => {
