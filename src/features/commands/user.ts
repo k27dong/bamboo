@@ -12,7 +12,6 @@ import {
 import { type Track, useMainPlayer } from "discord-player"
 
 import { extractorSearchOptions } from "@/common/types"
-import { logger } from "@/common/utils/logger"
 import {
   EXTRACTOR_IDENTIFIER,
   ExtractorSearchType,
@@ -24,6 +23,7 @@ import {
   ErrorMessage,
   NowPlayingUserPlaylistMessage,
 } from "@/core/player/embedMessages"
+import { logger } from "@/logger"
 
 /**
  * Get a deterministic emoji based on an integer input and a salt.
@@ -258,7 +258,7 @@ export const User: Command = {
         })()
       })
     } catch (error: any) {
-      logger.error(interaction, User, error)
+      logger.error(`/${User.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

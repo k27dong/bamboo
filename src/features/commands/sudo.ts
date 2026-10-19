@@ -6,11 +6,11 @@ import {
 } from "discord.js"
 
 import { getVersion } from "@/common/utils/common"
-import { logger } from "@/common/utils/logger"
 import { config } from "@/config"
 import type { Command } from "@/core/commands/Command"
 import type { StatGuildsRecord } from "@/env"
 import { timestampToDate } from "@/format"
+import { logger } from "@/logger"
 
 const SudoOption = new SlashCommandBuilder()
   .setName("sudo")
@@ -138,7 +138,7 @@ export const Sudo: Command = {
         }
       }
     } catch (error: any) {
-      logger.error(interaction, Sudo, error)
+      logger.error(`/${Sudo.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

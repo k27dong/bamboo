@@ -8,10 +8,10 @@ import {
   SlashCommandBuilder,
 } from "discord.js"
 
-import { logger } from "@/common/utils/logger"
 import { config } from "@/config"
 import { DONATION_LINK, ENABLE_DONATION_LINK } from "@/constants"
 import type { Command } from "@/core/commands/Command"
+import { logger } from "@/logger"
 
 import { Commands } from "."
 
@@ -130,7 +130,7 @@ export const Help: Command = {
         components: [component],
       })
     } catch (error: any) {
-      logger.error(interaction, Help, error)
+      logger.error(`/${Help.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

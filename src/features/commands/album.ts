@@ -15,7 +15,6 @@ import {
 import { type Playlist, useMainPlayer } from "discord-player"
 
 import { extractorSearchOptions } from "@/common/types"
-import { logger } from "@/common/utils/logger"
 import {
   CustomButtonId,
   DISCORD_EMBED_DESCRIPTION_LIMIT,
@@ -30,6 +29,7 @@ import {
   NowPlayingPlaylistMessage,
 } from "@/core/player/embedMessages"
 import { timestampToYear } from "@/format"
+import { logger } from "@/logger"
 
 const AlbumOption = new SlashCommandBuilder()
   .setName("album")
@@ -240,7 +240,7 @@ export const Album: Command = {
         })()
       })
     } catch (error: any) {
-      logger.error(interaction, Album, error)
+      logger.error(`/${Album.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

@@ -93,3 +93,7 @@ export const QRCodeStatus = {
 export const HTTP_STATUS = {
   OK: 200,
 } as const
+
+export const LOG_TIME_ZONE = "America/Toronto"
+export const LOG_LEVEL_WIDTH = 5
+export const LOG_COMMAND_WIDTH = 7

@@ -5,8 +5,8 @@ import {
   SlashCommandBuilder,
 } from "discord.js"
 
-import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
+import { logger } from "@/logger"
 
 const PingOption = new SlashCommandBuilder()
   .setName("ping")
@@ -22,7 +22,7 @@ export const Ping: Command = {
         `Pong! The latency is ${interaction.client.ws.ping}ms`,
       )
     } catch (error: any) {
-      logger.error(interaction, Ping, error)
+      logger.error(`/${Ping.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

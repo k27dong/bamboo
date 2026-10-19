@@ -8,7 +8,6 @@ import { useMainPlayer, useQueue } from "discord-player"
 import OpenAI from "openai"
 
 import { extractorSearchOptions } from "@/common/types"
-import { logger } from "@/common/utils/logger"
 import { config } from "@/config"
 import {
   DISCORD_MESSAGE_CHAR_LIMIT,
@@ -16,6 +15,7 @@ import {
   ExtractorSearchType,
 } from "@/constants"
 import type { Command } from "@/core/commands/Command"
+import { logger } from "@/logger"
 import { LYRIC_SANITIZATION_PROMPT } from "@/prompts"
 
 const getGptParsedLyric = async (
@@ -129,7 +129,7 @@ export const Lyric: Command = {
       ])
       await interaction.editReply(gptParsedLyric)
     } catch (error: any) {
-      logger.error(interaction, Lyric, error)
+      logger.error(`/${Lyric.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()
