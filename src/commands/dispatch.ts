@@ -3,9 +3,9 @@ import { isMatching, match, P } from "ts-pattern"
 
 import { EXPIRED_INTERACTION, NO_RESULT_ERROR_CODE } from "@/constants"
 import { type Request, request } from "@/context"
-import { ErrorMessage } from "@/core/player/embedMessages"
 import { BambooError, ErrorKind, UNEXPECTED_ERROR_TEXT } from "@/errors"
 import { logger } from "@/logger"
+import { ErrorMessage } from "@/ui/embeds"
 
 import type { Command } from "./command"
 

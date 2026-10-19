@@ -33,6 +33,10 @@ export enum CustomButtonId {
   ShowDescription = "show_description",
 }
 
+export enum SelectMenuId {
+  Pick = "starter",
+}
+
 export const HELP_HIDDEN_COMMANDS: readonly string[] = [
   CommandName.Sudo,
   CommandName.Help,
@@ -40,6 +44,9 @@ export const HELP_HIDDEN_COMMANDS: readonly string[] = [
 ]
 
 export const DEPLOY_SKIPPED_COMMANDS: readonly string[] = [CommandName.Sudo]
+
+export const MENU_TIMEOUT_MS = 30_000
+export const DESCRIPTION_BUTTON_TIMEOUT_MS = 60_000
 
 export const UserSelectEmojiPool: string[] = [
   "🚀",
