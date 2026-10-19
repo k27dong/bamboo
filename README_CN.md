@@ -13,7 +13,7 @@
 
 <p align="center">
   <a href="https://github.com/discordjs"><img src="https://img.shields.io/badge/discord.js-v14.16.3-f7df1e.svg?logo=pnpm" alt="discord.js badge" /></a>
-  <a href="https://discord.gg/yYrT6qfy"><img src="https://img.shields.io/discord/966754695123177554.svg?logo=discord&colorB=7289DA&label=Support&logoColor=FAFAFA" alt="Support server badge"/></a>
+  <a href="https://discord.gg/AFSRqK9fVQ"><img src="https://img.shields.io/discord/966754695123177554.svg?logo=discord&colorB=7289DA&label=Support&logoColor=FAFAFA" alt="Support server badge"/></a>
   <a href="https://www.codefactor.io/repository/github/k27dong/bamboo"><img src="https://img.shields.io/codefactor/grade/github/k27dong/bamboo/master?logo=CodeFactor"  alt="Code quality badge"/></a>
   <a href="https://top.gg/bot/899025207161929768"><img src="https://top.gg/api/widget/servers/899025207161929768.svg"></a>
 </p>
@@ -35,7 +35,7 @@ Bamboo(竹)部署在作者租用的Vultr服务器上以保证服务的稳定性�
 
 作者会持续更新与维护Bamboo，如果您有任何建议或遇到技术问题，欢迎加入官方服务器与我交流。
 
-[加入官方服务器](https://discord.gg/p6F32GejZT)
+[加入官方服务器](https://discord.gg/AFSRqK9fVQ)
 
 ## 本地开发
 

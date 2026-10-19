@@ -41,10 +41,10 @@ const isValidInteraction = (
 ): interaction is ChatInputCommandInteraction => {
   return Boolean(
     interaction &&
-      typeof interaction === "object" &&
-      "commandName" in interaction &&
-      "options" in interaction &&
-      "user" in interaction,
+    typeof interaction === "object" &&
+    "commandName" in interaction &&
+    "options" in interaction &&
+    "user" in interaction,
   )
 }
 
@@ -90,7 +90,11 @@ export const logger = {
     }
   },
 
-  error(interaction: ChatInputCommandInteraction, command: Command, error: unknown) {
+  error(
+    interaction: ChatInputCommandInteraction,
+    command: Command,
+    error: unknown,
+  ) {
     try {
       if (!isValidInteraction(interaction)) return
 
