@@ -1,6 +1,5 @@
-import { createHash, randomBytes } from "node:crypto"
+import { createHash } from "node:crypto"
 import { promises as fs } from "node:fs"
-import path from "node:path"
 import { setTimeout as sleep } from "node:timers/promises"
 
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
@@ -8,22 +7,21 @@ import qrcode from "qrcode-terminal"
 import { match } from "ts-pattern"
 
 import { config } from "@/config"
-import { HTTP_STATUS } from "@/constants"
 import { SourceId } from "@/sources/source"
 
-import { NETEASE_EAPI_DOMAIN, QR_STATUS_BY_CODE, QrStatus } from "./constants"
-import type { QrCodeAnswer, QrKeyAnswer } from "./types"
-
-const COOKIE_DIR = path.join(process.cwd(), "cookies")
-const COOKIE_PATH = path.join(COOKIE_DIR, "netease.cookie")
-const CLIENT_COOKIE =
-  "os=iPhone OS; appver=9.0.90; osver=16.2; channel=distribution"
-const LOGIN_COOKIE = [
+import {
   CLIENT_COOKIE,
-  `deviceId=${randomBytes(26).toString("hex").toUpperCase()}`,
-].join("; ")
-const QR_TIMEOUT_MS = 60_000
-const QR_POLL_MS = 1_000
+  COOKIE_DIR,
+  COOKIE_PATH,
+  HTTP_STATUS,
+  LOGIN_COOKIE,
+  NETEASE_EAPI_DOMAIN,
+  QR_POLL_MS,
+  QR_STATUS_BY_CODE,
+  QR_TIMEOUT_MS,
+  QrStatus,
+} from "./constants"
+import type { QrCodeAnswer, QrKeyAnswer } from "./types"
 
 const savedCookie = async (): Promise<string | null> => {
   try {

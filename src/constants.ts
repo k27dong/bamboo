@@ -80,10 +80,6 @@ export enum ExtractorSearchType {
   UserPlaylistTracks,
 }
 
-export const HTTP_STATUS = {
-  OK: 200,
-} as const
-
 export enum LogLevel {
   Info = "info",
   Warn = "warn",

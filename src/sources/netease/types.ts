@@ -45,7 +45,7 @@ export type RawPlaylist = {
   description: string | null
   coverImgUrl: string
   trackCount: number
-  creator: RawUser
+  creator?: RawUser
 }
 
 export type SongSearchAnswer = { result?: { songs?: RawSong[] } }
@@ -57,7 +57,7 @@ export type SimilarSongsAnswer = { songs?: RawSimilarSong[] }
 export type AlbumAnswer = { album?: RawAlbum; songs?: RawSong[] }
 export type UserPlaylistsAnswer = { playlist?: RawPlaylist[] }
 export type PlaylistDetailAnswer = {
-  playlist?: RawPlaylist & { trackIds: { id: number }[] }
+  playlist?: RawPlaylist & { creator: RawUser; trackIds: { id: number }[] }
 }
 export type SongDetailAnswer = { songs: RawSong[] }
 

@@ -45,7 +45,10 @@ export const songIdFromLink = (link: string): string => {
 
 const songOf = (raw: RawSong, thumbnail?: string): Song | null => {
   const artist = raw.ar?.[0]
-  if (!artist || !raw.al) return null
+  if (!artist || !raw.al) {
+    logger.warn(`Skipped NetEase song ${raw.id} without an artist or album`)
+    return null
+  }
   return {
     id: String(raw.id),
     title: raw.name,
@@ -61,7 +64,10 @@ const songsOf = (raws: RawSong[], thumbnail?: string): Song[] =>
 
 const similarSongOf = (raw: RawSimilarSong): Song | null => {
   const artist = raw.artists?.[0]
-  if (!artist || !raw.album) return null
+  if (!artist || !raw.album) {
+    logger.warn(`Skipped NetEase song ${raw.id} without an artist or album`)
+    return null
+  }
   return {
     id: String(raw.id),
     title: raw.name,
@@ -72,16 +78,23 @@ const similarSongOf = (raw: RawSimilarSong): Song | null => {
   }
 }
 
-const albumOf = (raw: RawAlbum): Album => ({
-  id: String(raw.id),
-  title: raw.name,
-  artist: raw.artists[0].name,
-  songCount: raw.size,
-  publishedAt: raw.publishTime,
-  description: raw.description,
-  thumbnail: raw.picUrl,
-  url: `${ALBUM_LINK}${raw.id}`,
-})
+const albumOf = (raw: RawAlbum): Album | null => {
+  const artist = raw.artists[0]
+  if (!artist) {
+    logger.warn(`Skipped NetEase album ${raw.id} without an artist`)
+    return null
+  }
+  return {
+    id: String(raw.id),
+    title: raw.name,
+    artist: artist.name,
+    songCount: raw.size,
+    publishedAt: raw.publishTime,
+    description: raw.description,
+    thumbnail: raw.picUrl,
+    url: `${ALBUM_LINK}${raw.id}`,
+  }
+}
 
 const playlistOf = (raw: RawPlaylist): Playlist => ({
   id: String(raw.id),
@@ -89,8 +102,8 @@ const playlistOf = (raw: RawPlaylist): Playlist => ({
   description: raw.description ?? "",
   songCount: raw.trackCount,
   thumbnail: raw.coverImgUrl,
-  ownerName: raw.creator.nickname,
-  ownerAvatar: raw.creator.avatarUrl,
+  ownerName: raw.creator?.nickname ?? "",
+  ownerAvatar: raw.creator?.avatarUrl ?? "",
   url: `${PLAYLIST_LINK}${raw.id}`,
 })
 
@@ -151,7 +164,10 @@ const searchAlbums = async (query: string): Promise<Album[]> => {
     { keywords: query, type: SEARCH_TYPE.ALBUM },
     NeteaseHost.Eapi,
   )
-  return (result?.albums ?? []).slice(0, DISCORD_DROPDOWN_LIMIT).map(albumOf)
+  return (result?.albums ?? [])
+    .slice(0, DISCORD_DROPDOWN_LIMIT)
+    .map(albumOf)
+    .filter((album) => album !== null)
 }
 
 export const albumWithSongs = async (id: string) => {
@@ -161,8 +177,10 @@ export const albumWithSongs = async (id: string) => {
     NeteaseHost.Default,
   )
   if (!album?.id) throw new BambooError(ErrorKind.NotFound)
+  const info = albumOf(album)
+  if (!info) throw new BambooError(ErrorKind.NotFound)
   return {
-    album: albumOf(album),
+    album: info,
     songs: songsOf(songs ?? [], album.picUrl),
   }
 }
@@ -178,7 +196,6 @@ const searchUsers = async (query: string): Promise<User[]> => {
     .map((raw) => ({
       id: String(raw.userId),
       name: raw.nickname,
-      avatar: raw.avatarUrl,
     }))
 }
 

@@ -7,11 +7,14 @@ import type {
 import { match, P } from "ts-pattern"
 
 import { config } from "@/config"
-import { HTTP_STATUS } from "@/constants"
 import { BambooError, ErrorKind } from "@/errors"
 import { logger } from "@/logger"
 
-import { NETEASE_EAPI_DOMAIN, REQUEST_TIMEOUT_MS } from "./constants"
+import {
+  HTTP_STATUS,
+  NETEASE_EAPI_DOMAIN,
+  REQUEST_TIMEOUT_MS,
+} from "./constants"
 
 export enum NeteaseHost {
   Eapi = "eapi",
@@ -87,6 +90,14 @@ export const request = async <T>(
     )
     .with({ settled: "answered" }, ({ body }) =>
       sourceDown(`answered without a code: ${describe(body)}`),
+    )
+    .with(
+      {
+        settled: "rejected",
+        reason: { body: { code: P.number, msg: P.string.minLength(1) } },
+      },
+      ({ reason }) =>
+        sourceDown(`failed with code ${reason.body.code}: ${reason.body.msg}`),
     )
     .with(
       { settled: "rejected", reason: { body: { code: P.number } } },
