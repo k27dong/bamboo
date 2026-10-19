@@ -23,7 +23,9 @@ import {
   ErrorMessage,
   NowPlayingUserPlaylistMessage,
 } from "@/core/player/embedMessages"
+import { BambooError, ErrorKind } from "@/errors"
 import { logger } from "@/logger"
+import { isLink } from "@/sources/source"
 
 /**
  * Get a deterministic emoji based on an integer input and a salt.
@@ -130,6 +132,7 @@ export const User: Command = {
 
       const player = useMainPlayer()
       const query = interaction.options.data[0].value as string
+      if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
       const member = interaction.member! as GuildMember
       const voiceChannel = member.voice.channel!
 

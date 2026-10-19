@@ -28,8 +28,10 @@ import {
   ErrorMessage,
   NowPlayingPlaylistMessage,
 } from "@/core/player/embedMessages"
+import { BambooError, ErrorKind } from "@/errors"
 import { timestampToYear } from "@/format"
 import { logger } from "@/logger"
+import { isLink } from "@/sources/source"
 
 const AlbumOption = new SlashCommandBuilder()
   .setName("album")
@@ -70,6 +72,7 @@ export const Album: Command = {
       const player = useMainPlayer()
 
       const query = interaction.options.data[0].value as string
+      if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
       const member = interaction.member! as GuildMember
       const voiceChannel = member.voice.channel!
 

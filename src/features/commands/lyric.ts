@@ -17,6 +17,7 @@ import {
 import type { Command } from "@/core/commands/Command"
 import { logger } from "@/logger"
 import { LYRIC_SANITIZATION_PROMPT } from "@/prompts"
+import { songIdFromLink } from "@/sources/netease/api"
 
 const getGptParsedLyric = async (
   rawLyric: string,
@@ -103,7 +104,7 @@ export const Lyric: Command = {
         return
       }
 
-      const trackId = queue.currentTrack.url
+      const trackId = songIdFromLink(queue.currentTrack.url)
 
       const lrcResult = await player.search(trackId, {
         requestedBy: interaction.user,

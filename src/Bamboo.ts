@@ -2,12 +2,10 @@ import chalk from "chalk"
 import { Client, GatewayIntentBits } from "discord.js"
 import { Player } from "discord-player"
 
-import { setUpCookie } from "@/common/utils/cookie"
 import { config } from "@/config"
-import { ApiServiceType } from "@/constants"
-import { BambooExtractor } from "@/core/extractor/BambooExtractor"
 import * as playerEvents from "@/core/player/events"
 import * as clientEvents from "@/features/events"
+import { registerSources } from "@/sources"
 
 process.on("unhandledRejection", (error) => {
   console.error("Unhandled rejection:", error)
@@ -26,15 +24,7 @@ const player = new Player(client)
 Object.values(clientEvents).forEach((event) => event(client))
 Object.values(playerEvents).forEach((event) => event(player))
 
-// Set up cookies for APIs
-const neteaseCookie = await setUpCookie(ApiServiceType.Netease)
-
-// Load extractors for player
-await player.extractors.register(BambooExtractor, {
-  cookies: {
-    [ApiServiceType.Netease]: neteaseCookie,
-  },
-})
+await registerSources(player)
 
 // Log in to Discord
 client
