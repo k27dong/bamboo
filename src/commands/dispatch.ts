@@ -1,19 +1,13 @@
-import {
-  type ChatInputCommandInteraction,
-  MessageFlags,
-  RESTJSONErrorCodes,
-} from "discord.js"
+import { type ChatInputCommandInteraction, MessageFlags } from "discord.js"
 import { isMatching, match, P } from "ts-pattern"
 
+import { EXPIRED_INTERACTION, NO_RESULT_ERROR_CODE } from "@/constants"
 import { type Request, request } from "@/context"
 import { ErrorMessage } from "@/core/player/embedMessages"
 import { BambooError, ErrorKind, UNEXPECTED_ERROR_TEXT } from "@/errors"
 import { logger } from "@/logger"
 
 import type { Command } from "./command"
-
-const NO_RESULT_CODE = "ERR_NO_RESULT"
-const EXPIRED = { code: RESTJSONErrorCodes.UnknownInteraction } as const
 
 const expired = () => {
   logger.warn("The interaction expired before it was answered")
@@ -26,12 +20,12 @@ const explain = (error: unknown, recorded: BambooError | null) =>
       logger.warn(message)
       return message
     })
-    .with({ code: NO_RESULT_CODE }, () => {
+    .with({ code: NO_RESULT_ERROR_CODE }, () => {
       const { message } = recorded ?? new BambooError(ErrorKind.NotFound)
       logger.warn(message)
       return message
     })
-    .with(EXPIRED, expired)
+    .with(EXPIRED_INTERACTION, expired)
     .otherwise(() => {
       logger.error("Unexpected error", error)
       return UNEXPECTED_ERROR_TEXT
@@ -49,7 +43,7 @@ const reply = async (
       await interaction.reply({ embeds, flags: MessageFlags.Ephemeral })
     }
   } catch (error) {
-    if (isMatching(EXPIRED, error)) expired()
+    if (isMatching(EXPIRED_INTERACTION, error)) expired()
     else logger.error("The error reply failed", error)
   }
 }

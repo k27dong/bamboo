@@ -1,8 +1,8 @@
 import { REST, Routes } from "discord.js"
 
 import { commands } from "@/commands"
-import { CommandName } from "@/commands/command"
 import { config } from "@/config"
+import { DEPLOY_SKIPPED_COMMANDS } from "@/constants"
 
 enum DeployScope {
   Dev = "dev",
@@ -10,7 +10,6 @@ enum DeployScope {
 }
 
 const rest = new REST({ version: "10" }).setToken(config.discord.token)
-const skippedCommands: readonly string[] = [CommandName.Sudo]
 
 export async function deployCommands(mode: DeployScope) {
   try {
@@ -36,7 +35,7 @@ export async function deployCommands(mode: DeployScope) {
       )
     } else {
       const globalCommands = commands.filter(
-        (command) => !skippedCommands.includes(command.data.name),
+        (command) => !DEPLOY_SKIPPED_COMMANDS.includes(command.data.name),
       )
 
       commandsData = globalCommands.map((command) => command.data.toJSON())

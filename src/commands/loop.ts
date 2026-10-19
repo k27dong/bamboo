@@ -1,15 +1,10 @@
 import { SlashCommandBuilder } from "discord.js"
 import { QueueRepeatMode } from "discord-player"
 
+import { REPEAT_MODE_LABELS } from "@/constants"
+
 import { type Command, CommandName } from "./command"
 import { requireQueue, requireVoice } from "./guards"
-
-const REPEAT_MODE_LABELS: Record<QueueRepeatMode, string> = {
-  [QueueRepeatMode.OFF]: "OFF",
-  [QueueRepeatMode.TRACK]: "TRACK",
-  [QueueRepeatMode.QUEUE]: "QUEUE",
-  [QueueRepeatMode.AUTOPLAY]: "AUTOPLAY",
-}
 
 export const Loop: Command = {
   data: new SlashCommandBuilder()

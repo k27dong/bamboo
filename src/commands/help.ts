@@ -8,16 +8,14 @@ import {
 } from "discord.js"
 
 import { config } from "@/config"
-import { DONATION_LINK, ENABLE_DONATION_LINK } from "@/constants"
+import {
+  DONATION_LINK,
+  ENABLE_DONATION_LINK,
+  HELP_HIDDEN_COMMANDS,
+} from "@/constants"
 
 import { commands } from "."
 import { type Command, CommandName } from "./command"
-
-const HIDDEN_COMMANDS: readonly string[] = [
-  CommandName.Sudo,
-  CommandName.Help,
-  CommandName.Ping,
-]
 
 // Fetches support server invite from whichever shard has it
 async function getSupportServerInvite(client: Client): Promise<string | null> {
@@ -69,7 +67,7 @@ export const Help: Command = {
     const name = interaction.options.getString("指令")
 
     const available = commands
-      .filter((command) => !HIDDEN_COMMANDS.includes(command.data.name))
+      .filter((command) => !HELP_HIDDEN_COMMANDS.includes(command.data.name))
       .sort((a, b) => a.data.name.localeCompare(b.data.name))
 
     const messageParts: string[] = []

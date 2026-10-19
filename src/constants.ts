@@ -1,4 +1,8 @@
 import chalk, { type ChalkInstance } from "chalk"
+import { RESTJSONErrorCodes } from "discord.js"
+import { QueueRepeatMode } from "discord-player"
+
+import { CommandName } from "@/commands/command"
 
 export const APP = "Bamboo"
 
@@ -20,9 +24,22 @@ export const DISCORD_DROPDOWN_LIMIT = 25
 export const DISCORD_SELECT_MENU_LIMIT = 100
 export const DISCORD_EMBED_DESCRIPTION_LIMIT = 4000
 
+export const NO_RESULT_ERROR_CODE = "ERR_NO_RESULT"
+export const EXPIRED_INTERACTION = {
+  code: RESTJSONErrorCodes.UnknownInteraction,
+} as const
+
 export enum CustomButtonId {
   ShowDescription = "show_description",
 }
+
+export const HELP_HIDDEN_COMMANDS: readonly string[] = [
+  CommandName.Sudo,
+  CommandName.Help,
+  CommandName.Ping,
+]
+
+export const DEPLOY_SKIPPED_COMMANDS: readonly string[] = [CommandName.Sudo]
 
 export const UserSelectEmojiPool: string[] = [
   "🚀",
@@ -108,3 +125,10 @@ export const LOG_COMMAND_WIDTH = 7
 
 export const QUEUE_VOLUME = 50
 export const QUEUE_LEAVE_ON_END_MS = 300_000
+
+export const REPEAT_MODE_LABELS: Record<QueueRepeatMode, string> = {
+  [QueueRepeatMode.OFF]: "OFF",
+  [QueueRepeatMode.TRACK]: "TRACK",
+  [QueueRepeatMode.QUEUE]: "QUEUE",
+  [QueueRepeatMode.AUTOPLAY]: "AUTOPLAY",
+}
