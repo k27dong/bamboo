@@ -11,6 +11,7 @@ import {
   SlashCommandBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  type TextChannel,
 } from "discord.js"
 import { type Playlist, useMainPlayer } from "discord-player"
 
@@ -31,6 +32,7 @@ import {
 import { BambooError, ErrorKind } from "@/errors"
 import { timestampToYear } from "@/format"
 import { logger } from "@/logger"
+import { queueOptions } from "@/player/player"
 import { isLink } from "@/sources/source"
 
 const AlbumOption = new SlashCommandBuilder()
@@ -220,13 +222,7 @@ export const Album: Command = {
             }
 
             await player.play(voiceChannel, albumTracks, {
-              nodeOptions: {
-                metadata: {
-                  channel: interaction.channel,
-                  volume: 50,
-                  leaveOnEndCooldown: 300_000,
-                },
-              },
+              nodeOptions: queueOptions(interaction.channel as TextChannel),
             })
           }
         })()

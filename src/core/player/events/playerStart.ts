@@ -5,8 +5,8 @@ import {
   type Track,
 } from "discord-player"
 
-import type { QueueMetadata } from "@/common/types"
 import { logger } from "@/logger"
+import type { QueueMetadata } from "@/player/player"
 
 import { NowPlayingMessage } from "../embedMessages"
 
