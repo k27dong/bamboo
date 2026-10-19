@@ -8,6 +8,7 @@ import {
   SlashCommandBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  type TextChannel,
 } from "discord.js"
 import { type Track, useMainPlayer } from "discord-player"
 
@@ -25,6 +26,7 @@ import {
 } from "@/core/player/embedMessages"
 import { BambooError, ErrorKind } from "@/errors"
 import { logger } from "@/logger"
+import { queueOptions } from "@/player/player"
 import { isLink } from "@/sources/source"
 
 /**
@@ -240,11 +242,7 @@ export const User: Command = {
             })
 
             await player.play(voiceChannel, playlistTracks, {
-              nodeOptions: {
-                metadata: { channel: interaction.channel },
-                volume: 50,
-                leaveOnEndCooldown: 300_000,
-              },
+              nodeOptions: queueOptions(interaction.channel as TextChannel),
             })
           }
         })()
