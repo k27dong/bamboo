@@ -2,7 +2,7 @@ import chalk from "chalk"
 import { Client, GatewayIntentBits } from "discord.js"
 
 import { config } from "@/config"
-import * as clientEvents from "@/features/events"
+import * as clientEvents from "@/events"
 import { registerPlayerEvents } from "@/player/events"
 import { createPlayer } from "@/player/player"
 import { registerSources } from "@/sources"
