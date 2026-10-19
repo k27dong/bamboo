@@ -7,6 +7,7 @@ import {
 import { useMainPlayer } from "discord-player"
 
 import { UserSelectEmojiPool } from "@/constants"
+import { recordedFailure } from "@/context"
 import { BambooError, ErrorKind } from "@/errors"
 import { queueOptions } from "@/player/player"
 import { netease } from "@/sources"
@@ -124,6 +125,8 @@ export const User: Command = {
     const result = await player.search(playlist.url, {
       requestedBy: interaction.user,
     })
+    const failure = recordedFailure()
+    if (failure) throw failure
     if (!result.playlist || result.isEmpty()) {
       await interaction.editReply({
         embeds: [ErrorMessage(`❌ 未找到歌单: ${playlist.title}`)],

@@ -17,6 +17,7 @@ import {
   DISCORD_EMBED_DESCRIPTION_LIMIT,
   DISCORD_SELECT_MENU_LIMIT,
 } from "@/constants"
+import { recordedFailure } from "@/context"
 import { BambooError, ErrorKind } from "@/errors"
 import { timestampToYear } from "@/format"
 import { queueOptions } from "@/player/player"
@@ -147,10 +148,16 @@ export const Album: Command = {
     const result = await player.search(album.url, {
       requestedBy: interaction.user,
     })
-    if (result.playlist?.tracks.length) {
-      await showAlbumCard(interaction, result.playlist)
+    const failure = recordedFailure()
+    if (failure) throw failure
+    if (!result.playlist?.tracks.length) {
+      await interaction.editReply({
+        embeds: [ErrorMessage(`❌ 未找到专辑: ${album.title}`)],
+      })
+      return
     }
 
+    await showAlbumCard(interaction, result.playlist)
     await player.play(voiceChannel, result, {
       nodeOptions: queueOptions(interaction.channel),
     })
