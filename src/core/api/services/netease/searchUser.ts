@@ -1,7 +1,7 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
-import { DISCORD_DROPDOWN_LIMIT, NETEASE_EAPI_DOMAIN } from "@/common/constants"
 import { config } from "@/config"
+import { DISCORD_DROPDOWN_LIMIT, NETEASE_EAPI_DOMAIN } from "@/constants"
 import type {
   NeteaseCloudSearchUserResult,
   NeteaseUserProfile,

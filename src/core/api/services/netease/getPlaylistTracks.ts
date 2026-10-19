@@ -1,10 +1,7 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
-import {
-  NETEASE_EAPI_DOMAIN,
-  SONG_DETAIL_TRACKID_LIMIT,
-} from "@/common/constants"
 import { config } from "@/config"
+import { NETEASE_EAPI_DOMAIN, SONG_DETAIL_TRACKID_LIMIT } from "@/constants"
 import type {
   NeteasePlaylistDetailSearchResult,
   NeteasePlaylistTracks,

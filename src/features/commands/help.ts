@@ -8,9 +8,9 @@ import {
   SlashCommandBuilder,
 } from "discord.js"
 
-import { DONATION_LINK, ENABLE_DONATION_LINK } from "@/common/constants"
 import { logger } from "@/common/utils/logger"
 import { config } from "@/config"
+import { DONATION_LINK, ENABLE_DONATION_LINK } from "@/constants"
 import type { Command } from "@/core/commands/Command"
 
 import { Commands } from "."

@@ -7,16 +7,16 @@ import {
 import { useMainPlayer, useQueue } from "discord-player"
 import OpenAI from "openai"
 
+import { extractorSearchOptions } from "@/common/types"
+import { logger } from "@/common/utils/logger"
+import { config } from "@/config"
 import {
   DISCORD_MESSAGE_CHAR_LIMIT,
   EXTRACTOR_IDENTIFIER,
   ExtractorSearchType,
-} from "@/common/constants"
-import { LYRIC_SANITIZATION_PROMPT } from "@/common/prompts"
-import { extractorSearchOptions } from "@/common/types"
-import { logger } from "@/common/utils/logger"
-import { config } from "@/config"
+} from "@/constants"
 import type { Command } from "@/core/commands/Command"
+import { LYRIC_SANITIZATION_PROMPT } from "@/prompts"
 
 const getGptParsedLyric = async (
   rawLyric: string,

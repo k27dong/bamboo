@@ -5,11 +5,12 @@ import {
   SlashCommandBuilder,
 } from "discord.js"
 
-import { getVersion, timestampToDate } from "@/common/utils/common"
+import { getVersion } from "@/common/utils/common"
 import { logger } from "@/common/utils/logger"
 import { config } from "@/config"
 import type { Command } from "@/core/commands/Command"
 import type { StatGuildsRecord } from "@/env"
+import { timestampToDate } from "@/format"
 
 const SudoOption = new SlashCommandBuilder()
   .setName("sudo")

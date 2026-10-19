@@ -6,8 +6,8 @@ import {
   type Track,
 } from "discord-player"
 
-import { APP, APPLINK, EmbedColors, ICONLINK } from "@/common/constants"
-import { timestampToYear } from "@/common/utils/common"
+import { APP, APPLINK, EmbedColors, ICONLINK } from "@/constants"
+import { timestampToYear } from "@/format"
 
 export const ErrorMessage = (message: string) => {
   return new EmbedBuilder()

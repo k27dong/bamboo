@@ -1,6 +1,6 @@
 import type { Track } from "discord-player"
 
-import { ApiServiceType } from "@/common/constants"
+import { ApiServiceType } from "@/constants"
 import type {
   BambooMusicApi,
   NeteaseAlbumDetailed,

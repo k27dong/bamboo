@@ -4,8 +4,8 @@ import { promises as fs } from "fs"
 import path from "path"
 import qrcode from "qrcode-terminal"
 
-import { ApiServiceType, NETEASE_EAPI_DOMAIN } from "@/common/constants"
 import { config } from "@/config"
+import { ApiServiceType, NETEASE_EAPI_DOMAIN } from "@/constants"
 import type { QRCheckResponse, QRCodeResponse, QRKeyResponse } from "@/env"
 
 const COOKIE_DIR = path.join(process.cwd(), "cookies")

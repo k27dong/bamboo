@@ -3,8 +3,8 @@ import NeteaseCloudMusicApi, {
 } from "@neteasecloudmusicapienhanced/api"
 import type { Track } from "discord-player"
 
-import { NETEASE_EAPI_DOMAIN } from "@/common/constants"
 import { config } from "@/config"
+import { NETEASE_EAPI_DOMAIN } from "@/constants"
 import type { NeteaseSongPlayable } from "@/core/api/interfaces"
 
 export const getSongUrlByTrack = async (

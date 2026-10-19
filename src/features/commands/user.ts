@@ -11,16 +11,41 @@ import {
 } from "discord.js"
 import { type Track, useMainPlayer } from "discord-player"
 
-import { EXTRACTOR_IDENTIFIER, ExtractorSearchType } from "@/common/constants"
 import { extractorSearchOptions } from "@/common/types"
-import { getAvatarEmoji } from "@/common/utils/common"
 import { logger } from "@/common/utils/logger"
+import {
+  EXTRACTOR_IDENTIFIER,
+  ExtractorSearchType,
+  UserSelectEmojiPool,
+} from "@/constants"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 import {
   ErrorMessage,
   NowPlayingUserPlaylistMessage,
 } from "@/core/player/embedMessages"
+
+/**
+ * Get a deterministic emoji based on an integer input and a salt.
+ * Ensures f(i, salt) and f(i+1, salt) behave the same way,
+ * but f(i, salt1) and f(i, salt2) give different results.
+ *
+ * @param {number} i - The integer input (e.g., user ID, index)
+ * @param {string | number} salt - A unique value to vary results (e.g., username, seed)
+ * @returns {string} - A consistent emoji from the list
+ */
+const getAvatarEmoji = (i: number, salt: string | number): string => {
+  // Convert salt into a numeric hash
+  const saltHash = [...String(salt)].reduce(
+    (acc, char) => acc + char.charCodeAt(0),
+    0,
+  )
+
+  // Compute index using both i and saltHash to vary results
+  const index = (i + saltHash) % UserSelectEmojiPool.length
+
+  return UserSelectEmojiPool[index]
+}
 
 const handleUserSelect = async (
   users: Track[],

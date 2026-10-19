@@ -1,7 +1,7 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
-import { DISCORD_DROPDOWN_LIMIT } from "@/common/constants"
 import { config } from "@/config"
+import { DISCORD_DROPDOWN_LIMIT } from "@/constants"
 import type { NeteasePlaylistSearchResult } from "@/core/api/interfaces"
 
 export const getPlaylistsByUserId = async (

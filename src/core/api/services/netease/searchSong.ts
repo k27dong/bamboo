@@ -1,7 +1,7 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
-import { NETEASE_EAPI_DOMAIN } from "@/common/constants"
 import { config } from "@/config"
+import { NETEASE_EAPI_DOMAIN } from "@/constants"
 import type {
   NeteaseCloudSearchSongResult,
   NeteaseSong,

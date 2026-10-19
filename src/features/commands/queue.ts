@@ -6,13 +6,10 @@ import {
 } from "discord.js"
 import { type Track, useQueue } from "discord-player"
 
-import { DISCORD_MESSAGE_CHAR_LIMIT } from "@/common/constants"
-import {
-  durationStringToSeconds,
-  secondsToHumanDuration,
-} from "@/common/utils/common"
 import { logger } from "@/common/utils/logger"
+import { DISCORD_MESSAGE_CHAR_LIMIT } from "@/constants"
 import type { Command } from "@/core/commands/Command"
+import { durationStringToSeconds, secondsToHumanDuration } from "@/format"
 
 const QueueOption = new SlashCommandBuilder()
   .setName("queue")
