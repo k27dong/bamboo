@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "discord.js"
 import OpenAI from "openai"
 
 import { config } from "@/config"
-import { DISCORD_MESSAGE_CHAR_LIMIT } from "@/constants"
+import { DISCORD_MESSAGE_CHAR_LIMIT, NO_LYRICS } from "@/constants"
 import { BambooError, ErrorKind } from "@/errors"
 import { logger } from "@/logger"
 import { LYRIC_SANITIZATION_PROMPT } from "@/prompts"
@@ -10,8 +10,6 @@ import { netease, songFromTrack } from "@/sources"
 
 import { type Command, CommandName } from "./command"
 import { requireQueue } from "./guards"
-
-const NO_LYRICS = "```\nNo lyrics available\n```"
 
 const getGptParsedLyric = async (
   rawLyric: string,

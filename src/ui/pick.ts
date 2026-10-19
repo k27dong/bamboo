@@ -8,7 +8,7 @@ import {
   type StringSelectMenuOptionBuilder,
 } from "discord.js"
 
-import { MENU_TIMEOUT_MS, SelectMenuId } from "@/constants"
+import { INTERFERENCE_TEXT, MENU_TIMEOUT_MS, SelectMenuId } from "@/constants"
 
 export type PickOptions<T> = {
   content: string
@@ -19,8 +19,6 @@ export type PickOptions<T> = {
 }
 
 export type Picked<T> = { item: T; click: StringSelectMenuInteraction }
-
-const INTERFERENCE_TEXT = "❌ 请不要干扰他人选择"
 
 export const pick = async <T>(
   interaction: ChatInputCommandInteraction,

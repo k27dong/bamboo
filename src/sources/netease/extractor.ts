@@ -19,11 +19,9 @@ import { albumWithSongs, idFromLink, netease, playlistWithSongs } from "./api"
 import {
   ALBUM_LINK,
   EXTRACTOR_IDENTIFIER,
+  NETEASE_LINKS,
   PLAYLIST_LINK,
-  SONG_LINK,
 } from "./constants"
-
-const NETEASE_LINKS = [SONG_LINK, ALBUM_LINK, PLAYLIST_LINK]
 
 export const songFromTrack = (track: Track): Song => ({
   id: idFromLink(track.url),

@@ -6,15 +6,14 @@ import {
   type Track,
 } from "discord-player"
 
-import { APP, APPLINK, EmbedColors, ICONLINK } from "@/constants"
+import {
+  APP,
+  APPLINK,
+  EmbedColors,
+  ICONLINK,
+  REPEAT_MODE_TEXT,
+} from "@/constants"
 import { timestampToYear } from "@/format"
-
-const REPEAT_MODE_TEXT: Record<QueueRepeatMode, string> = {
-  [QueueRepeatMode.OFF]: "",
-  [QueueRepeatMode.TRACK]: "🔂 单曲循环中",
-  [QueueRepeatMode.QUEUE]: "🔁 列表循环中",
-  [QueueRepeatMode.AUTOPLAY]: "♾️ 自动播放中",
-}
 
 export const ErrorMessage = (message: string) => {
   return new EmbedBuilder()

@@ -47,6 +47,7 @@ export const DEPLOY_SKIPPED_COMMANDS: readonly string[] = [CommandName.Sudo]
 
 export const MENU_TIMEOUT_MS = 30_000
 export const DESCRIPTION_BUTTON_TIMEOUT_MS = 60_000
+export const INTERFERENCE_TEXT = "❌ 请不要干扰他人选择"
 
 export const UserSelectEmojiPool: string[] = [
   "🚀",
@@ -126,3 +127,12 @@ export const REPEAT_MODE_LABELS: Record<QueueRepeatMode, string> = {
   [QueueRepeatMode.QUEUE]: "QUEUE",
   [QueueRepeatMode.AUTOPLAY]: "AUTOPLAY",
 }
+
+export const REPEAT_MODE_TEXT: Record<QueueRepeatMode, string> = {
+  [QueueRepeatMode.OFF]: "",
+  [QueueRepeatMode.TRACK]: "🔂 单曲循环中",
+  [QueueRepeatMode.QUEUE]: "🔁 列表循环中",
+  [QueueRepeatMode.AUTOPLAY]: "♾️ 自动播放中",
+}
+
+export const NO_LYRICS = "```\nNo lyrics available\n```"
