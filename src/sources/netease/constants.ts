@@ -2,6 +2,17 @@ import { randomBytes } from "node:crypto"
 import path from "node:path"
 
 export const NETEASE_EAPI_DOMAIN = "https://interface.music.163.com"
+
+export enum NeteaseHost {
+  Eapi = "eapi",
+  Default = "default",
+}
+
+export const DOMAIN_BY_HOST: Record<NeteaseHost, string | undefined> = {
+  [NeteaseHost.Eapi]: NETEASE_EAPI_DOMAIN,
+  [NeteaseHost.Default]: undefined,
+}
+
 export const REQUEST_TIMEOUT_MS = 10_000
 
 export const HTTP_STATUS = {

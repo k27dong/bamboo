@@ -12,9 +12,10 @@ import {
   type User,
 } from "@/sources/source"
 
-import { NeteaseHost, request } from "./client"
+import { request } from "./client"
 import {
   ALBUM_LINK,
+  NeteaseHost,
   PLAYLIST_LINK,
   SEARCH_TYPE,
   SONG_DETAIL_TRACKID_LIMIT,

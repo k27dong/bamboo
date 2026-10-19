@@ -11,15 +11,11 @@ import { BambooError, ErrorKind } from "@/errors"
 import { logger } from "@/logger"
 
 import {
+  DOMAIN_BY_HOST,
   HTTP_STATUS,
-  NETEASE_EAPI_DOMAIN,
+  type NeteaseHost,
   REQUEST_TIMEOUT_MS,
 } from "./constants"
-
-export enum NeteaseHost {
-  Eapi = "eapi",
-  Default = "default",
-}
 
 type NeteaseCall = {
   call(params: RequestBaseConfig): Promise<NeteaseAnswer<unknown>>
@@ -29,11 +25,6 @@ type Outcome =
   | { settled: "answered"; body: unknown }
   | { settled: "rejected"; reason: unknown }
   | { settled: "timed out" }
-
-const DOMAIN_BY_HOST: Record<NeteaseHost, string | undefined> = {
-  [NeteaseHost.Eapi]: NETEASE_EAPI_DOMAIN,
-  [NeteaseHost.Default]: undefined,
-}
 
 let cookie: string | undefined
 
