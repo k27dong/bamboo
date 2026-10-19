@@ -136,3 +136,7 @@ export const REPEAT_MODE_TEXT: Record<QueueRepeatMode, string> = {
 }
 
 export const NO_LYRICS = "```\nNo lyrics available\n```"
+
+export const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+export const LYRIC_MODEL = "deepseek/deepseek-v4.1-flash"
+export const LYRIC_MODEL_TIMEOUT_MS = 10_000
