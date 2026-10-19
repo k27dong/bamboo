@@ -67,10 +67,6 @@ export const UserSelectEmojiPool: string[] = [
   "🧩",
 ]
 
-export enum ApiServiceType {
-  Netease = "netease",
-}
-
 export const EXTRACTOR_IDENTIFIER = "com.k27dong.bamboo.bamboo-extractor"
 
 export enum ExtractorSearchType {
@@ -83,14 +79,6 @@ export enum ExtractorSearchType {
   UserPlaylists,
   UserPlaylistTracks,
 }
-
-export const NETEASE_EAPI_DOMAIN = "https://interface.music.163.com"
-export const SONG_DETAIL_TRACKID_LIMIT = 1000
-
-export const QRCodeStatus = {
-  CONFIRMED: 803,
-  EXPIRED: 800,
-} as const
 
 export const HTTP_STATUS = {
   OK: 200,
