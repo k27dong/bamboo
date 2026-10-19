@@ -1,7 +1,8 @@
 import { REST, Routes } from "discord.js"
 
+import { commands } from "@/commands"
+import { CommandName } from "@/commands/command"
 import { config } from "@/config"
-import { Commands } from "@/features/commands"
 
 enum DeployScope {
   Dev = "dev",
@@ -9,7 +10,7 @@ enum DeployScope {
 }
 
 const rest = new REST({ version: "10" }).setToken(config.discord.token)
-const skippedCommands = ["sudo"]
+const skippedCommands: readonly string[] = [CommandName.Sudo]
 
 export async function deployCommands(mode: DeployScope) {
   try {
@@ -22,7 +23,7 @@ export async function deployCommands(mode: DeployScope) {
         throw new Error("Missing setting DISCORD_DEV_SERVER_ID")
 
       // Include all commands for development guild
-      commandsData = Commands.map((command) => command.data.toJSON())
+      commandsData = commands.map((command) => command.data.toJSON())
       await rest.put(
         Routes.applicationGuildCommands(
           config.discord.applicationId,
@@ -34,7 +35,7 @@ export async function deployCommands(mode: DeployScope) {
         `✅ Successfully reloaded commands for development guild: ${config.discord.devGuildId}`,
       )
     } else {
-      const globalCommands = Commands.filter(
+      const globalCommands = commands.filter(
         (command) => !skippedCommands.includes(command.data.name),
       )
 
@@ -43,7 +44,10 @@ export async function deployCommands(mode: DeployScope) {
         body: commandsData,
       })
       console.log("✅ Successfully reloaded global application (/) commands.")
-      console.log(" - Commands:", globalCommands.map((c) => c.name).join(", "))
+      console.log(
+        " - Commands:",
+        globalCommands.map((command) => command.data.name).join(", "),
+      )
     }
   } catch (error) {
     console.error("❌ Failed to deploy commands:", error)
