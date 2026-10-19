@@ -38,7 +38,7 @@ const reply = async (
   const embeds = [ErrorMessage(text)]
   try {
     if (interaction.deferred || interaction.replied) {
-      await interaction.editReply({ embeds })
+      await interaction.editReply({ content: "", embeds, components: [] })
     } else {
       await interaction.reply({ embeds, flags: MessageFlags.Ephemeral })
     }
