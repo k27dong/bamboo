@@ -38,7 +38,7 @@ export const Shuffle: Command = {
 
       await interaction.reply("done")
     } catch (error: any) {
-      logger.error(interaction, Shuffle, error)
+      logger.error(`/${Shuffle.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

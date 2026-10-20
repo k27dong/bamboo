@@ -45,7 +45,7 @@ export const Skip: Command = {
 
       await interaction.reply("done")
     } catch (error: any) {
-      logger.error(interaction, Skip, error)
+      logger.error(`/${Skip.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

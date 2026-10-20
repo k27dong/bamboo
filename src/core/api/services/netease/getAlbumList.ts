@@ -1,7 +1,7 @@
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 
 import { DISCORD_DROPDOWN_LIMIT, NETEASE_EAPI_DOMAIN } from "@/common/constants"
-import { REAL_IP } from "@/common/utils/config"
+import { config } from "@/common/utils/config"
 import type {
   NeteaseAlbumDetailed,
   NeteaseCloudSearchAlbumResult,
@@ -15,7 +15,7 @@ export const getAlbumList = async (
     keywords: query,
     type: 10,
     cookie,
-    realIP: REAL_IP,
+    realIP: config.netease.realIp,
     domain: NETEASE_EAPI_DOMAIN,
   })
     .then((rawResult) => {

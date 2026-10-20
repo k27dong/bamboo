@@ -22,7 +22,7 @@ export const Ping: Command = {
         `Pong! The latency is ${interaction.client.ws.ping}ms`,
       )
     } catch (error: any) {
-      logger.error(interaction, Ping, error)
+      logger.error(`/${Ping.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

@@ -9,10 +9,7 @@ import {
 } from "discord.js"
 
 import { DONATION_LINK, ENABLE_DONATION_LINK } from "@/common/constants"
-import {
-  SUPPORT_SERVER_CHANNEL_ID,
-  SUPPORT_SERVER_ID,
-} from "@/common/utils/config"
+import { config } from "@/common/utils/config"
 import { logger } from "@/common/utils/logger"
 import type { Command } from "@/core/commands/Command"
 
@@ -30,13 +27,14 @@ const HelpOption = new SlashCommandBuilder()
 
 // Fetches support server invite from whichever shard has it
 async function getSupportServerInvite(client: Client): Promise<string | null> {
-  if (!SUPPORT_SERVER_ID || !SUPPORT_SERVER_CHANNEL_ID) return null
+  if (!config.discord.supportServerId || !config.discord.supportChannelId)
+    return null
 
   // If not sharded, access directly
   if (!client.shard) {
     const channel = client.guilds.cache
-      .get(SUPPORT_SERVER_ID)
-      ?.channels.cache.get(SUPPORT_SERVER_CHANNEL_ID)
+      .get(config.discord.supportServerId)
+      ?.channels.cache.get(config.discord.supportChannelId)
     if (!channel?.isTextBased() || channel.isThread()) return null
     const invite = await channel.createInvite()
     return invite.url
@@ -54,8 +52,8 @@ async function getSupportServerInvite(client: Client): Promise<string | null> {
     },
     {
       context: {
-        serverId: SUPPORT_SERVER_ID,
-        channelId: SUPPORT_SERVER_CHANNEL_ID,
+        serverId: config.discord.supportServerId,
+        channelId: config.discord.supportChannelId,
       },
     },
   )
@@ -132,7 +130,7 @@ export const Help: Command = {
         components: [component],
       })
     } catch (error: any) {
-      logger.error(interaction, Help, error)
+      logger.error(`/${Help.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()
