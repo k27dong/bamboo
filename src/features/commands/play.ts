@@ -11,7 +11,7 @@ import { useMainPlayer } from "discord-player"
 import { BambooError, ErrorKind } from "@/common/errors"
 import { logger } from "@/common/utils/logger"
 import { isLink } from "@/core/api/interfaces"
-import type { Command } from "@/core/commands/Command"
+import type { LegacyCommand } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 import { queueOptions } from "@/core/player/player"
 
@@ -22,7 +22,7 @@ const PlayOption = new SlashCommandBuilder()
     option.setName("搜索").setDescription("搜索音乐").setRequired(true),
   )
 
-export const Play: Command = {
+export const Play: LegacyCommand = {
   name: PlayOption.name,
   description: PlayOption.description,
   data: PlayOption,

@@ -1,53 +1,21 @@
-import {
-  type ChatInputCommandInteraction,
-  type Client,
-  MessageFlags,
-  SlashCommandBuilder,
-} from "discord.js"
-import { useQueue } from "discord-player"
+import { SlashCommandBuilder } from "discord.js"
 
-import { logger } from "@/common/utils/logger"
-import type { Command } from "@/core/commands/Command"
-import { checkInVoiceChannel } from "@/core/player/core"
-
-const ShuffleOption = new SlashCommandBuilder()
-  .setName("shuffle")
-  .setDescription("随机打乱播放列表")
+import { type Command, CommandName } from "@/core/commands/Command"
+import { requireQueue, requireVoice } from "@/core/player/core"
 
 export const Shuffle: Command = {
-  name: ShuffleOption.name,
-  description: ShuffleOption.description,
-  data: ShuffleOption,
+  data: new SlashCommandBuilder()
+    .setName(CommandName.Shuffle)
+    .setDescription("随机打乱播放列表"),
   manual: "随机打乱播放列表。",
-  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
-    try {
-      await checkInVoiceChannel(interaction)
+  run: async ({ interaction }) => {
+    requireVoice(interaction)
+    const queue = requireQueue(interaction)
 
-      const queue = useQueue(interaction.guild!)!
-
-      if (!queue) {
-        await interaction.reply(
-          "This server does not have an active player session.",
-        )
-        return
-      }
-
-      if (queue.tracks.size >= 2) {
-        queue.tracks.shuffle()
-      }
-
-      await interaction.reply("done")
-    } catch (error: any) {
-      logger.error(`/${Shuffle.name} failed`, error)
-
-      if (!interaction.deferred && !interaction.replied) {
-        await interaction.deferReply()
-      }
-
-      await interaction.followUp({
-        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
-        flags: MessageFlags.Ephemeral,
-      })
+    if (queue.tracks.size >= 2) {
+      queue.tracks.shuffle()
     }
+
+    await interaction.reply("done")
   },
 }
