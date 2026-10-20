@@ -1,3 +1,11 @@
-export { default as error } from "./error"
-export { default as playerError } from "./playerError"
-export { default as playerStart } from "./playerStart"
+import type { Player } from "discord-player"
+
+import error from "./error"
+import playerError from "./playerError"
+import playerStart from "./playerStart"
+
+export const registerPlayerEvents = (player: Player) => {
+  error(player)
+  playerError(player)
+  playerStart(player)
+}

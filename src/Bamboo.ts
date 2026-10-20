@@ -1,10 +1,10 @@
 import chalk from "chalk"
 import { Client, GatewayIntentBits } from "discord.js"
-import { Player } from "discord-player"
 
 import { config } from "@/common/utils/config"
 import { registerSources } from "@/core/api/BambooApi"
-import * as playerEvents from "@/core/player/events"
+import { registerPlayerEvents } from "@/core/player/events"
+import { createPlayer } from "@/core/player/player"
 import * as clientEvents from "@/features/events"
 
 process.on("unhandledRejection", (error) => {
@@ -18,11 +18,11 @@ process.on("uncaughtException", (error) => {
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 })
-const player = new Player(client)
+const player = createPlayer(client)
 
 // Load Discord and player events
 Object.values(clientEvents).forEach((event) => event(client))
-Object.values(playerEvents).forEach((event) => event(player))
+registerPlayerEvents(player)
 
 await registerSources(player)
 

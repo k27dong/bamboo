@@ -11,6 +11,7 @@ import {
   SlashCommandBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  type TextChannel,
 } from "discord.js"
 import { type Playlist, useMainPlayer } from "discord-player"
 
@@ -32,6 +33,7 @@ import {
   ErrorMessage,
   NowPlayingPlaylistMessage,
 } from "@/core/player/embedMessages"
+import { queueOptions } from "@/core/player/player"
 
 const AlbumOption = new SlashCommandBuilder()
   .setName("album")
@@ -220,13 +222,7 @@ export const Album: Command = {
             }
 
             await player.play(voiceChannel, albumTracks, {
-              nodeOptions: {
-                metadata: {
-                  channel: interaction.channel,
-                  volume: 50,
-                  leaveOnEndCooldown: 300_000,
-                },
-              },
+              nodeOptions: queueOptions(interaction.channel as TextChannel),
             })
           }
         })()
