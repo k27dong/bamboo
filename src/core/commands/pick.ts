@@ -56,7 +56,12 @@ export const pick = async <T>(
       }
       picked = true
       clicks.stop()
-      resolve({ item: items[Number(click.values[0])], click })
+      const item = items[Number(click.values[0])]
+      if (item === undefined) {
+        reject(new Error(`No menu item for value ${click.values[0]}`))
+        return
+      }
+      resolve({ item, click })
     })
 
     clicks.on("end", () => {

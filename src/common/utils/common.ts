@@ -1,3 +1,5 @@
+import { match, P } from "ts-pattern"
+
 import { UserSelectEmojiPool } from "@/common/constants"
 
 /**
@@ -10,21 +12,20 @@ import { UserSelectEmojiPool } from "@/common/constants"
  */
 export const durationStringToSeconds = (duration: string): number => {
   const parts = duration.split(":").map((part) => parseInt(part, 10))
-  let seconds = 0
-  if (parts.length === 3) {
-    // HH:MM:SS
-    seconds += parts[0] * 3600
-    seconds += parts[1] * 60
-    seconds += parts[2]
-  } else if (parts.length === 2) {
-    // MM:SS
-    seconds += parts[0] * 60
-    seconds += parts[1]
-  } else if (parts.length === 1) {
-    // SS
-    seconds += parts[0]
-  }
-  return seconds
+  return match(parts)
+    .with(
+      [P.number, P.number, P.number], // HH:MM:SS
+      ([hours, minutes, seconds]) => hours * 3600 + minutes * 60 + seconds,
+    )
+    .with(
+      [P.number, P.number], // MM:SS
+      ([minutes, seconds]) => minutes * 60 + seconds,
+    )
+    .with(
+      [P.number], // SS
+      ([seconds]) => seconds,
+    )
+    .otherwise(() => 0)
 }
 
 /**
@@ -114,7 +115,9 @@ export const getAvatarEmoji = (i: number, salt: string | number): string => {
   // Compute index using both i and saltHash to vary results
   const index = (i + saltHash) % UserSelectEmojiPool.length
 
-  return UserSelectEmojiPool[index]
+  const emoji = UserSelectEmojiPool[index]
+  if (emoji === undefined) throw new Error(`No avatar emoji at ${index}`)
+  return emoji
 }
 
 /**
