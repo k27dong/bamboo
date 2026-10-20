@@ -16,6 +16,7 @@ import { LYRIC_SANITIZATION_PROMPT } from "@/common/prompts"
 import { extractorSearchOptions } from "@/common/types"
 import { config } from "@/common/utils/config"
 import { logger } from "@/common/utils/logger"
+import { songIdFromLink } from "@/core/api/services/netease/api"
 import type { Command } from "@/core/commands/Command"
 
 const getGptParsedLyric = async (
@@ -103,7 +104,7 @@ export const Lyric: Command = {
         return
       }
 
-      const trackId = queue.currentTrack.url
+      const trackId = songIdFromLink(queue.currentTrack.url)
 
       const lrcResult = await player.search(trackId, {
         requestedBy: interaction.user,

@@ -1,154 +1,59 @@
-import type { Track } from "discord-player"
+export enum SourceId {
+  Netease = "netease",
+}
 
-declare module "@neteasecloudmusicapienhanced/api" {
-  interface RequestBaseConfig {
-    crypto?: "eapi"
-    domain?: string
+export type Song = {
+  id: string
+  title: string
+  artist: string
+  durationMs: number
+  thumbnail: string
+  url: string
+}
+
+export type Album = {
+  id: string
+  title: string
+  artist: string
+  songCount: number
+  publishedAt: number
+  description: string
+  thumbnail: string
+  url: string
+}
+
+export type User = {
+  id: string
+  name: string
+}
+
+export type Playlist = {
+  id: string
+  title: string
+  description: string
+  songCount: number
+  thumbnail: string
+  ownerName: string
+  ownerAvatar: string
+  url: string
+}
+
+export interface MusicSource {
+  id: SourceId
+  searchSongs(query: string): Promise<Song[]>
+  getStreamUrl(song: Song): Promise<string>
+  findRelated?(song: Song, played: Song[]): Promise<Song | null>
+  getLyrics?(song: Song): Promise<string | null>
+  albums?: {
+    search(query: string): Promise<Album[]>
+    getSongs(album: Album): Promise<Song[]>
+  }
+  users?: {
+    search(query: string): Promise<User[]>
+    getPlaylists(user: User): Promise<Playlist[]>
+    getPlaylistSongs(playlist: Playlist): Promise<Song[]>
   }
 }
 
-export interface BambooMusicApi {
-  getTrackUrl: (id: Track) => Promise<string>
-  getDefaultTrack: (query: string) => Promise<NeteaseSong | null>
-  searchAlbum: (query: string) => Promise<NeteaseAlbumDetailed[] | null>
-  getAlbumById: (id: string) => Promise<NeteaseSong[] | null>
-  getLyricById: (id: string) => Promise<string | null>
-  searchUser: (query: string) => Promise<NeteaseUserProfile[] | null>
-  getUserPlaylists: (
-    query: string,
-  ) => Promise<NeteasePlaylistSearchResult[] | null>
-  getUserPlaylistTracksById: (
-    id: string,
-  ) => Promise<NeteasePlaylistTracks | null>
-  getSimilarTrack: (
-    id: string,
-    prevTracks: string[],
-  ) => Promise<NeteaseSong | null>
-}
-
-export interface NeteaseCloudSearchSongResult {
-  searchQcReminder: any
-  songs: NeteaseSong[]
-  songCount: number
-}
-
-export enum NeteaseFeeType {
-  FREE_OR_NONE = 0,
-  VIP = 1,
-  PREMIUM_ALBUM = 3,
-  LOW_QUALITY = 8,
-}
-
-export interface NeteaseAlbum {
-  id: number
-  name: string
-  picUrl: string
-  description: string
-}
-
-export interface NeteaseAlbumDetailed extends NeteaseAlbum {
-  size: number
-  pic: number
-  publishTime: number
-  artists: NeteaseArtist[]
-}
-
-export interface NeteaseArtist {
-  id: number
-  name: string
-}
-
-export interface NeteaseSong {
-  name: string
-  id: number
-  ar: NeteaseArtist[]
-  pop: number // popularity
-  fee: NeteaseFeeType
-  al: NeteaseAlbum
-  dt: number // duration
-  publishTime: number
-  s_id: number // to indicate if the song is from clouddisk
-}
-
-export interface NeteaseSongPlayable {
-  id: number
-  url: string
-  size: number
-  code: number
-  type: string
-  fee: NeteaseFeeType
-}
-
-export interface NeteaseCloudSearchAlbumResult {
-  albums: NeteaseAlbumDetailed[]
-  albumCount: number
-}
-
-export interface NeteaseAlbumSearchInfo {
-  picUrl: string
-  description: string
-  publishTime: number
-}
-
-export interface NeteaseLyric {
-  version: number
-  lyric: string
-}
-
-export interface NeteaseUserProfile {
-  defaultAvatar: boolean
-  avatarUrl: string
-  userId: number
-  nickname: string
-  signature: string
-  playlistCount: number
-}
-
-export interface NeteaseCloudSearchUserResult {
-  userprofiles: NeteaseUserProfile[]
-  userprofileCount: number
-}
-
-export interface NeteasePlaylistSearchResult {
-  trackCount: number
-  coverImgUrl: string
-  playCount: number
-  name: string
-  id: number
-}
-
-export interface NeteasePlaylistDetailSearchResult {
-  id: number
-  name: string
-  coverImgUrl: string
-  userId: number
-  createTime: number
-  playCount: number
-  description: string
-  trackIds: any[]
-  creator: NeteaseUserProfile
-}
-
-export interface SongDetail {
-  name: string
-  id: number
-  dt: number
-  al: { picUrl: string }
-  ar: { name: string }[]
-}
-
-export interface NeteasePlaylistTracks {
-  info: NeteasePlaylistDetailSearchResult
-  tracks: SongDetail[]
-}
-
-export interface NeteaseSimilarTrack {
-  fee: NeteaseFeeType
-  popularity: number
-  id: number
-  name: string
-  artists: NeteaseArtist[]
-  album: NeteaseAlbum
-  duration: number
-  publishTime: number
-}
+export const isLink = (text: string) =>
+  /^(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(text)
