@@ -8,6 +8,7 @@ import {
   SlashCommandBuilder,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
+  type TextChannel,
 } from "discord.js"
 import { type Track, useMainPlayer } from "discord-player"
 
@@ -23,6 +24,7 @@ import {
   ErrorMessage,
   NowPlayingUserPlaylistMessage,
 } from "@/core/player/embedMessages"
+import { queueOptions } from "@/core/player/player"
 
 const handleUserSelect = async (
   users: Track[],
@@ -215,11 +217,7 @@ export const User: Command = {
             })
 
             await player.play(voiceChannel, playlistTracks, {
-              nodeOptions: {
-                metadata: { channel: interaction.channel },
-                volume: 50,
-                leaveOnEndCooldown: 300_000,
-              },
+              nodeOptions: queueOptions(interaction.channel as TextChannel),
             })
           }
         })()

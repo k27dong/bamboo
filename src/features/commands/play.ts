@@ -4,6 +4,7 @@ import {
   type GuildMember,
   MessageFlags,
   SlashCommandBuilder,
+  type TextChannel,
 } from "discord.js"
 import { useMainPlayer } from "discord-player"
 
@@ -12,6 +13,7 @@ import { logger } from "@/common/utils/logger"
 import { isLink } from "@/core/api/interfaces"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
+import { queueOptions } from "@/core/player/player"
 
 const PlayOption = new SlashCommandBuilder()
   .setName("play")
@@ -37,11 +39,7 @@ export const Play: Command = {
       const voiceChannel = member.voice.channel!
 
       const result = await player.play(voiceChannel, query, {
-        nodeOptions: {
-          metadata: { channel: interaction.channel },
-          volume: 50,
-          leaveOnEndCooldown: 300_000,
-        },
+        nodeOptions: queueOptions(interaction.channel as TextChannel),
       })
 
       await interaction.editReply(
