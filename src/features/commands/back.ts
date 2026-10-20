@@ -1,55 +1,29 @@
-import {
-  type ChatInputCommandInteraction,
-  type Client,
-  MessageFlags,
-  SlashCommandBuilder,
-} from "discord.js"
-import { useHistory, useTimeline } from "discord-player"
+import { SlashCommandBuilder } from "discord.js"
 
-import { logger } from "@/common/utils/logger"
-import type { Command } from "@/core/commands/Command"
-import { checkInVoiceChannel } from "@/core/player/core"
-
-const BackOption = new SlashCommandBuilder()
-  .setName("back")
-  .setDescription("播放上一首")
+import { type Command, CommandName } from "@/core/commands/Command"
+import { requireQueue, requireVoice } from "@/core/player/core"
 
 export const Back: Command = {
-  name: BackOption.name,
-  description: BackOption.description,
-  data: BackOption,
+  data: new SlashCommandBuilder()
+    .setName(CommandName.Back)
+    .setDescription("播放上一首"),
   manual: "它可以帮你回到上一首播放的歌曲。不过时间是回不去了。",
-  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
-    try {
-      await checkInVoiceChannel(interaction)
+  run: async ({ interaction }) => {
+    requireVoice(interaction)
+    const queue = requireQueue(interaction)
 
-      const history = useHistory(interaction.guild!)!
-      const timeline = useTimeline({ node: interaction.guildId! })!
-
-      if (!history || history.isEmpty()) {
-        await timeline?.setPosition(0)
-      } else {
-        await history.previous(true)
-      }
-
-      if (timeline.paused) {
-        timeline.resume()
-      } else {
-        timeline.pause()
-      }
-
-      await interaction.reply("done")
-    } catch (error: any) {
-      logger.error(`/${Back.name} failed`, error)
-
-      if (!interaction.deferred && !interaction.replied) {
-        await interaction.deferReply()
-      }
-
-      await interaction.followUp({
-        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
-        flags: MessageFlags.Ephemeral,
-      })
+    if (queue.history.isEmpty()) {
+      await queue.node.seek(0)
+    } else {
+      await queue.history.previous(true)
     }
+
+    if (queue.node.isPaused()) {
+      queue.node.resume()
+    } else {
+      queue.node.pause()
+    }
+
+    await interaction.reply("done")
   },
 }

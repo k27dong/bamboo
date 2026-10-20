@@ -18,7 +18,7 @@ import { extractorSearchOptions } from "@/common/types"
 import { getAvatarEmoji } from "@/common/utils/common"
 import { logger } from "@/common/utils/logger"
 import { isLink } from "@/core/api/interfaces"
-import type { Command } from "@/core/commands/Command"
+import type { LegacyCommand } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 import {
   ErrorMessage,
@@ -96,7 +96,7 @@ const UserOption = new SlashCommandBuilder()
       .setRequired(true),
   )
 
-export const User: Command = {
+export const User: LegacyCommand = {
   name: UserOption.name,
   description: UserOption.description,
   data: UserOption,

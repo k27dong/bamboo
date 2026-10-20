@@ -2,28 +2,20 @@ import {
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
-  type ChatInputCommandInteraction,
   type Client,
   MessageFlags,
   SlashCommandBuilder,
 } from "discord.js"
 
-import { DONATION_LINK, ENABLE_DONATION_LINK } from "@/common/constants"
+import {
+  DONATION_LINK,
+  ENABLE_DONATION_LINK,
+  HELP_HIDDEN_COMMANDS,
+} from "@/common/constants"
 import { config } from "@/common/utils/config"
-import { logger } from "@/common/utils/logger"
-import type { Command } from "@/core/commands/Command"
+import { type Command, CommandName } from "@/core/commands/Command"
 
-import { Commands } from "."
-
-const HelpOption = new SlashCommandBuilder()
-  .setName("help")
-  .setDescription("帮助")
-  .addStringOption((option) =>
-    option
-      .setName("指令")
-      .setDescription("获取具体某一条指令的信息")
-      .setRequired(false),
-  )
+import { commands } from "."
 
 // Fetches support server invite from whichever shard has it
 async function getSupportServerInvite(client: Client): Promise<string | null> {
@@ -62,84 +54,77 @@ async function getSupportServerInvite(client: Client): Promise<string | null> {
 }
 
 export const Help: Command = {
-  name: HelpOption.name,
-  description: HelpOption.description,
-  data: HelpOption,
-  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
-    try {
-      const excludedCommands = ["sudo", "help", "ping"]
-      const command = interaction.options.data[0]?.value as string | undefined
+  data: new SlashCommandBuilder()
+    .setName(CommandName.Help)
+    .setDescription("帮助")
+    .addStringOption((option) =>
+      option
+        .setName("指令")
+        .setDescription("获取具体某一条指令的信息")
+        .setRequired(false),
+    ),
+  run: async ({ interaction }) => {
+    const name = interaction.options.getString("指令")
 
-      const availableCommands = Commands.filter(
-        (cmd) => !excludedCommands.includes(cmd.name),
-      ).sort((a, b) => a.name.localeCompare(b.name))
+    const available = commands
+      .filter((command) => !HELP_HIDDEN_COMMANDS.includes(command.data.name))
+      .sort((a, b) => a.data.name.localeCompare(b.data.name))
 
-      const messageParts: string[] = []
+    const messageParts: string[] = []
+
+    if (!name) {
+      const commandsList = available
+        .map(({ data }) => `${data.name.padEnd(10)}${data.description}`)
+        .join("\n")
+
+      messageParts.push(`📚 **完整指令列表：**`, `\`\`\`${commandsList}\`\`\``)
+    } else {
+      const command = available.find(({ data }) => data.name === name)
 
       if (!command) {
-        const commandsList = availableCommands
-          .map((cmd) => `${cmd.name.padEnd(10)}${cmd.description}`)
-          .join("\n")
+        await interaction.reply({
+          content: `Command *${name}* not found.`,
+          flags: MessageFlags.Ephemeral,
+        })
+        return
+      }
 
-        messageParts.push(
-          `📚 **完整指令列表：**`,
-          `\`\`\`${commandsList}\`\`\``,
-        )
+      messageParts.push(
+        `📝 **指令详情：**`,
+        `\`\`\`${command.data.name} | ${command.data.description}\n\n${command.manual ?? ""}\`\`\``,
+      )
+    }
+
+    const component = new ActionRowBuilder<ButtonBuilder>()
+
+    const inviteUrl = await getSupportServerInvite(interaction.client)
+    if (inviteUrl) {
+      if (!name) {
+        messageParts.push(`👥 加入官方服务器：${inviteUrl}`)
       } else {
-        const cmd = availableCommands.find((c) => c.name === command)
-
-        if (!cmd) {
-          throw new Error(`Command *${command}* not found.`)
-        }
-
-        messageParts.push(
-          `📝 **指令详情：**`,
-          `\`\`\`${cmd.name} | ${cmd.description}\n\n${cmd.manual ?? ""}\`\`\``,
-        )
-      }
-
-      const component = new ActionRowBuilder<ButtonBuilder>()
-
-      const inviteUrl = await getSupportServerInvite(client)
-      if (inviteUrl) {
-        if (!command) {
-          messageParts.push(`👥 加入官方服务器：${inviteUrl}`)
-        } else {
-          component.addComponents(
-            new ButtonBuilder()
-              .setLabel("官方")
-              .setStyle(ButtonStyle.Link)
-              .setURL(inviteUrl)
-              .setEmoji("👥"),
-          )
-        }
-      }
-
-      if (ENABLE_DONATION_LINK) {
         component.addComponents(
           new ButtonBuilder()
-            .setLabel("赞助")
+            .setLabel("官方")
             .setStyle(ButtonStyle.Link)
-            .setURL(DONATION_LINK)
-            .setEmoji("💰"),
+            .setURL(inviteUrl)
+            .setEmoji("👥"),
         )
       }
-
-      await interaction.reply({
-        content: messageParts.join("\n"),
-        components: [component],
-      })
-    } catch (error: any) {
-      logger.error(`/${Help.name} failed`, error)
-
-      if (!interaction.deferred && !interaction.replied) {
-        await interaction.deferReply()
-      }
-
-      await interaction.followUp({
-        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
-        flags: MessageFlags.Ephemeral,
-      })
     }
+
+    if (ENABLE_DONATION_LINK) {
+      component.addComponents(
+        new ButtonBuilder()
+          .setLabel("赞助")
+          .setStyle(ButtonStyle.Link)
+          .setURL(DONATION_LINK)
+          .setEmoji("💰"),
+      )
+    }
+
+    await interaction.reply({
+      content: messageParts.join("\n"),
+      components: [component],
+    })
   },
 }
