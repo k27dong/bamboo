@@ -11,6 +11,7 @@ export const APPLINK = "https://github.com/k27dong/bamboo"
 
 export const ENABLE_DONATION_LINK = true
 export const DONATION_LINK = "https://www.buymeacoffee.com/kefan"
+export const SUPPORT_INVITE_URL = "https://discord.gg/AFSRqK9fVQ"
 
 export enum EmbedColors {
   Error = 0xbf2121,

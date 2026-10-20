@@ -22,8 +22,6 @@ export const config: Readonly<{
     applicationId: string
     ownerId: string
     devGuildId?: string
-    supportServerId?: string
-    supportChannelId?: string
   }
   netease: { realIp?: string; cookie?: string }
   openrouterApiKey: string
@@ -38,8 +36,6 @@ export const config: Readonly<{
     applicationId: required("DISCORD_APPLICATION_ID"),
     ownerId: required("DISCORD_OWNER_ID"),
     devGuildId: process.env.DISCORD_DEV_SERVER_ID,
-    supportServerId: process.env.DISCORD_SUPPORT_SERVER_ID,
-    supportChannelId: process.env.DISCORD_SUPPORT_CHANNEL_ID,
   },
   netease: {
     realIp: process.env.NETEASE_REAL_IP,
