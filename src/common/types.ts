@@ -1,17 +1,5 @@
-import type { RequestOptions } from "node:http"
-
-import type { TextChannel } from "discord.js"
-
-import type { ExtractorSearchType } from "@/common/constants"
+import type { SendableChannels } from "discord.js"
 
 export interface QueueMetadata {
-  channel: TextChannel
+  channel: SendableChannels | null
 }
-
-export interface ExtractorSearchOptions extends RequestOptions {
-  searchType: ExtractorSearchType
-}
-
-export const extractorSearchOptions = (
-  options: ExtractorSearchOptions,
-): ExtractorSearchOptions => options

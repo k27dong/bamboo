@@ -1,4 +1,4 @@
-import type { Command, LegacyCommand } from "@/core/commands/Command"
+import type { Command } from "@/core/commands/Command"
 
 import { Album } from "./album"
 import { Back } from "./back"
@@ -17,20 +17,14 @@ import { Skip } from "./skip"
 import { Sudo } from "./sudo"
 import { User } from "./user"
 
-const adapt = (command: LegacyCommand): Command => ({
-  data: command.data,
-  manual: command.manual,
-  run: ({ interaction }) => command.run(interaction.client, interaction),
-})
-
 export const commands: readonly Command[] = [
   Ping,
-  adapt(Play),
+  Play,
   Queue,
   Skip,
-  adapt(Album),
-  adapt(Lyric),
-  adapt(User),
+  Album,
+  Lyric,
+  User,
   Shuffle,
   Jump,
   Clear,
