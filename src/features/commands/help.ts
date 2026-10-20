@@ -52,7 +52,12 @@ async function getSupportServerInvite(client: Client): Promise<string | null> {
       const invite = await channel.createInvite()
       return invite.url
     },
-    { context: { serverId: SUPPORT_SERVER_ID, channelId: SUPPORT_SERVER_CHANNEL_ID } },
+    {
+      context: {
+        serverId: SUPPORT_SERVER_ID,
+        channelId: SUPPORT_SERVER_CHANNEL_ID,
+      },
+    },
   )
 
   return results.find((url) => url !== null) ?? null

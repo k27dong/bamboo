@@ -193,8 +193,8 @@ export const User: Command = {
               requestedBy: interaction.user,
               searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
               requestOptions: extractorSearchOptions({
-          searchType: ExtractorSearchType.UserPlaylistTracks,
-        }),
+                searchType: ExtractorSearchType.UserPlaylistTracks,
+              }),
             })
 
             if (playlistTracks.isEmpty()) {
