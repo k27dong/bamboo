@@ -27,7 +27,7 @@ export type RawAlbum = {
   id: number
   name: string
   picUrl: string
-  description: string
+  description: string | null
   publishTime: number
   size: number
   artists: RawArtist[]

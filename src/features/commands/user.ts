@@ -1,249 +1,125 @@
 import {
-  ActionRowBuilder,
   type ChatInputCommandInteraction,
-  type Client,
-  ComponentType,
-  type GuildMember,
   MessageFlags,
   SlashCommandBuilder,
-  StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
-  type TextChannel,
 } from "discord.js"
-import { type Track, useMainPlayer } from "discord-player"
+import { useMainPlayer } from "discord-player"
 
-import { EXTRACTOR_IDENTIFIER, ExtractorSearchType } from "@/common/constants"
+import { recordedFailure } from "@/common/context"
 import { BambooError, ErrorKind } from "@/common/errors"
-import { extractorSearchOptions } from "@/common/types"
 import { getAvatarEmoji } from "@/common/utils/common"
-import { logger } from "@/common/utils/logger"
-import { isLink } from "@/core/api/interfaces"
-import type { LegacyCommand } from "@/core/commands/Command"
-import { checkInVoiceChannel } from "@/core/player/core"
+import { netease } from "@/core/api/BambooApi"
+import { isLink, type User as UserInfo } from "@/core/api/interfaces"
+import { type Command, CommandName } from "@/core/commands/Command"
+import { pick } from "@/core/commands/pick"
+import { requireVoice } from "@/core/player/core"
 import {
   ErrorMessage,
   NowPlayingUserPlaylistMessage,
 } from "@/core/player/embedMessages"
 import { queueOptions } from "@/core/player/player"
 
-const handleUserSelect = async (
-  users: Track[],
+const pickUser = async (
   interaction: ChatInputCommandInteraction,
-): Promise<string[]> => {
-  const userSelectRowOptions = users.map((user, i) => {
-    return new StringSelectMenuOptionBuilder()
-      .setLabel(user.title)
-      .setValue(i.toString())
-      .setEmoji(getAvatarEmoji(i, interaction.createdTimestamp))
+  users: UserInfo[],
+): Promise<UserInfo | null> => {
+  const picked = await pick(interaction, {
+    content: "❓ 找到多个用户，请选择一个",
+    placeholder: "请选择用户",
+    items: users,
+    option: (user, index) =>
+      new StringSelectMenuOptionBuilder()
+        .setLabel(user.name)
+        .setValue(index.toString())
+        .setEmoji(getAvatarEmoji(index, interaction.createdTimestamp)),
+    timeoutText: "选择超时，请重新运行命令",
   })
+  if (!picked) return null
 
-  const userSelectRow =
-    new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-      new StringSelectMenuBuilder()
-        .setCustomId("starter")
-        .setPlaceholder("请选择用户")
-        .addOptions(userSelectRowOptions),
-    )
-
-  const responseInteraction = await interaction.editReply({
-    content: `❓ 找到多个用户，请选择一个`,
-    components: [userSelectRow],
+  await picked.click.update({
+    content: `✅ 选择了用户: ${picked.item.name}`,
+    components: [],
   })
-
-  return new Promise((resolve, reject) => {
-    const userSelectResponseCollector =
-      responseInteraction.createMessageComponentCollector({
-        componentType: ComponentType.StringSelect,
-        time: 30000,
-      })
-
-    userSelectResponseCollector.on("collect", (selectInteraction) => {
-      void (async () => {
-        if (selectInteraction.user.id !== interaction.user.id) {
-          await selectInteraction.reply({
-            content: "❌ 请不要干扰他人选择",
-            ephemeral: true,
-          })
-          return
-        }
-
-        const selectedUser = users[parseInt(selectInteraction.values[0])]
-        await selectInteraction.update({
-          content: `✅ 选择了用户: ${selectedUser.title}`,
-          components: [],
-        })
-
-        resolve([selectedUser.url, selectedUser.title])
-        userSelectResponseCollector.stop()
-      })()
-    })
-
-    userSelectResponseCollector.on("end", (_, reason) => {
-      if (reason === "time") {
-        reject(new Error("选择超时，请重新运行命令"))
-      }
-    })
-  })
+  return picked.item
 }
 
-const UserOption = new SlashCommandBuilder()
-  .setName("user")
-  .setDescription("播放用户歌单")
-  .addStringOption((option) =>
-    option
-      .setName("用户名")
-      .setDescription("填写网易云账号的用户名")
-      .setRequired(true),
-  )
-
-export const User: LegacyCommand = {
-  name: UserOption.name,
-  description: UserOption.description,
-  data: UserOption,
+export const User: Command = {
+  data: new SlashCommandBuilder()
+    .setName(CommandName.User)
+    .setDescription("播放用户歌单")
+    .addStringOption((option) =>
+      option
+        .setName("用户名")
+        .setDescription("填写网易云账号的用户名")
+        .setRequired(true),
+    ),
   manual:
     "在选项中填入用户名，在下拉菜单中选择用户的公开歌单，歌单中的所有歌曲将被添加到播放列表。",
-  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
-    try {
-      await interaction.deferReply({ ephemeral: true })
-      await checkInVoiceChannel(interaction)
+  run: async ({ interaction }) => {
+    const voiceChannel = requireVoice(interaction)
+    const query = interaction.options.getString("用户名", true)
+    if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-      const player = useMainPlayer()
-      const query = interaction.options.data[0].value as string
-      if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
-      const member = interaction.member! as GuildMember
-      const voiceChannel = member.voice.channel!
-
-      // this result will be a list of users
-      const userSearchResult = await player.search(query, {
-        requestedBy: interaction.user,
-        searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-        requestOptions: extractorSearchOptions({
-          searchType: ExtractorSearchType.UserLists,
-        }),
+    const users = await netease.users.search(query)
+    if (users.length === 0) {
+      await interaction.editReply({
+        embeds: [ErrorMessage(`❌ 未找到用户: ${query}`)],
       })
-
-      if (userSearchResult.isEmpty()) {
-        await interaction.editReply({
-          embeds: [ErrorMessage(`❌ 未找到用户: ${query}`)],
-        })
-        return
-      }
-
-      const [selectedUserId, selectedUserName] =
-        userSearchResult.tracks.length === 1
-          ? [userSearchResult.tracks[0].url, userSearchResult.tracks[0].title]
-          : await handleUserSelect(userSearchResult.tracks, interaction)
-
-      const userPlaylistSearchResult = await player.search(selectedUserId, {
-        requestedBy: interaction.user,
-        searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-        requestOptions: extractorSearchOptions({
-          searchType: ExtractorSearchType.UserPlaylists,
-        }),
-      })
-
-      if (userPlaylistSearchResult.isEmpty()) {
-        await interaction.editReply({
-          embeds: [ErrorMessage(`❌ 未找到用户公开歌单: ${selectedUserName}`)],
-        })
-        return
-      }
-
-      const playlistSelectRowOptions = userPlaylistSearchResult.tracks.map(
-        (playlist, i) => {
-          return new StringSelectMenuOptionBuilder()
-            .setLabel(playlist.title.toString())
-            .setValue(i.toString())
-            .setDescription(`${playlist.author} 首`)
-        },
-      )
-
-      const playlistSelectRow =
-        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-          new StringSelectMenuBuilder()
-            .setCustomId("starter")
-            .setPlaceholder("请选择歌单")
-            .addOptions(playlistSelectRowOptions),
-        )
-
-      const responseInteraction = await interaction.editReply({
-        content: "🔍 请选择歌单",
-        components: [playlistSelectRow],
-      })
-
-      const playlistSelectionResponseCollector =
-        responseInteraction.createMessageComponentCollector({
-          componentType: ComponentType.StringSelect,
-          time: 30000,
-        })
-
-      playlistSelectionResponseCollector.on("collect", (response) => {
-        void (async () => {
-          if (response.user.id !== interaction.user.id) {
-            await response.reply({
-              content: "❌ 请不要干扰他人选择",
-              ephemeral: true,
-            })
-          } else {
-            const selectedPlaylistIndex = parseInt(response.values[0], 10)
-            const selectedPlaylist =
-              userPlaylistSearchResult.tracks[selectedPlaylistIndex]
-
-            await interaction.editReply({
-              content: `**歌单**: ${selectedPlaylist.title} (${selectedPlaylist.author} 首)`,
-              components: [],
-            })
-
-            const playlistTracks = await player.search(selectedPlaylist.url, {
-              requestedBy: interaction.user,
-              searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-              requestOptions: extractorSearchOptions({
-                searchType: ExtractorSearchType.UserPlaylistTracks,
-              }),
-            })
-
-            if (playlistTracks.isEmpty()) {
-              await interaction.editReply({
-                embeds: [
-                  ErrorMessage(`❌ 未找到歌单: ${selectedPlaylist.title}`),
-                ],
-              })
-              return
-            }
-
-            await interaction.followUp({
-              content: "",
-              embeds: [NowPlayingUserPlaylistMessage(playlistTracks.playlist!)],
-            })
-
-            await player.play(voiceChannel, playlistTracks, {
-              nodeOptions: queueOptions(interaction.channel as TextChannel),
-            })
-          }
-        })()
-      })
-
-      playlistSelectionResponseCollector.on("end", (response) => {
-        void (async () => {
-          if (response.size === 0) {
-            await interaction.editReply({
-              content: "❌ 歌单选择超时",
-              components: [],
-            })
-          }
-        })()
-      })
-    } catch (error: any) {
-      logger.error(`/${User.name} failed`, error)
-
-      if (!interaction.deferred && !interaction.replied) {
-        await interaction.deferReply()
-      }
-
-      await interaction.followUp({
-        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
-        flags: MessageFlags.Ephemeral,
-      })
+      return
     }
+
+    const user =
+      users.length === 1 ? users[0] : await pickUser(interaction, users)
+    if (!user) return
+
+    const playlists = await netease.users.getPlaylists(user)
+    if (playlists.length === 0) {
+      await interaction.editReply({
+        embeds: [ErrorMessage(`❌ 未找到用户公开歌单: ${user.name}`)],
+      })
+      return
+    }
+
+    const picked = await pick(interaction, {
+      content: "🔍 请选择歌单",
+      placeholder: "请选择歌单",
+      items: playlists,
+      option: (playlist, index) =>
+        new StringSelectMenuOptionBuilder()
+          .setLabel(playlist.title)
+          .setValue(index.toString())
+          .setDescription(`${playlist.songCount} 首`),
+      timeoutText: "❌ 歌单选择超时",
+    })
+    if (!picked) return
+
+    const { item: playlist, click } = picked
+    await click.update({
+      content: `**歌单**: ${playlist.title} (${playlist.songCount} 首)`,
+      components: [],
+    })
+
+    const player = useMainPlayer()
+    const result = await player.search(playlist.url, {
+      requestedBy: interaction.user,
+    })
+    const failure = recordedFailure()
+    if (failure) throw failure
+    if (!result.playlist || result.isEmpty()) {
+      await interaction.editReply({
+        embeds: [ErrorMessage(`❌ 未找到歌单: ${playlist.title}`)],
+      })
+      return
+    }
+
+    await interaction.followUp({
+      embeds: [NowPlayingUserPlaylistMessage(result.playlist)],
+    })
+
+    await player.play(voiceChannel, result, {
+      nodeOptions: queueOptions(interaction.channel),
+    })
   },
 }

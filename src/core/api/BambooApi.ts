@@ -5,6 +5,7 @@ import { login } from "@/core/api/services/netease/login"
 import { NeteaseExtractor } from "@/core/extractor/BambooExtractor"
 
 export { netease } from "@/core/api/services/netease/api"
+export { songFromTrack } from "@/core/extractor/BambooExtractor"
 
 export const registerSources = async (player: Player) => {
   setCookie(await login())
