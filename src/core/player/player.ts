@@ -1,5 +1,5 @@
 import type { Client, TextBasedChannel } from "discord.js"
-import { type GuildNodeCreateOptions, Player } from "discord-player"
+import { type GuildNodeCreateOptions, Player, StreamType } from "discord-player"
 
 import { QUEUE_LEAVE_ON_END_MS, QUEUE_VOLUME } from "@/common/constants"
 import type { QueueMetadata } from "@/common/types"
@@ -13,4 +13,10 @@ export const queueOptions = (
   metadata: { channel: channel?.isSendable() ? channel : null },
   volume: QUEUE_VOLUME,
   leaveOnEndCooldown: QUEUE_LEAVE_ON_END_MS,
+  disableEqualizer: true,
+  onAfterCreateStream: (stream, queue) => {
+    queue.filters.compressor?.disable()
+    queue.filters.reverb?.disable()
+    return Promise.resolve({ stream, type: StreamType.Raw })
+  },
 })
