@@ -61,7 +61,7 @@ export async function deployCommands(mode: DeployScope) {
   }
 }
 
-const mode = process.argv[2] as DeployScope
+const mode = process.argv[2]
 
 if (mode !== DeployScope.Dev && mode !== DeployScope.Global) {
   console.error("❌ Invalid mode. Use 'dev' or 'global'.")
