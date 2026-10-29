@@ -36,7 +36,7 @@ export const Exit: Command = {
 
       await interaction.reply("done")
     } catch (error: any) {
-      logger.error(interaction, Exit, error)
+      logger.error(`/${Exit.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

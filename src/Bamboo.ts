@@ -3,8 +3,7 @@ import { Client, GatewayIntentBits } from "discord.js"
 import { Player } from "discord-player"
 
 import { ApiServiceType } from "@/common/constants"
-import { initializeVersion } from "@/common/utils/common"
-import { ENVIROMENT, TOKEN } from "@/common/utils/config"
+import { config } from "@/common/utils/config"
 import { setUpCookie } from "@/common/utils/cookie"
 import { BambooExtractor } from "@/core/extractor/BambooExtractor"
 import * as playerEvents from "@/core/player/events"
@@ -15,10 +14,6 @@ process.on("unhandledRejection", (error) => {
 })
 process.on("uncaughtException", (error) => {
   console.error("Uncaught exception:", error)
-})
-
-initializeVersion().catch((error) => {
-  console.error("❌ Failed to initialize version:", error)
 })
 
 // Create new Discord and player clients
@@ -43,9 +38,9 @@ await player.extractors.register(BambooExtractor, {
 
 // Log in to Discord
 client
-  .login(TOKEN)
+  .login(config.discord.token)
   .then(() => {
-    console.log(`✅ Successfully started in ${chalk.bold(ENVIROMENT)}`)
+    console.log(`✅ Successfully started in ${chalk.bold(config.environment)}`)
   })
   .catch((error) => {
     console.error("❌ Failed to log in:", error)

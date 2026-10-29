@@ -64,7 +64,7 @@ export const Loop: Command = {
 
       await interaction.reply(`播放方式：**${modeName}**.`)
     } catch (error: any) {
-      logger.error(interaction, Loop, error)
+      logger.error(`/${Loop.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

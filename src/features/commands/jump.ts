@@ -62,7 +62,7 @@ export const Jump: Command = {
 
       await interaction.reply("done")
     } catch (error: any) {
-      logger.error(interaction, Jump, error)
+      logger.error(`/${Jump.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

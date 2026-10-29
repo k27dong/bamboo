@@ -39,7 +39,7 @@ export const Clear: Command = {
 
       await interaction.reply("done")
     } catch (error: any) {
-      logger.error(interaction, Clear, error)
+      logger.error(`/${Clear.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

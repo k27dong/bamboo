@@ -166,7 +166,7 @@ export const Queue: Command = {
         ),
       )
     } catch (error: any) {
-      logger.error(interaction, Queue, error)
+      logger.error(`/${Queue.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()

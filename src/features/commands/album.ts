@@ -240,7 +240,7 @@ export const Album: Command = {
         })()
       })
     } catch (error: any) {
-      logger.error(interaction, Album, error)
+      logger.error(`/${Album.name} failed`, error)
 
       if (!interaction.deferred && !interaction.replied) {
         await interaction.deferReply()
