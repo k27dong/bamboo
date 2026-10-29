@@ -5,198 +5,184 @@ import {
   type GuildQueueHistory,
   Playlist,
   QueryType,
-  type SearchQueryType,
   Track,
 } from "discord-player"
 
-import {
-  type ApiServiceType,
-  EXTRACTOR_IDENTIFIER,
-  ExtractorSearchType,
-} from "@/common/constants"
+import { ExtractorSearchType } from "@/common/constants"
+import { recordFailure } from "@/common/context"
+import { BambooError } from "@/common/errors"
 import type { ExtractorSearchOptions } from "@/common/types"
 import { millisecondsToTimeString } from "@/common/utils/common"
-import { BambooApi } from "@/core/api/BambooApi"
-import type {
-  NeteaseAlbumDetailed,
-  NeteasePlaylistSearchResult,
-  NeteaseSong,
-  NeteaseUserProfile,
-  SongDetail,
-} from "@/core/api/interfaces"
+import { logger } from "@/common/utils/logger"
+import { isLink, type Song } from "@/core/api/interfaces"
+import {
+  albumWithSongs,
+  lyricsOf,
+  netease,
+  playlistsOf,
+  playlistWithSongs,
+  songIdFromLink,
+} from "@/core/api/services/netease/api"
+import {
+  EXTRACTOR_IDENTIFIER,
+  SONG_LINK,
+} from "@/core/api/services/netease/constants"
 
-export class BambooExtractor extends BaseExtractor {
+const songFromTrack = (track: Track): Song => ({
+  id: songIdFromLink(track.url),
+  title: track.title,
+  artist: track.author,
+  durationMs: track.durationMS,
+  thumbnail: track.thumbnail,
+  url: track.url,
+})
+
+export class NeteaseExtractor extends BaseExtractor {
   static override identifier = EXTRACTOR_IDENTIFIER
 
-  private api: BambooApi | null = null
+  public override createBridgeQuery = (track: Track) => track.url
 
-  private isDirectUrl(query: string): boolean {
-    return /^(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(query)
-  }
-
-  private isNumericId(query: string): boolean {
-    return /^\d+$/.test(query)
-  }
-
-  public override createBridgeQuery = (track: Track) => {
-    return track.url
-  }
-
-  override async activate(): Promise<void> {
-    const initOptions = this.options as {
-      cookies?: Record<ApiServiceType, string>
-    }
-
-    const cookies = initOptions?.cookies
-    this.api = new BambooApi(cookies)
-
+  override activate(): Promise<void> {
     this.protocols = ["bamboo"]
-    await Promise.resolve()
+    return Promise.resolve()
   }
 
-  override async deactivate(): Promise<void> {
-    this.api = null
+  override deactivate(): Promise<void> {
     this.protocols = []
-    await Promise.resolve()
+    return Promise.resolve()
   }
 
-  override validate(
-    query: string,
-    queryType?: SearchQueryType,
-  ): Promise<boolean> {
-    if (typeof query !== "string") return Promise.resolve(false)
-
-    return Promise.resolve(
-      !this.isDirectUrl(query) &&
-        (this.isNumericId(query) ||
-          (
-            [
-              QueryType.AUTO,
-              QueryType.AUTO_SEARCH,
-              `ext:${EXTRACTOR_IDENTIFIER}`,
-            ] as SearchQueryType[]
-          ).includes(queryType!)),
-    )
+  override validate(query: string): Promise<boolean> {
+    return Promise.resolve(query.startsWith(SONG_LINK) || !isLink(query))
   }
 
   override async handle(
     query: string,
     context: ExtractorSearchContext,
   ): Promise<ExtractorInfo> {
-    if (!this.api) throw new Error("Extractor not activated")
-
-    const requestOptions = context.requestOptions as
-      ExtractorSearchOptions | undefined
-
-    switch (requestOptions?.searchType) {
-      case ExtractorSearchType.AlbumLists: {
-        const rawAlbums = await this.api.searchAlbum(query)
-        if (!rawAlbums) throw new Error("Failed to get album list")
-
-        const albumList = this.buildAlbumSelectionItem(rawAlbums)
-
-        return this.createResponse(null, albumList)
+    const kind = (context.requestOptions as ExtractorSearchOptions | undefined)
+      ?.searchType
+    try {
+      switch (kind) {
+        case ExtractorSearchType.AlbumLists: {
+          const albums = await netease.albums.search(query)
+          return this.createResponse(
+            null,
+            albums.map(
+              (album) =>
+                new Track(this.context.player, {
+                  title: album.title,
+                  url: album.id,
+                  duration: `${album.publishedAt}`,
+                  author: album.artist,
+                  source: "arbitrary",
+                  views: album.songCount,
+                }),
+            ),
+          )
+        }
+        case ExtractorSearchType.Album: {
+          const { album, songs } = await albumWithSongs(query)
+          const tracks = songs.map((song) => this.trackOf(song, context))
+          return this.createResponse(
+            new Playlist(this.context.player, {
+              tracks,
+              title: album.title,
+              description: album.description,
+              thumbnail: album.thumbnail,
+              source: "arbitrary",
+              type: "album",
+              author: {
+                name: songs.at(0)?.artist ?? album.artist,
+                url: `${album.publishedAt}`,
+              },
+              id: album.id,
+              url: album.url,
+            }),
+            tracks,
+          )
+        }
+        case ExtractorSearchType.Lyric: {
+          const lyrics = await lyricsOf(query)
+          if (!lyrics) return this.createResponse()
+          return this.createResponse(null, [
+            new Track(this.context.player, {
+              title: lyrics,
+              requestedBy: context.requestedBy,
+              source: "arbitrary",
+              queryType: context.type ?? QueryType.AUTO,
+            }),
+          ])
+        }
+        case ExtractorSearchType.UserLists: {
+          const users = await netease.users.search(query)
+          return this.createResponse(
+            null,
+            users.map(
+              (user) =>
+                new Track(this.context.player, {
+                  title: user.name,
+                  url: user.id,
+                  requestedBy: context.requestedBy,
+                  source: "arbitrary",
+                  queryType: context.type ?? QueryType.AUTO,
+                }),
+            ),
+          )
+        }
+        case ExtractorSearchType.UserPlaylists: {
+          const playlists = await playlistsOf(query)
+          return this.createResponse(
+            null,
+            playlists.map(
+              (playlist) =>
+                new Track(this.context.player, {
+                  title: playlist.title,
+                  url: playlist.id,
+                  thumbnail: playlist.thumbnail,
+                  author: `${playlist.songCount}`,
+                  requestedBy: context.requestedBy,
+                  source: "arbitrary",
+                  queryType: context.type ?? QueryType.AUTO,
+                }),
+            ),
+          )
+        }
+        case ExtractorSearchType.UserPlaylistTracks: {
+          const { playlist, songs } = await playlistWithSongs(query)
+          const tracks = songs.map((song) => this.trackOf(song, context))
+          return this.createResponse(
+            new Playlist(this.context.player, {
+              tracks,
+              title: playlist.title,
+              description: playlist.description,
+              thumbnail: playlist.thumbnail,
+              type: "playlist",
+              source: "arbitrary",
+              author: { name: playlist.ownerName, url: playlist.ownerAvatar },
+              id: playlist.id,
+              url: playlist.url,
+            }),
+            tracks,
+          )
+        }
+        default: {
+          const [song] = await netease.searchSongs(query)
+          return this.createResponse(
+            null,
+            song ? [this.trackOf(song, context)] : [],
+          )
+        }
       }
-      case ExtractorSearchType.Album: {
-        const rawAlbumSongs = await this.api.getAlbumById(query)
-        if (!rawAlbumSongs) throw new Error("Failed to get album")
-
-        const albumSongs = rawAlbumSongs.map((song) =>
-          this.buildTrack(song, context),
-        )
-
-        const album = new Playlist(this.context.player, {
-          tracks: albumSongs,
-          title: rawAlbumSongs[0].al.name,
-          description: rawAlbumSongs[0].al.description,
-          thumbnail: albumSongs[0].thumbnail,
-          source: "arbitrary",
-          type: "album",
-          author: {
-            name: albumSongs[0].author,
-            url: rawAlbumSongs[0].publishTime.toString(),
-          },
-          id: query,
-          url: "",
-        })
-
-        return this.createResponse(album, albumSongs)
-      }
-      case ExtractorSearchType.Lyric: {
-        const rawLyric = await this.api.getLyricById(query)
-        if (!rawLyric) throw new Error("Failed to get lyric")
-
-        const lyricTrack = this.buildLyricTrack(rawLyric, context)
-
-        return this.createResponse(null, [lyricTrack])
-      }
-      case ExtractorSearchType.UserLists: {
-        const rawUsers = await this.api.searchUser(query)
-        if (!rawUsers) throw new Error("Failed to get user list")
-
-        const userTracks = rawUsers.map((user) =>
-          this.buildUserTrack(user, context),
-        )
-
-        return this.createResponse(null, userTracks)
-      }
-      case ExtractorSearchType.UserPlaylists: {
-        const rawUserPlaylists = await this.api.getUserPlaylists(query)
-        if (!rawUserPlaylists) throw new Error("Failed to get user playlists")
-
-        const userPlaylists = rawUserPlaylists.map((playlist) =>
-          this.buildPlaylistTrack(playlist, context),
-        )
-
-        return this.createResponse(null, userPlaylists)
-      }
-      case ExtractorSearchType.UserPlaylistTracks: {
-        const rawPlaylistTracks =
-          await this.api.getUserPlaylistTracksById(query)
-        if (!rawPlaylistTracks) throw new Error("Failed to get playlist")
-
-        const playlistInfo = rawPlaylistTracks.info
-
-        const playlistTracks = rawPlaylistTracks.tracks.map((track) =>
-          this.buildNeteaseTrack(track, context),
-        )
-
-        const playlist = new Playlist(this.context.player, {
-          tracks: playlistTracks,
-          title: playlistInfo.name,
-          description: playlistInfo.description,
-          thumbnail: playlistInfo.coverImgUrl,
-          type: "playlist",
-          source: "arbitrary",
-          author: {
-            name: playlistInfo.creator.nickname,
-            url: playlistInfo.creator.avatarUrl,
-          },
-          id: playlistInfo.id.toString(),
-          url: "",
-        })
-
-        return this.createResponse(playlist, playlistTracks)
-      }
-      case ExtractorSearchType.Track:
-      default: {
-        const rawTrack = await this.api.getDefaultTrack(query)
-        if (!rawTrack) throw new Error("Failed to get track")
-
-        const track = this.buildTrack(rawTrack, context)
-
-        return this.createResponse(null, [track])
-      }
+    } catch (error) {
+      if (error instanceof BambooError) recordFailure(error)
+      else logger.error(`Lookup failed for ${query}`, error)
+      return this.createResponse()
     }
   }
 
   override async stream(track: Track): Promise<string> {
-    if (!this.api) throw new Error("Extractor not activated")
-
-    const streamUrl = await this.api.getTrackUrl(track)
-    if (!streamUrl) throw new Error("Failed to get stream URL")
-
-    return streamUrl
+    return netease.getStreamUrl(songFromTrack(track))
   }
 
   // discord-player calls this method when it wants some tracks for autoplay mode.
@@ -204,95 +190,25 @@ export class BambooExtractor extends BaseExtractor {
     track: Track,
     history: GuildQueueHistory,
   ): Promise<ExtractorInfo> {
-    if (!this.api) throw new Error("Extractor not activated")
-
-    const prevTrackIds = history.tracks.data.map((t) => t.url)
-    const rawTrack = await this.api.getSimilarTrack(track.url, prevTrackIds)
-
-    if (!rawTrack) throw new Error("Failed to get track")
-
-    const relatedTrack = this.buildTrack(rawTrack)
-
-    return this.createResponse(null, [relatedTrack])
+    const related = await netease.findRelated(
+      songFromTrack(track),
+      history.tracks.data.map(songFromTrack),
+    )
+    return this.createResponse(null, related ? [this.trackOf(related)] : [])
   }
 
-  buildTrack(info: NeteaseSong, context?: ExtractorSearchContext): Track {
+  private trackOf(song: Song, context?: ExtractorSearchContext): Track {
     return new Track(this.context.player, {
-      title: info.name,
-      url: `${info.id}`,
-      duration: millisecondsToTimeString(info.dt),
-      thumbnail: info.al.picUrl,
-      author: info.ar[0].name,
+      title: song.title,
+      url: song.url,
+      duration: millisecondsToTimeString(song.durationMs),
+      thumbnail: song.thumbnail,
+      author: song.artist,
       requestedBy: context?.requestedBy,
       source: "arbitrary",
       queryType: context?.type ?? QueryType.AUTO,
-      metadata: info,
-      requestMetadata: () => Promise.resolve(info),
-    })
-  }
-
-  buildNeteaseTrack(song: SongDetail, context: ExtractorSearchContext): Track {
-    return new Track(this.context.player, {
-      title: song.name,
-      url: `${song.id}`,
-      duration: millisecondsToTimeString(song.dt),
-      thumbnail: song.al.picUrl,
-      author: song.ar[0].name,
-      requestedBy: context.requestedBy,
-      source: "arbitrary",
-      queryType: context.type!,
       metadata: song,
       requestMetadata: () => Promise.resolve(song),
-    })
-  }
-
-  buildAlbumSelectionItem(albumList: NeteaseAlbumDetailed[]): Track[] {
-    return albumList.map((album) => {
-      return new Track(this.context.player, {
-        title: album.name,
-        url: `${album.id}`,
-        duration: `${album.publishTime}`,
-        author: album.artists[0].name,
-        source: "arbitrary",
-        views: album.size,
-      })
-    })
-  }
-
-  buildLyricTrack(lyric: string, context: ExtractorSearchContext): Track {
-    return new Track(this.context.player, {
-      title: lyric,
-      requestedBy: context.requestedBy,
-      source: "arbitrary",
-      queryType: context.type!,
-    })
-  }
-
-  buildUserTrack(
-    user: NeteaseUserProfile,
-    context: ExtractorSearchContext,
-  ): Track {
-    return new Track(this.context.player, {
-      title: user.nickname,
-      url: `${user.userId}`,
-      requestedBy: context.requestedBy,
-      source: "arbitrary",
-      queryType: context.type!,
-    })
-  }
-
-  buildPlaylistTrack(
-    playlist: NeteasePlaylistSearchResult,
-    context: ExtractorSearchContext,
-  ): Track {
-    return new Track(this.context.player, {
-      title: playlist.name,
-      url: `${playlist.id}`,
-      thumbnail: playlist.coverImgUrl,
-      author: playlist.trackCount.toString(),
-      requestedBy: context.requestedBy,
-      source: "arbitrary",
-      queryType: context.type!,
     })
   }
 }

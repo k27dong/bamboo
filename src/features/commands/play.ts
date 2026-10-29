@@ -7,7 +7,9 @@ import {
 } from "discord.js"
 import { useMainPlayer } from "discord-player"
 
+import { BambooError, ErrorKind } from "@/common/errors"
 import { logger } from "@/common/utils/logger"
+import { isLink } from "@/core/api/interfaces"
 import type { Command } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 
@@ -30,6 +32,7 @@ export const Play: Command = {
       const player = useMainPlayer()
 
       const query = interaction.options.data[0].value as string
+      if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
       const member = interaction.member! as GuildMember
       const voiceChannel = member.voice.channel!
 
