@@ -1,19 +1,8 @@
 import type {
-  ChatInputApplicationCommandData,
   ChatInputCommandInteraction,
-  Client,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js"
-
-export interface LegacyCommand extends ChatInputApplicationCommandData {
-  data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder
-  run: (
-    client: Client,
-    interaction: ChatInputCommandInteraction,
-  ) => Promise<void>
-  manual?: string
-}
 
 export enum CommandName {
   Ping = "ping",

@@ -20,3 +20,5 @@ export const recordFailure = (error: BambooError) => {
   const current = activeRequest()
   if (current) current.failure = error
 }
+
+export const recordedFailure = () => activeRequest()?.failure ?? null

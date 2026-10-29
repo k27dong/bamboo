@@ -3,49 +3,70 @@ import {
   ButtonBuilder,
   ButtonStyle,
   type ChatInputCommandInteraction,
-  type Client,
   ComponentType,
   EmbedBuilder,
-  type GuildMember,
   MessageFlags,
   SlashCommandBuilder,
-  StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
-  type TextChannel,
 } from "discord.js"
 import { type Playlist, useMainPlayer } from "discord-player"
 
 import {
   CustomButtonId,
+  DESCRIPTION_BUTTON_TIMEOUT_MS,
   DISCORD_EMBED_DESCRIPTION_LIMIT,
-  DISCORD_SELECT_MENU_LIMIT as DISCORD_SELECT_MENU_LIMIT,
-  EXTRACTOR_IDENTIFIER,
-  ExtractorSearchType,
+  DISCORD_SELECT_MENU_LIMIT,
 } from "@/common/constants"
+import { recordedFailure } from "@/common/context"
 import { BambooError, ErrorKind } from "@/common/errors"
-import { extractorSearchOptions } from "@/common/types"
 import { timestampToYear } from "@/common/utils/common"
-import { logger } from "@/common/utils/logger"
-import { isLink } from "@/core/api/interfaces"
-import type { LegacyCommand } from "@/core/commands/Command"
-import { checkInVoiceChannel } from "@/core/player/core"
+import { netease } from "@/core/api/BambooApi"
+import { type Album as AlbumInfo, isLink } from "@/core/api/interfaces"
+import { type Command, CommandName } from "@/core/commands/Command"
+import { pick } from "@/core/commands/pick"
+import { requireVoice } from "@/core/player/core"
 import {
   ErrorMessage,
   NowPlayingPlaylistMessage,
 } from "@/core/player/embedMessages"
 import { queueOptions } from "@/core/player/player"
 
-const AlbumOption = new SlashCommandBuilder()
-  .setName("album")
-  .setDescription("专辑搜索")
-  .addStringOption((option) =>
-    option.setName("搜索").setDescription("专辑名").setRequired(true),
+const albumOption = (album: AlbumInfo, index: number) => {
+  const label =
+    album.title.length > DISCORD_SELECT_MENU_LIMIT
+      ? `${album.title.slice(0, DISCORD_SELECT_MENU_LIMIT - 3)}...`
+      : album.title
+
+  const year = timestampToYear(album.publishedAt)
+  const views = album.songCount.toString()
+
+  const yearLength = year.toString().length
+  const viewsLength = views.length
+  const fixedPartsLength = viewsLength + yearLength + 7
+  const maxAuthorLength = Math.max(
+    0,
+    DISCORD_SELECT_MENU_LIMIT - fixedPartsLength,
   )
 
-export const getPlaylistEmbedInfo = (playlist: Playlist) => {
-  const embed = NowPlayingPlaylistMessage(playlist)
+  const author =
+    album.artist.length > maxAuthorLength
+      ? `${album.artist.slice(0, maxAuthorLength - 3)}...`
+      : album.artist
 
-  const components = playlist.description?.trim()
+  return new StringSelectMenuOptionBuilder()
+    .setLabel(label)
+    .setValue(index.toString())
+    .setDescription(`${author} | ${views}首 | ${year}`)
+    .setEmoji("💿")
+}
+
+const showAlbumCard = async (
+  interaction: ChatInputCommandInteraction,
+  playlist: Playlist,
+) => {
+  const embed = NowPlayingPlaylistMessage(playlist)
+  const description = playlist.description.trim()
+  const components = description
     ? [
         new ActionRowBuilder<ButtonBuilder>().addComponents(
           new ButtonBuilder()
@@ -57,198 +78,90 @@ export const getPlaylistEmbedInfo = (playlist: Playlist) => {
       ]
     : []
 
-  return { embed, components }
+  const card = await interaction.followUp({ embeds: [embed], components })
+  if (!description) return
+
+  const clicks = card.createMessageComponentCollector({
+    componentType: ComponentType.Button,
+    time: DESCRIPTION_BUTTON_TIMEOUT_MS,
+  })
+
+  clicks.on("collect", (click) => {
+    void (async () => {
+      if (click.customId !== CustomButtonId.ShowDescription) return
+      await click.update({
+        embeds: [
+          EmbedBuilder.from(embed).setDescription(
+            description.length <= DISCORD_EMBED_DESCRIPTION_LIMIT
+              ? description
+              : `${description.substring(0, DISCORD_EMBED_DESCRIPTION_LIMIT - 4)}\n...`,
+          ),
+        ],
+        components: [],
+      })
+      clicks.stop()
+    })()
+  })
+
+  clicks.on("end", (collected) => {
+    if (collected.size === 0) void card.edit({ components: [] })
+  })
 }
 
-export const Album: LegacyCommand = {
-  name: AlbumOption.name,
-  description: AlbumOption.description,
-  data: AlbumOption,
+export const Album: Command = {
+  data: new SlashCommandBuilder()
+    .setName(CommandName.Album)
+    .setDescription("专辑搜索")
+    .addStringOption((option) =>
+      option.setName("搜索").setDescription("专辑名").setRequired(true),
+    ),
   manual:
     "在选项中填入专辑名，在返回的列表中选择专辑，专辑中的所有歌曲会自动加到播放列表的末尾。",
-  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
-    try {
-      await interaction.deferReply({ ephemeral: true })
-      await checkInVoiceChannel(interaction)
+  run: async ({ interaction }) => {
+    const voiceChannel = requireVoice(interaction)
+    const query = interaction.options.getString("搜索", true)
+    if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-      const player = useMainPlayer()
-
-      const query = interaction.options.data[0].value as string
-      if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
-      const member = interaction.member! as GuildMember
-      const voiceChannel = member.voice.channel!
-
-      // this result is not tracks but albums
-      const albumSearchResult = await player.search(query, {
-        requestedBy: interaction.user,
-        searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-        requestOptions: extractorSearchOptions({
-          searchType: ExtractorSearchType.AlbumLists,
-        }),
+    const albums = await netease.albums.search(query)
+    if (albums.length === 0) {
+      await interaction.editReply({
+        embeds: [ErrorMessage(`❌ 未找到专辑: ${query}`)],
       })
-
-      if (albumSearchResult.isEmpty()) {
-        await interaction.editReply({
-          embeds: [ErrorMessage(`❌ 未找到专辑: ${query}`)],
-        })
-        return
-      }
-
-      const albumSelectRowOptions = albumSearchResult.tracks.map((track, i) => {
-        const label =
-          track.title.length > DISCORD_SELECT_MENU_LIMIT
-            ? `${track.title.slice(0, DISCORD_SELECT_MENU_LIMIT - 3)}...`
-            : track.title
-
-        const year = timestampToYear(parseInt(track.duration, 10))
-        const views = track.views.toString()
-
-        const yearLength = year.toString().length
-        const viewsLength = views.length
-        const fixedPartsLength = viewsLength + yearLength + 7
-        const maxAuthorLength = Math.max(
-          0,
-          DISCORD_SELECT_MENU_LIMIT - fixedPartsLength,
-        )
-
-        const author =
-          track.author.length > maxAuthorLength
-            ? `${track.author.slice(0, maxAuthorLength - 3)}...`
-            : track.author
-
-        return new StringSelectMenuOptionBuilder()
-          .setLabel(label)
-          .setValue(i.toString())
-          .setDescription(`${author} | ${views}首 | ${year}`)
-          .setEmoji("💿")
-      })
-
-      const albumSelectRow =
-        new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-          new StringSelectMenuBuilder()
-            .setCustomId("starter")
-            .setPlaceholder("Make a selection!")
-            .addOptions(albumSelectRowOptions),
-        )
-
-      const responseInteraction = await interaction.editReply({
-        content: "🔍 请选择专辑",
-        components: [albumSelectRow],
-      })
-
-      const albumSelectionResponseCollector =
-        responseInteraction.createMessageComponentCollector({
-          componentType: ComponentType.StringSelect,
-          time: 30000,
-        })
-
-      albumSelectionResponseCollector.on("collect", (response) => {
-        void (async () => {
-          if (response.user.id !== interaction.user.id) {
-            await response.reply({
-              content: "❌ 请不要干扰他人选择",
-              ephemeral: true,
-            })
-          } else {
-            const selectedAlbumIndex = parseInt(response.values[0], 10)
-            const selectedAlbum = albumSearchResult.tracks[selectedAlbumIndex]
-
-            await interaction.editReply({
-              content: `**专辑**: ${selectedAlbum.title} (${timestampToYear(parseInt(selectedAlbum.duration, 10))})`,
-              components: [],
-            })
-
-            const albumTracks = await player.search(selectedAlbum.url, {
-              requestedBy: interaction.user,
-              searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-              requestOptions: extractorSearchOptions({
-                searchType: ExtractorSearchType.Album,
-              }),
-            })
-
-            const { embed, components } = getPlaylistEmbedInfo(
-              albumTracks.playlist!,
-            )
-
-            const albumFollowUpResponse = await interaction.followUp({
-              content: "",
-              embeds: [embed],
-              components: components,
-            })
-
-            const selectedAlbumDescription = albumTracks.playlist!.description
-
-            if (components.length > 0) {
-              const albumFollowUpResponseCollector =
-                albumFollowUpResponse.createMessageComponentCollector({
-                  componentType: ComponentType.Button,
-                  time: 60_000,
-                })
-
-              albumFollowUpResponseCollector.on(
-                "collect",
-                (albumInfoResponse) => {
-                  void (async () => {
-                    if (
-                      albumInfoResponse.customId ===
-                      CustomButtonId.ShowDescription
-                    ) {
-                      const updatedEmbed = EmbedBuilder.from(
-                        embed,
-                      ).setDescription(
-                        selectedAlbumDescription.length <=
-                          DISCORD_EMBED_DESCRIPTION_LIMIT
-                          ? selectedAlbumDescription
-                          : `${selectedAlbumDescription.substring(0, DISCORD_EMBED_DESCRIPTION_LIMIT - 4)}\n...`,
-                      )
-
-                      await albumInfoResponse.update({
-                        embeds: [updatedEmbed],
-                        components: [],
-                      })
-                      albumFollowUpResponseCollector.stop()
-                    }
-                  })()
-                },
-              )
-
-              albumFollowUpResponseCollector.on("end", () => {
-                void (async () => {
-                  await albumFollowUpResponse.edit({
-                    components: [],
-                  })
-                })()
-              })
-            }
-
-            await player.play(voiceChannel, albumTracks, {
-              nodeOptions: queueOptions(interaction.channel as TextChannel),
-            })
-          }
-        })()
-      })
-
-      albumSelectionResponseCollector.on("end", (response) => {
-        void (async () => {
-          if (response.size === 0) {
-            await interaction.editReply({
-              content: "❌ 专辑选择超时",
-              components: [],
-            })
-          }
-        })()
-      })
-    } catch (error: any) {
-      logger.error(`/${Album.name} failed`, error)
-
-      if (!interaction.deferred && !interaction.replied) {
-        await interaction.deferReply()
-      }
-
-      await interaction.followUp({
-        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
-        flags: MessageFlags.Ephemeral,
-      })
+      return
     }
+
+    const picked = await pick(interaction, {
+      content: "🔍 请选择专辑",
+      placeholder: "Make a selection!",
+      items: albums,
+      option: albumOption,
+      timeoutText: "❌ 专辑选择超时",
+    })
+    if (!picked) return
+
+    const { item: album, click } = picked
+    await click.update({
+      content: `**专辑**: ${album.title} (${timestampToYear(album.publishedAt)})`,
+      components: [],
+    })
+
+    const player = useMainPlayer()
+    const result = await player.search(album.url, {
+      requestedBy: interaction.user,
+    })
+    const failure = recordedFailure()
+    if (failure) throw failure
+    if (!result.playlist || result.isEmpty()) {
+      await interaction.editReply({
+        embeds: [ErrorMessage(`❌ 未找到专辑: ${album.title}`)],
+      })
+      return
+    }
+
+    await showAlbumCard(interaction, result.playlist)
+    await player.play(voiceChannel, result, {
+      nodeOptions: queueOptions(interaction.channel),
+    })
   },
 }

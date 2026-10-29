@@ -20,11 +20,11 @@ const client = new Client({
 })
 const player = createPlayer(client)
 
-// Load Discord and player events
-Object.values(clientEvents).forEach((event) => event(client))
-registerPlayerEvents(player)
-
 await registerSources(player)
+
+// Load Discord and player events
+registerPlayerEvents(player)
+Object.values(clientEvents).forEach((event) => event(client))
 
 // Log in to Discord
 client

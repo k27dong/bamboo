@@ -1,23 +1,14 @@
-import {
-  type ChatInputCommandInteraction,
-  type Client,
-  MessageFlags,
-  SlashCommandBuilder,
-} from "discord.js"
-import { useMainPlayer, useQueue } from "discord-player"
+import { SlashCommandBuilder } from "discord.js"
 import OpenAI from "openai"
 
-import {
-  DISCORD_MESSAGE_CHAR_LIMIT,
-  EXTRACTOR_IDENTIFIER,
-  ExtractorSearchType,
-} from "@/common/constants"
+import { DISCORD_MESSAGE_CHAR_LIMIT, NO_LYRICS } from "@/common/constants"
+import { BambooError, ErrorKind } from "@/common/errors"
 import { LYRIC_SANITIZATION_PROMPT } from "@/common/prompts"
-import { extractorSearchOptions } from "@/common/types"
 import { config } from "@/common/utils/config"
 import { logger } from "@/common/utils/logger"
-import { songIdFromLink } from "@/core/api/services/netease/api"
-import type { LegacyCommand } from "@/core/commands/Command"
+import { netease, songFromTrack } from "@/core/api/BambooApi"
+import { type Command, CommandName } from "@/core/commands/Command"
+import { requireQueue } from "@/core/player/core"
 
 const getGptParsedLyric = async (
   rawLyric: string,
@@ -38,14 +29,12 @@ const getGptParsedLyric = async (
     model: "gpt-4o-mini",
   })
 
-  return response.choices[0].message.content!
+  const { content } = response.choices[0].message
+  if (content === null) throw new Error("The model returned no lyrics")
+  return content
 }
 
-const parseLrc = (lrc: string | null | undefined): string => {
-  if (!lrc) {
-    return "```\nNo lyrics available\n```"
-  }
-
+const parseLrc = (lrc: string): string => {
   const sanitizedLines = lrc
     .split("\n")
     .map((line) =>
@@ -77,69 +66,39 @@ const parseLrc = (lrc: string | null | undefined): string => {
 
   return lyricContent.trim()
     ? `\`\`\`\n${lyricContent.trim()}\n\`\`\``
-    : "```\nNo lyrics available\n```"
+    : NO_LYRICS
 }
 
-const LyricOption = new SlashCommandBuilder()
-  .setName("lyric")
-  .setDescription("显示歌词")
-
-export const Lyric: LegacyCommand = {
-  name: LyricOption.name,
-  description: LyricOption.description,
-  data: LyricOption,
+export const Lyric: Command = {
+  data: new SlashCommandBuilder()
+    .setName(CommandName.Lyric)
+    .setDescription("显示歌词"),
   manual: "显示当前播放歌曲的歌词。",
-  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
-    try {
-      const player = useMainPlayer()
-      const queue = useQueue(interaction.guild!)!
+  run: async ({ interaction }) => {
+    const queue = requireQueue(interaction)
+    if (!queue.currentTrack) throw new BambooError(ErrorKind.NothingPlaying)
 
-      if (!queue) {
-        await interaction.reply("Queue not found!")
-        return
-      }
-
-      if (!queue.currentTrack) {
-        await interaction.reply("No track is currently playing!")
-        return
-      }
-
-      const trackId = songIdFromLink(queue.currentTrack.url)
-
-      const lrcResult = await player.search(trackId, {
-        requestedBy: interaction.user,
-        searchEngine: `ext:${EXTRACTOR_IDENTIFIER}`,
-        requestOptions: extractorSearchOptions({
-          searchType: ExtractorSearchType.Lyric,
-        }),
-      })
-
-      const rawLyric = lrcResult.tracks[0].title
-      const parsedLyric = parseLrc(rawLyric)
-
-      await interaction.reply(parsedLyric)
-
-      const gptParsedLyric = await Promise.race([
-        getGptParsedLyric(rawLyric, parsedLyric),
-        new Promise<string>((_, reject) =>
-          setTimeout(
-            () => reject(new Error("API timeout after 15 minutes")),
-            900000,
-          ),
-        ),
-      ])
-      await interaction.editReply(gptParsedLyric)
-    } catch (error: any) {
-      logger.error(`/${Lyric.name} failed`, error)
-
-      if (!interaction.deferred && !interaction.replied) {
-        await interaction.deferReply()
-      }
-
-      await interaction.followUp({
-        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
-        flags: MessageFlags.Ephemeral,
-      })
+    const rawLyric = await netease.getLyrics(songFromTrack(queue.currentTrack))
+    if (!rawLyric) {
+      await interaction.reply(NO_LYRICS)
+      return
     }
+
+    const parsedLyric = parseLrc(rawLyric)
+    await interaction.reply(parsedLyric)
+
+    const gptParsedLyric = await Promise.race([
+      getGptParsedLyric(rawLyric, parsedLyric),
+      new Promise<string>((_, reject) =>
+        setTimeout(
+          () => reject(new Error("API timeout after 15 minutes")),
+          900000,
+        ),
+      ),
+    ]).catch((error: unknown) => {
+      logger.warn(`Lyric tidy-up failed: ${String(error)}`)
+      return null
+    })
+    if (gptParsedLyric !== null) await interaction.editReply(gptParsedLyric)
   },
 }
