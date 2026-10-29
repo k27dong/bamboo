@@ -105,3 +105,6 @@ export const LOG_TIME_FORMAT = new Intl.DateTimeFormat("en-CA", {
 })
 export const LOG_LEVEL_WIDTH = 5
 export const LOG_COMMAND_WIDTH = 7
+
+export const QUEUE_VOLUME = 50
+export const QUEUE_LEAVE_ON_END_MS = 300_000
