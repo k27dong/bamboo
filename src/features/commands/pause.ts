@@ -1,61 +1,25 @@
-import {
-  type ChatInputCommandInteraction,
-  type Client,
-  MessageFlags,
-  SlashCommandBuilder,
-} from "discord.js"
-import { useTimeline } from "discord-player"
+import { SlashCommandBuilder } from "discord.js"
 
-import { logger } from "@/common/utils/logger"
-import type { Command } from "@/core/commands/Command"
-import { checkInVoiceChannel } from "@/core/player/core"
-
-const PauseOption = new SlashCommandBuilder()
-  .setName("pause")
-  .setDescription("暂停/继续")
+import { type Command, CommandName } from "@/core/commands/Command"
+import { requireQueue, requireVoice } from "@/core/player/core"
 
 export const Pause: Command = {
-  name: PauseOption.name,
-  description: PauseOption.description,
-  data: PauseOption,
+  data: new SlashCommandBuilder()
+    .setName(CommandName.Pause)
+    .setDescription("暂停/继续"),
   manual: "暂停/继续播放。",
-  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
-    try {
-      await checkInVoiceChannel(interaction)
+  run: async ({ interaction }) => {
+    requireVoice(interaction)
+    const queue = requireQueue(interaction)
 
-      const timeline = useTimeline({
-        node: interaction.guild!,
-      })!
+    const wasPaused = queue.node.isPaused()
 
-      if (!timeline) {
-        await interaction.reply(
-          "This server does not have an active player session.",
-        )
-        return
-      }
-
-      const wasPaused = timeline.paused
-
-      if (wasPaused) {
-        timeline.resume()
-      } else {
-        timeline.pause()
-      }
-
-      await interaction.reply(
-        `Now: ${wasPaused ? "**playing**" : "**paused**"}`,
-      )
-    } catch (error: any) {
-      logger.error(`/${Pause.name} failed`, error)
-
-      if (!interaction.deferred && !interaction.replied) {
-        await interaction.deferReply()
-      }
-
-      await interaction.followUp({
-        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
-        flags: MessageFlags.Ephemeral,
-      })
+    if (wasPaused) {
+      queue.node.resume()
+    } else {
+      queue.node.pause()
     }
+
+    await interaction.reply(`Now: ${wasPaused ? "**playing**" : "**paused**"}`)
   },
 }

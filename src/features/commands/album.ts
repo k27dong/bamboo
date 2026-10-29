@@ -27,7 +27,7 @@ import { extractorSearchOptions } from "@/common/types"
 import { timestampToYear } from "@/common/utils/common"
 import { logger } from "@/common/utils/logger"
 import { isLink } from "@/core/api/interfaces"
-import type { Command } from "@/core/commands/Command"
+import type { LegacyCommand } from "@/core/commands/Command"
 import { checkInVoiceChannel } from "@/core/player/core"
 import {
   ErrorMessage,
@@ -60,7 +60,7 @@ export const getPlaylistEmbedInfo = (playlist: Playlist) => {
   return { embed, components }
 }
 
-export const Album: Command = {
+export const Album: LegacyCommand = {
   name: AlbumOption.name,
   description: AlbumOption.description,
   data: AlbumOption,

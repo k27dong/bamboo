@@ -1,22 +1,21 @@
-import {
-  type ChatInputCommandInteraction,
-  type Client,
-  MessageFlags,
-  SlashCommandBuilder,
-} from "discord.js"
+import { type Client, MessageFlags, SlashCommandBuilder } from "discord.js"
+import { match } from "ts-pattern"
 
 import { timestampToDate } from "@/common/utils/common"
 import { config } from "@/common/utils/config"
-import { logger } from "@/common/utils/logger"
-import type { Command } from "@/core/commands/Command"
+import { type Command, CommandName } from "@/core/commands/Command"
 import type { StatGuildsRecord } from "@/env"
 
-const SudoOption = new SlashCommandBuilder()
-  .setName("sudo")
-  .setDescription("命令行")
-  .addStringOption((option) =>
-    option.setName("run").setDescription("commands").setRequired(true),
-  )
+enum SudoAction {
+  List = "ls",
+  Up = "up",
+  Uptime = "uptime",
+  V = "v",
+  Version = "version",
+}
+
+const isSudoAction = (value: string): value is SudoAction =>
+  Object.values<string>(SudoAction).includes(value)
 
 interface ShardGuildData {
   guilds: StatGuildsRecord[]
@@ -73,80 +72,68 @@ async function getAllGuildsData(client: Client): Promise<ShardGuildData> {
   return { guilds, memberCount }
 }
 
+const listServers = async (client: Client) => {
+  const { guilds, memberCount } = await getAllGuildsData(client)
+
+  console.table(guilds)
+  console.log("TOTAL USERS: " + memberCount)
+
+  const shardInfo = client.shard ? ` (${client.shard.count} shards)` : ""
+  return `\`\`\`Number of servers: ${guilds.length}${shardInfo}\nTotal users: ${memberCount}\`\`\``
+}
+
+const uptime = (client: Client) => {
+  if (!client.uptime) return "```Uptime: N/A```"
+
+  const days = Math.floor(client.uptime / 86400000)
+  const hours = Math.floor((client.uptime / 3600000) % 24)
+  const minutes = Math.floor((client.uptime / 60000) % 60)
+
+  const parts = [
+    days > 0 ? `${days}d` : "",
+    hours > 0 ? `${hours}h` : "",
+    `${minutes}m`,
+  ]
+    .filter(Boolean)
+    .join(" ")
+
+  const shardId = client.shard?.ids[0] ?? 0
+  return `\`\`\`Uptime: ${parts} (shard ${shardId})\`\`\``
+}
+
 export const Sudo: Command = {
-  name: SudoOption.name,
-  description: SudoOption.description,
-  data: SudoOption,
-  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
-    try {
-      await interaction.deferReply({ ephemeral: true })
-      const query = interaction.options.data[0].value as string
-
-      if (interaction.user.id !== config.discord.ownerId) {
-        throw new Error("⚠️ Permission denied, you are not the owner.")
-      }
-
-      switch (query) {
-        case "ls": {
-          const { guilds, memberCount } = await getAllGuildsData(client)
-
-          console.table(guilds)
-          console.log("TOTAL USERS: " + memberCount)
-
-          const shardInfo = client.shard
-            ? ` (${client.shard.count} shards)`
-            : ""
-          await interaction.editReply(
-            `\`\`\`Number of servers: ${guilds.length}${shardInfo}\nTotal users: ${memberCount}\`\`\``,
-          )
-          break
-        }
-        case "up":
-        case "uptime": {
-          const uptime = client.uptime
-          if (!uptime) {
-            await interaction.editReply("```Uptime: N/A```")
-            break
-          }
-
-          const days = Math.floor(uptime / 86400000)
-          const hours = Math.floor((uptime / 3600000) % 24)
-          const minutes = Math.floor((uptime / 60000) % 60)
-
-          const parts = [
-            days > 0 ? `${days}d` : "",
-            hours > 0 ? `${hours}h` : "",
-            `${minutes}m`,
-          ]
-            .filter(Boolean)
-            .join(" ")
-
-          const shardId = client.shard?.ids[0] ?? 0
-          await interaction.editReply(
-            `\`\`\`Uptime: ${parts} (shard ${shardId})\`\`\``,
-          )
-          break
-        }
-        case "v":
-        case "version": {
-          await interaction.editReply(`\`\`\`Version: ${BAMBOO_VERSION}\`\`\``)
-          break
-        }
-        default: {
-          await interaction.editReply("Todo")
-        }
-      }
-    } catch (error: any) {
-      logger.error(`/${Sudo.name} failed`, error)
-
-      if (!interaction.deferred && !interaction.replied) {
-        await interaction.deferReply()
-      }
-
-      await interaction.followUp({
-        content: `❌ **Error**\n\`\`\`${error}\`\`\``,
+  data: new SlashCommandBuilder()
+    .setName(CommandName.Sudo)
+    .setDescription("命令行")
+    .addStringOption((option) =>
+      option.setName("run").setDescription("commands").setRequired(true),
+    ),
+  run: async ({ interaction }) => {
+    if (interaction.user.id !== config.discord.ownerId) {
+      await interaction.reply({
+        content: "⚠️ Permission denied, you are not the owner.",
         flags: MessageFlags.Ephemeral,
       })
+      return
     }
+
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral })
+    const action = interaction.options.getString("run", true)
+
+    const text = isSudoAction(action)
+      ? await match(action)
+          .with(SudoAction.List, () => listServers(interaction.client))
+          .with(SudoAction.Up, SudoAction.Uptime, () =>
+            uptime(interaction.client),
+          )
+          .with(
+            SudoAction.V,
+            SudoAction.Version,
+            () => `\`\`\`Version: ${BAMBOO_VERSION}\`\`\``,
+          )
+          .exhaustive()
+      : "Todo"
+
+    await interaction.editReply(text)
   },
 }

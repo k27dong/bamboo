@@ -17,7 +17,7 @@ import { extractorSearchOptions } from "@/common/types"
 import { config } from "@/common/utils/config"
 import { logger } from "@/common/utils/logger"
 import { songIdFromLink } from "@/core/api/services/netease/api"
-import type { Command } from "@/core/commands/Command"
+import type { LegacyCommand } from "@/core/commands/Command"
 
 const getGptParsedLyric = async (
   rawLyric: string,
@@ -84,7 +84,7 @@ const LyricOption = new SlashCommandBuilder()
   .setName("lyric")
   .setDescription("显示歌词")
 
-export const Lyric: Command = {
+export const Lyric: LegacyCommand = {
   name: LyricOption.name,
   description: LyricOption.description,
   data: LyricOption,

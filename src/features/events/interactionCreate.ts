@@ -1,30 +1,17 @@
-import { type Client, Events, type Interaction } from "discord.js"
+import { type Client, Events } from "discord.js"
 
-import { logger } from "@/common/utils/logger"
+import { dispatch } from "@/core/commands/dispatch"
 
-import { Commands } from "../commands"
+import { commands } from "../commands"
 
 export default (client: Client) => {
-  client.on(Events.InteractionCreate, (interaction: Interaction) => {
-    void (async () => {
-      try {
-        if (interaction.isChatInputCommand()) {
-          const command = Commands.find(
-            (command) => command.name === interaction.commandName,
-          )
+  client.on(Events.InteractionCreate, (interaction) => {
+    if (!interaction.isChatInputCommand()) return
 
-          if (command) {
-            const started = performance.now()
-            try {
-              await command.run(client, interaction)
-            } finally {
-              logger.command(interaction, performance.now() - started)
-            }
-          }
-        }
-      } catch (error) {
-        console.error("❌ Error in interactionCreate event:", error)
-      }
-    })()
+    const command = commands.find(
+      ({ data }) => data.name === interaction.commandName,
+    )
+
+    if (command) void dispatch(command, interaction)
   })
 }
