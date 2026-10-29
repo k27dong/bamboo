@@ -86,8 +86,7 @@ export class BambooExtractor extends BaseExtractor {
     if (!this.api) throw new Error("Extractor not activated")
 
     const requestOptions = context.requestOptions as
-      | ExtractorSearchOptions
-      | undefined
+      ExtractorSearchOptions | undefined
 
     switch (requestOptions?.searchType) {
       case ExtractorSearchType.AlbumLists: {
