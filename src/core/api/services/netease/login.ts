@@ -4,7 +4,7 @@ import { setTimeout as sleep } from "node:timers/promises"
 
 import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 import qrcode from "qrcode-terminal"
-import { match } from "ts-pattern"
+import { isMatching, match } from "ts-pattern"
 
 import { config } from "@/common/utils/config"
 import { SourceId } from "@/core/api/interfaces"
@@ -69,13 +69,13 @@ const qrLogin = async (): Promise<string> => {
     cookie: LOGIN_COOKIE,
     domain: NETEASE_EAPI_DOMAIN,
   })
-  if (qrKey.status !== HttpStatus.Ok) {
+  if (!isMatching(HttpStatus.Ok, qrKey.status)) {
     throw new Error(`Failed to get QR key: ${qrKey.status}`)
   }
   const { unikey } = qrKey.body.data as QrKeyAnswer
 
   const qrCode = await NeteaseCloudMusicApi.login_qr_create({ key: unikey })
-  if (qrCode.status !== HttpStatus.Ok) {
+  if (!isMatching(HttpStatus.Ok, qrCode.status)) {
     throw new Error(`Failed to get QR code: ${qrCode.status}`)
   }
   const { qrurl } = qrCode.body.data as QrCodeAnswer
