@@ -7,7 +7,6 @@ import qrcode from "qrcode-terminal"
 import { isMatching, match } from "ts-pattern"
 
 import { config } from "@/common/utils/config"
-import { SourceId } from "@/core/api/interfaces"
 
 import {
   CLIENT_COOKIE,
@@ -89,12 +88,12 @@ const qrLogin = async (): Promise<string> => {
 
 const sessionCookie = async (): Promise<string> => {
   if (config.netease.cookie) {
-    console.log(`✅ Cookie ${SourceId.Netease} provided, skipping login`)
+    console.log("✅ NetEase cookie provided, skipping login")
     return config.netease.cookie
   }
   const saved = await savedCookie()
   if (saved) {
-    console.log(`✅ Cookie ${SourceId.Netease} found, skipping login`)
+    console.log("✅ NetEase cookie found, skipping login")
     return saved
   }
   return qrLogin()

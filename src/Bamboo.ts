@@ -2,7 +2,9 @@ import chalk from "chalk"
 import { Client, GatewayIntentBits } from "discord.js"
 
 import { config } from "@/common/utils/config"
-import { registerSources } from "@/core/api/BambooApi"
+import { setCookie } from "@/core/api/services/netease/client"
+import { login } from "@/core/api/services/netease/login"
+import { NeteaseExtractor } from "@/core/extractor/BambooExtractor"
 import { registerPlayerEvents } from "@/core/player/events"
 import { createPlayer } from "@/core/player/player"
 import * as clientEvents from "@/features/events"
@@ -20,7 +22,8 @@ const client = new Client({
 })
 const player = createPlayer(client)
 
-await registerSources(player)
+setCookie(await login())
+await player.extractors.register(NeteaseExtractor, {})
 
 // Load Discord and player events
 registerPlayerEvents(player)

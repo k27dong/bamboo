@@ -12,7 +12,7 @@ import { BambooError, ErrorKind } from "@/common/errors"
 import { LYRIC_SANITIZATION_PROMPT } from "@/common/prompts"
 import { config } from "@/common/utils/config"
 import { logger } from "@/common/utils/logger"
-import { netease, songFromTrack } from "@/core/api/BambooApi"
+import { getLyric, idFromLink } from "@/core/api/services/netease/api"
 import { type Command, CommandName } from "@/core/commands/Command"
 import { requireQueue } from "@/core/player/core"
 
@@ -129,7 +129,7 @@ export const Lyric: Command = {
     await interaction.deferReply()
     const deadline = AbortSignal.timeout(LYRIC_MODEL_TIMEOUT_MS)
 
-    const rawLyric = await netease.getLyrics(songFromTrack(queue.currentTrack))
+    const rawLyric = await getLyric(idFromLink(queue.currentTrack.url))
     if (!rawLyric) {
       await interaction.editReply(NO_LYRICS)
       return

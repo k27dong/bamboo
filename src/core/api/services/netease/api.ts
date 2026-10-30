@@ -3,33 +3,19 @@ import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 import { DISCORD_DROPDOWN_LIMIT } from "@/common/constants"
 import { BambooError, ErrorKind } from "@/common/errors"
 import { logger } from "@/common/utils/logger"
-import {
-  type Album,
-  type MusicSource,
-  type Playlist,
-  type Song,
-  SourceId,
-  type User,
-} from "@/core/api/interfaces"
 
 import { request } from "./client"
-import {
-  ALBUM_LINK,
-  NeteaseHost,
-  PLAYLIST_LINK,
-  SearchType,
-  SONG_DETAIL_TRACKID_LIMIT,
-  SONG_LINK,
-} from "./constants"
+import { NeteaseHost, SearchType, SONG_DETAIL_TRACKID_LIMIT } from "./constants"
 import type {
   AlbumAnswer,
   AlbumSearchAnswer,
   LyricAnswer,
+  NeteaseAlbum,
+  NeteaseAlbumWithArtist,
+  NeteasePlaylist,
+  NeteaseSong,
+  NeteaseUser,
   PlaylistDetailAnswer,
-  RawAlbum,
-  RawPlaylist,
-  RawSimilarSong,
-  RawSong,
   SimilarSongsAnswer,
   SongDetailAnswer,
   SongSearchAnswer,
@@ -44,80 +30,22 @@ export const idFromLink = (link: string): string => {
   return id
 }
 
-const songOf = (raw: RawSong, thumbnail?: string): Song | null => {
-  const artist = raw.ar?.[0]
-  if (!artist || !raw.al) {
-    logger.warn(`Skipped NetEase song ${raw.id} without an artist or album`)
-    return null
-  }
-  return {
-    id: String(raw.id),
-    title: raw.name,
-    artist: artist.name,
-    durationMs: raw.dt,
-    thumbnail: thumbnail ?? raw.al.picUrl,
-    url: `${SONG_LINK}${raw.id}`,
-  }
+const hasArtist = (album: NeteaseAlbum): album is NeteaseAlbumWithArtist => {
+  if (album.artists.length > 0) return true
+  logger.warn(`Skipped NetEase album ${album.id} without an artist`)
+  return false
 }
 
-const songsOf = (raws: RawSong[], thumbnail?: string): Song[] =>
-  raws.map((raw) => songOf(raw, thumbnail)).filter((song) => song !== null)
-
-const similarSongOf = (raw: RawSimilarSong): Song | null => {
-  const artist = raw.artists?.[0]
-  if (!artist || !raw.album) {
-    logger.warn(`Skipped NetEase song ${raw.id} without an artist or album`)
-    return null
-  }
-  return {
-    id: String(raw.id),
-    title: raw.name,
-    artist: artist.name,
-    durationMs: raw.duration,
-    thumbnail: raw.album.picUrl,
-    url: `${SONG_LINK}${raw.id}`,
-  }
-}
-
-const albumOf = (raw: RawAlbum): Album | null => {
-  const artist = raw.artists[0]
-  if (!artist) {
-    logger.warn(`Skipped NetEase album ${raw.id} without an artist`)
-    return null
-  }
-  return {
-    id: String(raw.id),
-    title: raw.name,
-    artist: artist.name,
-    songCount: raw.size,
-    publishedAt: raw.publishTime,
-    description: raw.description ?? "",
-    thumbnail: raw.picUrl,
-    url: `${ALBUM_LINK}${raw.id}`,
-  }
-}
-
-const playlistOf = (raw: RawPlaylist): Playlist => ({
-  id: String(raw.id),
-  title: raw.name,
-  description: raw.description ?? "",
-  songCount: raw.trackCount,
-  thumbnail: raw.coverImgUrl,
-  ownerName: raw.creator?.nickname ?? "",
-  ownerAvatar: raw.creator?.avatarUrl ?? "",
-  url: `${PLAYLIST_LINK}${raw.id}`,
-})
-
-const searchSongs = async (query: string): Promise<Song[]> => {
+export const searchSongs = async (query: string): Promise<NeteaseSong[]> => {
   const { result } = await request<SongSearchAnswer>(
     NeteaseCloudMusicApi.cloudsearch,
     { keywords: query, type: SearchType.Song },
     NeteaseHost.Eapi,
   )
-  return songsOf(result?.songs ?? [])
+  return result?.songs ?? []
 }
 
-const streamUrlOf = async (id: string): Promise<string> => {
+export const getSongUrl = async (id: string): Promise<string> => {
   const { data } = await request<SongUrlAnswer>(
     NeteaseCloudMusicApi.song_url_v1,
     { id: Number(id), level: "standard", crypto: "eapi" },
@@ -131,26 +59,23 @@ const streamUrlOf = async (id: string): Promise<string> => {
   return url
 }
 
-const relatedTo = async (
-  id: string,
-  playedIds: string[],
-): Promise<Song | null> => {
+export const getSimilarSongs = async (id: string): Promise<NeteaseSong[]> => {
   const { songs } = await request<SimilarSongsAnswer>(
     NeteaseCloudMusicApi.simi_song,
     { id },
     NeteaseHost.Default,
   )
-  const candidates = (songs ?? [])
-    .map(similarSongOf)
-    .filter((song) => song !== null)
-  return (
-    candidates.find((song) => !playedIds.includes(song.id)) ??
-    candidates.at(0) ??
-    null
-  )
+  // simi_song still answers with NetEase's older song fields
+  return (songs ?? []).map((song) => ({
+    id: song.id,
+    name: song.name,
+    dt: song.duration,
+    ar: song.artists,
+    al: song.album,
+  }))
 }
 
-const lyricsOf = async (id: string): Promise<string | null> => {
+export const getLyric = async (id: string): Promise<string | null> => {
   const { lrc } = await request<LyricAnswer>(
     NeteaseCloudMusicApi.lyric,
     { id },
@@ -159,7 +84,9 @@ const lyricsOf = async (id: string): Promise<string | null> => {
   return lrc?.lyric || null
 }
 
-const searchAlbums = async (query: string): Promise<Album[]> => {
+export const searchAlbums = async (
+  query: string,
+): Promise<NeteaseAlbumWithArtist[]> => {
   const { result } = await request<AlbumSearchAnswer>(
     NeteaseCloudMusicApi.cloudsearch,
     { keywords: query, type: SearchType.Album },
@@ -167,49 +94,40 @@ const searchAlbums = async (query: string): Promise<Album[]> => {
   )
   return (result?.albums ?? [])
     .slice(0, DISCORD_DROPDOWN_LIMIT)
-    .map(albumOf)
-    .filter((album) => album !== null)
+    .filter(hasArtist)
 }
 
-export const albumWithSongs = async (id: string) => {
+export const getAlbumWithSongs = async (id: string) => {
   const { album, songs } = await request<AlbumAnswer>(
     NeteaseCloudMusicApi.album,
     { id },
     NeteaseHost.Default,
   )
-  if (!album?.id) throw new BambooError(ErrorKind.NotFound)
-  const info = albumOf(album)
-  if (!info) throw new BambooError(ErrorKind.NotFound)
-  return {
-    album: info,
-    songs: songsOf(songs ?? [], album.picUrl),
-  }
+  if (!album?.id || !hasArtist(album)) throw new BambooError(ErrorKind.NotFound)
+  return { album, songs: songs ?? [] }
 }
 
-const searchUsers = async (query: string): Promise<User[]> => {
+export const searchUsers = async (query: string): Promise<NeteaseUser[]> => {
   const { result } = await request<UserSearchAnswer>(
     NeteaseCloudMusicApi.cloudsearch,
     { keywords: query, type: SearchType.User },
     NeteaseHost.Eapi,
   )
-  return (result?.userprofiles ?? [])
-    .slice(0, DISCORD_DROPDOWN_LIMIT)
-    .map((raw) => ({
-      id: String(raw.userId),
-      name: raw.nickname,
-    }))
+  return (result?.userprofiles ?? []).slice(0, DISCORD_DROPDOWN_LIMIT)
 }
 
-const playlistsOf = async (userId: string): Promise<Playlist[]> => {
+export const getUserPlaylists = async (
+  userId: string,
+): Promise<NeteasePlaylist[]> => {
   const { playlist } = await request<UserPlaylistsAnswer>(
     NeteaseCloudMusicApi.user_playlist,
     { uid: userId },
     NeteaseHost.Default,
   )
-  return (playlist ?? []).slice(0, DISCORD_DROPDOWN_LIMIT).map(playlistOf)
+  return (playlist ?? []).slice(0, DISCORD_DROPDOWN_LIMIT)
 }
 
-export const playlistWithSongs = async (id: string) => {
+export const getPlaylistWithSongs = async (id: string) => {
   const { playlist } = await request<PlaylistDetailAnswer>(
     NeteaseCloudMusicApi.playlist_detail,
     { id },
@@ -234,30 +152,5 @@ export const playlistWithSongs = async (id: string) => {
       ),
     ),
   )
-  return {
-    playlist: playlistOf(playlist),
-    songs: songsOf(details.flatMap(({ songs }) => songs)),
-  }
+  return { playlist, songs: details.flatMap(({ songs }) => songs) }
 }
-
-export const netease = {
-  id: SourceId.Netease,
-  searchSongs,
-  getStreamUrl: (song) => streamUrlOf(song.id),
-  findRelated: (song, played) =>
-    relatedTo(
-      song.id,
-      played.map((other) => other.id),
-    ),
-  getLyrics: (song) => lyricsOf(song.id),
-  albums: {
-    search: searchAlbums,
-    getSongs: async (album) => (await albumWithSongs(album.id)).songs,
-  },
-  users: {
-    search: searchUsers,
-    getPlaylists: (user) => playlistsOf(user.id),
-    getPlaylistSongs: async (playlist) =>
-      (await playlistWithSongs(playlist.id)).songs,
-  },
-} satisfies MusicSource

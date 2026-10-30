@@ -20,9 +20,10 @@ import {
 } from "@/common/constants"
 import { recordedFailure } from "@/common/context"
 import { BambooError, ErrorKind } from "@/common/errors"
-import { timestampToYear } from "@/common/utils/common"
-import { netease } from "@/core/api/BambooApi"
-import { type Album as AlbumInfo, isLink } from "@/core/api/interfaces"
+import { isLink, timestampToYear } from "@/common/utils/common"
+import { searchAlbums } from "@/core/api/services/netease/api"
+import { ALBUM_LINK } from "@/core/api/services/netease/constants"
+import type { NeteaseAlbumWithArtist } from "@/core/api/services/netease/types"
 import { type Command, CommandName } from "@/core/commands/Command"
 import { pick } from "@/core/commands/pick"
 import { requireVoice } from "@/core/player/core"
@@ -32,14 +33,15 @@ import {
 } from "@/core/player/embedMessages"
 import { queueOptions } from "@/core/player/player"
 
-const albumOption = (album: AlbumInfo, index: number) => {
+const albumOption = (album: NeteaseAlbumWithArtist, index: number) => {
   const label =
-    album.title.length > DISCORD_SELECT_MENU_LIMIT
-      ? `${album.title.slice(0, DISCORD_SELECT_MENU_LIMIT - 3)}...`
-      : album.title
+    album.name.length > DISCORD_SELECT_MENU_LIMIT
+      ? `${album.name.slice(0, DISCORD_SELECT_MENU_LIMIT - 3)}...`
+      : album.name
 
-  const year = timestampToYear(album.publishedAt)
-  const views = album.songCount.toString()
+  const year = timestampToYear(album.publishTime)
+  const views = album.size.toString()
+  const artist = album.artists[0].name
 
   const yearLength = year.toString().length
   const viewsLength = views.length
@@ -50,9 +52,9 @@ const albumOption = (album: AlbumInfo, index: number) => {
   )
 
   const author =
-    album.artist.length > maxAuthorLength
-      ? `${album.artist.slice(0, maxAuthorLength - 3)}...`
-      : album.artist
+    artist.length > maxAuthorLength
+      ? `${artist.slice(0, maxAuthorLength - 3)}...`
+      : artist
 
   return new StringSelectMenuOptionBuilder()
     .setLabel(label)
@@ -124,7 +126,7 @@ export const Album: Command = {
     if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
     await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-    const albums = await netease.albums.search(query)
+    const albums = await searchAlbums(query)
     if (albums.length === 0) {
       await interaction.editReply({
         embeds: [ErrorMessage(`❌ 未找到专辑: ${query}`)],
@@ -143,19 +145,19 @@ export const Album: Command = {
 
     const { item: album, click } = picked
     await click.update({
-      content: `**专辑**: ${album.title} (${timestampToYear(album.publishedAt)})`,
+      content: `**专辑**: ${album.name} (${timestampToYear(album.publishTime)})`,
       components: [],
     })
 
     const player = useMainPlayer()
-    const result = await player.search(album.url, {
+    const result = await player.search(`${ALBUM_LINK}${album.id}`, {
       requestedBy: interaction.user,
     })
     const failure = recordedFailure()
     if (failure) throw failure
     if (!result.playlist || result.isEmpty()) {
       await interaction.editReply({
-        embeds: [ErrorMessage(`❌ 未找到专辑: ${album.title}`)],
+        embeds: [ErrorMessage(`❌ 未找到专辑: ${album.name}`)],
       })
       return
     }

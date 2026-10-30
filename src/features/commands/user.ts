@@ -8,9 +8,10 @@ import { useMainPlayer } from "discord-player"
 
 import { recordedFailure } from "@/common/context"
 import { BambooError, ErrorKind } from "@/common/errors"
-import { getAvatarEmoji } from "@/common/utils/common"
-import { netease } from "@/core/api/BambooApi"
-import { isLink, type User as UserInfo } from "@/core/api/interfaces"
+import { getAvatarEmoji, isLink } from "@/common/utils/common"
+import { getUserPlaylists, searchUsers } from "@/core/api/services/netease/api"
+import { PLAYLIST_LINK } from "@/core/api/services/netease/constants"
+import type { NeteaseUser } from "@/core/api/services/netease/types"
 import { type Command, CommandName } from "@/core/commands/Command"
 import { pick } from "@/core/commands/pick"
 import { requireVoice } from "@/core/player/core"
@@ -22,15 +23,15 @@ import { queueOptions } from "@/core/player/player"
 
 const pickUser = async (
   interaction: ChatInputCommandInteraction,
-  users: UserInfo[],
-): Promise<UserInfo | null> => {
+  users: NeteaseUser[],
+): Promise<NeteaseUser | null> => {
   const picked = await pick(interaction, {
     content: "❓ 找到多个用户，请选择一个",
     placeholder: "请选择用户",
     items: users,
     option: (user, index) =>
       new StringSelectMenuOptionBuilder()
-        .setLabel(user.name)
+        .setLabel(user.nickname)
         .setValue(index.toString())
         .setEmoji(getAvatarEmoji(index, interaction.createdTimestamp)),
     timeoutText: "选择超时，请重新运行命令",
@@ -38,7 +39,7 @@ const pickUser = async (
   if (!picked) return null
 
   await picked.click.update({
-    content: `✅ 选择了用户: ${picked.item.name}`,
+    content: `✅ 选择了用户: ${picked.item.nickname}`,
     components: [],
   })
   return picked.item
@@ -62,7 +63,7 @@ export const User: Command = {
     if (isLink(query)) throw new BambooError(ErrorKind.NotFound)
     await interaction.deferReply({ flags: MessageFlags.Ephemeral })
 
-    const users = await netease.users.search(query)
+    const users = await searchUsers(query)
     if (users.length === 0) {
       await interaction.editReply({
         embeds: [ErrorMessage(`❌ 未找到用户: ${query}`)],
@@ -74,10 +75,10 @@ export const User: Command = {
       users.length === 1 ? users[0] : await pickUser(interaction, users)
     if (!user) return
 
-    const playlists = await netease.users.getPlaylists(user)
+    const playlists = await getUserPlaylists(String(user.userId))
     if (playlists.length === 0) {
       await interaction.editReply({
-        embeds: [ErrorMessage(`❌ 未找到用户公开歌单: ${user.name}`)],
+        embeds: [ErrorMessage(`❌ 未找到用户公开歌单: ${user.nickname}`)],
       })
       return
     }
@@ -88,28 +89,28 @@ export const User: Command = {
       items: playlists,
       option: (playlist, index) =>
         new StringSelectMenuOptionBuilder()
-          .setLabel(playlist.title)
+          .setLabel(playlist.name)
           .setValue(index.toString())
-          .setDescription(`${playlist.songCount} 首`),
+          .setDescription(`${playlist.trackCount} 首`),
       timeoutText: "❌ 歌单选择超时",
     })
     if (!picked) return
 
     const { item: playlist, click } = picked
     await click.update({
-      content: `**歌单**: ${playlist.title} (${playlist.songCount} 首)`,
+      content: `**歌单**: ${playlist.name} (${playlist.trackCount} 首)`,
       components: [],
     })
 
     const player = useMainPlayer()
-    const result = await player.search(playlist.url, {
+    const result = await player.search(`${PLAYLIST_LINK}${playlist.id}`, {
       requestedBy: interaction.user,
     })
     const failure = recordedFailure()
     if (failure) throw failure
     if (!result.playlist || result.isEmpty()) {
       await interaction.editReply({
-        embeds: [ErrorMessage(`❌ 未找到歌单: ${playlist.title}`)],
+        embeds: [ErrorMessage(`❌ 未找到歌单: ${playlist.name}`)],
       })
       return
     }

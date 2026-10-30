@@ -11,30 +11,24 @@ import { match, P } from "ts-pattern"
 
 import { recordFailure } from "@/common/context"
 import { BambooError } from "@/common/errors"
-import { millisecondsToTimeString } from "@/common/utils/common"
+import { isLink, millisecondsToTimeString } from "@/common/utils/common"
 import { logger } from "@/common/utils/logger"
-import { isLink, type Song } from "@/core/api/interfaces"
 import {
-  albumWithSongs,
+  getAlbumWithSongs,
+  getPlaylistWithSongs,
+  getSimilarSongs,
+  getSongUrl,
   idFromLink,
-  netease,
-  playlistWithSongs,
+  searchSongs,
 } from "@/core/api/services/netease/api"
 import {
   ALBUM_LINK,
   EXTRACTOR_IDENTIFIER,
   NETEASE_LINKS,
   PLAYLIST_LINK,
+  SONG_LINK,
 } from "@/core/api/services/netease/constants"
-
-export const songFromTrack = (track: Track): Song => ({
-  id: idFromLink(track.url),
-  title: track.title,
-  artist: track.author,
-  durationMs: track.durationMS,
-  thumbnail: track.thumbnail,
-  url: track.url,
-})
+import type { NeteaseSong } from "@/core/api/services/netease/types"
 
 export class NeteaseExtractor extends BaseExtractor {
   static override identifier = EXTRACTOR_IDENTIFIER
@@ -78,7 +72,7 @@ export class NeteaseExtractor extends BaseExtractor {
   }
 
   override async stream(track: Track): Promise<string> {
-    return netease.getStreamUrl(songFromTrack(track))
+    return getSongUrl(idFromLink(track.url))
   }
 
   // discord-player calls this method when it wants some tracks for autoplay mode.
@@ -86,41 +80,43 @@ export class NeteaseExtractor extends BaseExtractor {
     track: Track,
     history: GuildQueueHistory,
   ): Promise<ExtractorInfo> {
-    const related = await netease.findRelated(
-      songFromTrack(track),
-      history.tracks.data.map(songFromTrack),
+    const played = new Set(history.tracks.data.map(({ url }) => url))
+    const candidates = this.toTracks(
+      await getSimilarSongs(idFromLink(track.url)),
     )
-    return this.createResponse(null, related ? [this.trackOf(related)] : [])
+    const related =
+      candidates.find(({ url }) => !played.has(url)) ?? candidates.at(0)
+    return this.createResponse(null, related ? [related] : [])
   }
 
   private async firstHit(
     text: string,
     context: ExtractorSearchContext,
   ): Promise<ExtractorInfo> {
-    const [song] = await netease.searchSongs(text)
-    return this.createResponse(null, song ? [this.trackOf(song, context)] : [])
+    const [track] = this.toTracks(await searchSongs(text), context)
+    return this.createResponse(null, track ? [track] : [])
   }
 
   private async album(
     link: string,
     context: ExtractorSearchContext,
   ): Promise<ExtractorInfo> {
-    const { album, songs } = await albumWithSongs(idFromLink(link))
-    const tracks = songs.map((song) => this.trackOf(song, context))
+    const { album, songs } = await getAlbumWithSongs(idFromLink(link))
+    const tracks = this.toTracks(songs, context, album.picUrl)
     return this.createResponse(
       new Playlist(this.context.player, {
         tracks,
-        title: album.title,
-        description: album.description,
-        thumbnail: album.thumbnail,
+        title: album.name,
+        description: album.description ?? "",
+        thumbnail: album.picUrl,
         source: "arbitrary",
         type: "album",
         author: {
-          name: songs.at(0)?.artist ?? album.artist,
-          url: `${album.publishedAt}`,
+          name: tracks.at(0)?.author ?? album.artists[0].name,
+          url: `${album.publishTime}`,
         },
-        id: album.id,
-        url: album.url,
+        id: String(album.id),
+        url: `${ALBUM_LINK}${album.id}`,
       }),
       tracks,
     )
@@ -130,36 +126,52 @@ export class NeteaseExtractor extends BaseExtractor {
     link: string,
     context: ExtractorSearchContext,
   ): Promise<ExtractorInfo> {
-    const { playlist, songs } = await playlistWithSongs(idFromLink(link))
-    const tracks = songs.map((song) => this.trackOf(song, context))
+    const { playlist, songs } = await getPlaylistWithSongs(idFromLink(link))
+    const tracks = this.toTracks(songs, context)
     return this.createResponse(
       new Playlist(this.context.player, {
         tracks,
-        title: playlist.title,
-        description: playlist.description,
-        thumbnail: playlist.thumbnail,
+        title: playlist.name,
+        description: playlist.description ?? "",
+        thumbnail: playlist.coverImgUrl,
         type: "playlist",
         source: "arbitrary",
-        author: { name: playlist.ownerName, url: playlist.ownerAvatar },
-        id: playlist.id,
-        url: playlist.url,
+        author: {
+          name: playlist.creator?.nickname ?? "",
+          url: playlist.creator?.avatarUrl ?? "",
+        },
+        id: String(playlist.id),
+        url: `${PLAYLIST_LINK}${playlist.id}`,
       }),
       tracks,
     )
   }
 
-  private trackOf(song: Song, context?: ExtractorSearchContext): Track {
-    return new Track(this.context.player, {
-      title: song.title,
-      url: song.url,
-      duration: millisecondsToTimeString(song.durationMs),
-      thumbnail: song.thumbnail,
-      author: song.artist,
-      requestedBy: context?.requestedBy,
-      source: "arbitrary",
-      queryType: context?.type ?? QueryType.AUTO,
-      metadata: song,
-      requestMetadata: () => Promise.resolve(song),
+  private toTracks(
+    songs: NeteaseSong[],
+    context?: ExtractorSearchContext,
+    thumbnail?: string,
+  ): Track[] {
+    return songs.flatMap((song) => {
+      const artist = song.ar?.[0]
+      if (!artist || !song.al) {
+        logger.warn(
+          `Skipped NetEase song ${song.id} without an artist or album`,
+        )
+        return []
+      }
+      return new Track(this.context.player, {
+        title: song.name,
+        url: `${SONG_LINK}${song.id}`,
+        duration: millisecondsToTimeString(song.dt),
+        thumbnail: thumbnail ?? song.al.picUrl,
+        author: artist.name,
+        requestedBy: context?.requestedBy,
+        source: "arbitrary",
+        queryType: context?.type ?? QueryType.AUTO,
+        metadata: song,
+        requestMetadata: () => Promise.resolve(song),
+      })
     })
   }
 }

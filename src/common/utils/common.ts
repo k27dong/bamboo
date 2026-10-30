@@ -148,3 +148,6 @@ export const timestampToDate = (timestamp: number): string => {
 
   return `${year}, ${month}, ${day}`
 }
+
+export const isLink = (text: string) =>
+  /^(?:https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i.test(text)

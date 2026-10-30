@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "discord.js"
 import { useMainPlayer } from "discord-player"
 
 import { BambooError, ErrorKind } from "@/common/errors"
-import { isLink } from "@/core/api/interfaces"
+import { isLink } from "@/common/utils/common"
 import { type Command, CommandName } from "@/core/commands/Command"
 import { requireVoice } from "@/core/player/core"
 import { queueOptions } from "@/core/player/player"
