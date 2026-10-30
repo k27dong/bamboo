@@ -19,7 +19,7 @@ esbuild
     outdir: "dist",
     bundle: true,
     platform: "node",
-    target: "node22",
+    target: "node26",
     format: "esm",
     sourcemap: true,
     minify: process.env.NODE_ENV === "production",

@@ -39,6 +39,7 @@
     "chalk": "^6.0.0",
     "discord-player": "^7.2.0",
     "discord.js": "^14.27.0",
+    "mediaplex": "^1.0.0",
     "openai": "^7.4.0",
     "qrcode-terminal": "^0.12.0",
     "sodium-native": "^5.1.0",
@@ -47,21 +48,20 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^22",
+    "@types/node": "^26",
     "@types/qrcode-terminal": "^0.12.2",
     "esbuild": "^0.28.2",
     "eslint": "^10.8.1",
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "globals": "^17.9.0",
     "prettier": "^3.9.6",
-    "tsx": "^4.23.11",
+    "tsx": "^4.23.15",
     "@typescript/native": "npm:typescript@^7.0.2",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint": "^8.66.0"
+    "typescript-eslint": "^8.72.1"
   },
-  "packageManager": "pnpm@12.11.2",
   "engines": {
-    "node": ">=22.18",
+    "node": ">=26",
     "pnpm": ">=12"
   }
 }
