@@ -41,8 +41,7 @@ Bamboo is actively developed and maintained. If you encounter any bugs or have s
 
 ### Prerequisites
 
-- [`Node.js`]: Runtime for the project (22.18 or newer)
-- [`pnpm`]: Package manager (12 or newer)
+- [`mise`]: Installs the Node.js and pnpm versions pinned in `mise.toml` with `mise install`
 - [`ffmpeg`]: Required for audio processing and streaming
 
 ### Usage
@@ -89,7 +88,6 @@ The settings can come from Infisical instead of a `.env` file. With the [`Infisi
   <img src="https://contrib.rocks/image?repo=k27dong/bamboo"  alt="Contributor badge"/>
 </a>
 
-[`node.js`]: https://nodejs.org/en/download
-[`pnpm`]: https://pnpm.io/installation
+[`mise`]: https://mise.jdx.dev/installing-mise.html
 [`ffmpeg`]: https://ffmpeg.org/
 [`Infisical CLI`]: https://infisical.com/docs/cli/overview

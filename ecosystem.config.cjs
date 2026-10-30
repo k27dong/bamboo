@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "Bamboo",
-      script: "dist/sharding.js",
+      script: "dist/manager.js",
       instances: 1,
       exec_mode: "fork",
       autorestart: true,

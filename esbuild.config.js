@@ -15,11 +15,11 @@ const { version } = JSON.parse(readFileSync("package.json", "utf8"))
 
 esbuild
   .build({
-    entryPoints: ["src/Bamboo.ts", "src/sharding.ts"],
+    entryPoints: ["src/shard.ts", "src/manager.ts"],
     outdir: "dist",
     bundle: true,
     platform: "node",
-    target: "node22",
+    target: "node26",
     format: "esm",
     sourcemap: true,
     minify: process.env.NODE_ENV === "production",
