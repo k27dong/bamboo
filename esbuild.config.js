@@ -15,7 +15,7 @@ const { version } = JSON.parse(readFileSync("package.json", "utf8"))
 
 esbuild
   .build({
-    entryPoints: ["src/Bamboo.ts", "src/sharding.ts"],
+    entryPoints: ["src/shard.ts", "src/manager.ts"],
     outdir: "dist",
     bundle: true,
     platform: "node",

@@ -15,21 +15,21 @@
   "license": "MIT",
   "author": "k27dong",
   "type": "module",
-  "main": "dist/sharding.js",
+  "main": "dist/manager.js",
   "scripts": {
     "type-check": "tsc --noEmit",
     "build": "pnpm type-check && NODE_ENV=development node esbuild.config.js",
-    "start": "node src/common/scripts/withSettings.ts dev node --enable-source-maps --no-deprecation dist/sharding.js",
+    "start": "node src/scripts/withSettings.ts dev node --enable-source-maps --no-deprecation dist/manager.js",
     "dev": "pnpm build && pnpm start",
     "build:prod": "pnpm type-check && NODE_ENV=production node esbuild.config.js",
-    "start:prod": "node src/common/scripts/withSettings.ts prod node --enable-source-maps --no-deprecation dist/sharding.js",
+    "start:prod": "node src/scripts/withSettings.ts prod node --enable-source-maps --no-deprecation dist/manager.js",
     "prod": "pnpm build:prod && pnpm start:prod",
     "lint": "eslint . --cache",
     "lint:fix": "eslint . --cache --fix && prettier --write .",
-    "flush:dev": "node src/common/scripts/withSettings.ts dev tsx src/common/scripts/flush.ts",
-    "deploy:dev": "node src/common/scripts/withSettings.ts dev tsx src/common/scripts/deploy.ts dev",
-    "deploy:prod": "node src/common/scripts/withSettings.ts prod tsx src/common/scripts/deploy.ts global",
-    "check": "tsx src/common/scripts/checkDep.ts"
+    "flush:dev": "node src/scripts/withSettings.ts dev tsx src/scripts/flush.ts",
+    "deploy:dev": "node src/scripts/withSettings.ts dev tsx src/scripts/deploy.ts dev",
+    "deploy:prod": "node src/scripts/withSettings.ts prod tsx src/scripts/deploy.ts global",
+    "check": "tsx src/scripts/checkDep.ts"
   },
   "dependencies": {
     "@discord-player/extractor": "^7.2.0",
