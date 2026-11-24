@@ -6,7 +6,7 @@ import NeteaseCloudMusicApi from "@neteasecloudmusicapienhanced/api"
 import qrcode from "qrcode-terminal"
 import { isMatching, match } from "ts-pattern"
 
-import { config } from "@/shared/config"
+import { config, Environment } from "@/shared/config"
 
 import {
   CLIENT_COOKIE,
@@ -95,6 +95,11 @@ const sessionCookie = async (): Promise<string> => {
   if (saved) {
     console.log("✅ NetEase cookie found, skipping login")
     return saved
+  }
+  if (config.environment === Environment.Production) {
+    throw new Error(
+      "⚠️  Missing setting NETEASE_COOKIE. A NetEase QR login can't finish in production.",
+    )
   }
   return qrLogin()
 }
