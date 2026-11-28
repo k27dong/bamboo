@@ -1,14 +1,18 @@
 import {
   BaseExtractor,
+  createFFmpegStream,
   type ExtractorInfo,
   type ExtractorSearchContext,
+  type ExtractorStreamable,
   type GuildQueueHistory,
   Playlist,
   QueryType,
+  StreamType,
   Track,
 } from "discord-player"
 import { match, P } from "ts-pattern"
 
+import { PLAYBACK_VOLUME } from "@/shared/constants"
 import { recordFailure } from "@/shared/context"
 import { BambooError } from "@/shared/errors"
 import { isLink, millisecondsToTimeString } from "@/shared/format"
@@ -72,8 +76,21 @@ export class NeteaseExtractor extends BaseExtractor {
     }
   }
 
-  override async stream(track: Track): Promise<string> {
-    return getSongUrl(idFromLink(track.url))
+  override async stream(track: Track): Promise<ExtractorStreamable> {
+    const url = await getSongUrl(idFromLink(track.url))
+    return {
+      $fmt: StreamType.OggOpus,
+      stream: createFFmpegStream(url, {
+        fmt: "opus",
+        seek: 0, // without a number here, createFFmpegStream hands ffmpeg "-ss undefined"
+        encoderArgs: [
+          "-af",
+          `volume=${PLAYBACK_VOLUME}`,
+          "-frame_duration",
+          "20",
+        ],
+      }),
+    }
   }
 
   // discord-player calls this method when it wants some tracks for autoplay mode.
